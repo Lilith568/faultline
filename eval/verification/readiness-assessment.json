@@ -1,0 +1,50 @@
+{
+  "assessment_type": "subjective_readiness_review_not_jury_score_or_win_probability",
+  "as_of": "2026-10-26T23:07:14.768870+00:00",
+  "dimensions": [
+    {
+      "name": "Impact",
+      "weight": 0.3,
+      "score_out_of_10": 6,
+      "reason": "Usable CI and saved sessions; upstream probes establish narrow compatibility, not a real network-backed defect."
+    },
+    {
+      "name": "Meta tooling",
+      "weight": 0.25,
+      "score_out_of_10": 7,
+      "reason": "Hypothesis/follow-up/diagnosis loop and review-only patches; complete live API and open-weights quality unmeasured."
+    },
+    {
+      "name": "Technical execution",
+      "weight": 0.2,
+      "score_out_of_10": 8,
+      "reason": "Validated vocabulary, confirmations, preserved evidence, regression tests and reviewed source boundaries; documented authentication and coverage limits remain."
+    },
+    {
+      "name": "Demo",
+      "weight": 0.25,
+      "score_out_of_10": 7,
+      "reason": "Working responsive evidence UI and actual fixed-build replay; final real Meta video and submission assets still pending."
+    }
+  ],
+  "weighted_score_out_of_10": 6.9,
+  "not_a_10_because": [
+    "No completed live Meta evaluation with independent repeats",
+    "No established defect in a meaningful unmodified network-backed upstream app",
+    "Live proposed patch and open-weights deployment not validated",
+    "Bonus stacking and the Guide kickoff/building-period ambiguity remain unresolved",
+    "Final public repository/video/submission not created"
+  ],
+  "further_work_performed": [
+    "Preserved failed/partial evaluations and source fingerprints",
+    "Added CI/JUnit and scoped saved-login support",
+    "Added consent-gated review-only validated diffs",
+    "Redesigned and browser-tested notebook UI",
+    "Fixed issues found by independent review"
+  ],
+  "constraints": [
+    "No real API key or live open-weights endpoint available",
+    "Original Git history absent from supplied Drive snapshot",
+    "Participant Guide reviewed from owner-supplied text; browser authentication was not used"
+  ]
+}

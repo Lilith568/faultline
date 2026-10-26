@@ -15,6 +15,8 @@ from urllib.parse import urlparse
 
 from playwright.async_api import Browser, Page
 
+from .auth import install_authenticated_transport, scope_storage_state
+
 SCAN_JS = r"""
 () => {
   const SEL = [
@@ -231,27 +233,58 @@ class _RequestLog:
         return list(dict.fromkeys(self.items[index:]))
 
 
-async def guard_navigation(context, origin: str) -> None:
-    """Keep the browser on the target's origin: page loads elsewhere (redirects, links) are blocked."""
+async def guard_navigation(context, origin: str, *, strict: bool = False) -> None:
+    """Keep page navigation at the target origin without following unchecked redirects.
+
+    Playwright routes only the first request in a browser redirect chain. Fetch
+    navigation responses without following redirects, and reject any redirect
+    before its destination is contacted. Ordinary fetch/XHR traffic still falls
+    through to the existing perturbation routes; this is not an egress sandbox.
+    """
     async def handler(route):
         request = route.request
-        if request.is_navigation_request() and origin_of(request.url) != origin:
+        if (strict or request.is_navigation_request()) and origin_of(request.url) != origin:
             await route.abort("blockedbyclient")
+            return
+        if request.is_navigation_request():
+            response = None
+            try:
+                response = await route.fetch(max_redirects=0)
+                if 300 <= response.status < 400 and response.headers.get("location"):
+                    await route.abort("blockedbyclient")
+                else:
+                    await route.fulfill(response=response)
+            except Exception:
+                try:
+                    await route.abort("failed")
+                except Exception:
+                    pass  # the context may close while navigation is pending
+            finally:
+                if response is not None:
+                    await response.dispose()
             return
         await route.fallback()
 
     await context.route("**/*", handler)
 
 
-async def _open(browser: Browser, url: str):
-    context = await browser.new_context(viewport={"width": 1280, "height": 800})
-    await guard_navigation(context, origin_of(url))
+async def _open(browser: Browser, url: str, storage_state: dict | None = None):
+    state = scope_storage_state(storage_state, url) if storage_state is not None else None
+    context = await browser.new_context(viewport={"width": 1280, "height": 800},
+                                        storage_state=state, service_workers="block")
+    if state is not None:
+        await install_authenticated_transport(context)
+    await guard_navigation(context, origin_of(url), strict=state is not None)
     page = await context.new_page()
     log = _RequestLog(origin_of(url))
     context.on("request", log)
-    await page.goto(url, wait_until="load")
-    await page.wait_for_timeout(350)
-    return context, page, log
+    try:
+        await page.goto(url, wait_until="load")
+        await page.wait_for_timeout(350)
+        return context, page, log
+    except BaseException:
+        await context.close()
+        raise
 
 
 INLINE_SOURCE_JS = r"""
@@ -260,8 +293,8 @@ INLINE_SOURCE_JS = r"""
 
 
 async def discover(browser: Browser, url: str, *, max_openers: int = 6, max_inputs: int = 4,
-                   settle_ms: int = 700) -> dict[str, Any]:
-    context, page, log = await _open(browser, url)
+                   settle_ms: int = 700, storage_state: dict | None = None) -> dict[str, Any]:
+    context, page, log = await _open(browser, url, storage_state)
     try:
         title = await page.title()
         base = await scan(page)
@@ -297,7 +330,7 @@ async def discover(browser: Browser, url: str, *, max_openers: int = 6, max_inpu
                and not DESTRUCTIVE.search(e["name"] or "")
                and (e["haspopup"] or e["role"] == "tab" or OPENER_HINT.search(e["name"] or e["testid"] or ""))]
     for opener in openers[:max_openers]:
-        context, page, log = await _open(browser, url)
+        context, page, log = await _open(browser, url, storage_state)
         try:
             mark = len(log.items)
             before = {spec_key(s["locator"]): s["visible"] for s in await scan(page)}
@@ -325,11 +358,14 @@ async def discover(browser: Browser, url: str, *, max_openers: int = 6, max_inpu
 
     inputs = [e for e in elements if e["visible"] and e["editable"] and not e["in_dialog"]]
     for field in inputs[:max_inputs]:
-        context, page, log = await _open(browser, url)
+        context, page, log = await _open(browser, url, storage_state)
         try:
             mark = len(log.items)
             texts_before = {spec_key(s["locator"]): s["text"] for s in await scan(page) if s["container"]}
-            await locator_for(page, field["locator"]).press_sequentially("ab", delay=60, timeout=3000)
+            locator = locator_for(page, field["locator"])
+            if await locator.evaluate("el => el instanceof HTMLInputElement && el.type === 'password'"):
+                raise ValueError("Refusing to type into a password field")
+            await locator.press_sequentially("ab", delay=60, timeout=3000)
             await page.wait_for_timeout(settle_ms)
             texts_after = {spec_key(s["locator"]): s["text"] for s in await scan(page) if s["container"]}
             updated = [by_key[k]["ref"] for k, v in texts_after.items()

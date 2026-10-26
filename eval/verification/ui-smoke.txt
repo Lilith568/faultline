@@ -1,0 +1,11 @@
+desktop {'viewport': 1440, 'width': 1440}
+mobile {'viewport': 375, 'width': 375}
+status 1 verified failure in 18.8s. The rules-only planner designed the experiments.
+finding mobile {'viewport': 375, 'width': 375}
+spec characters 2166
+retest Check passed on this build
+
+This counterexample did not recur. Keep the exported test to catch regressions.
+
+Tested build: http://127.0.0.1:8183/demo/checkout.html?mode=fixed
+errors []

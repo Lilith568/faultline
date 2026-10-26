@@ -11,8 +11,8 @@ a test suite.
 
 Faultline hunts for exactly these failures in an app you are building:
 
-1. **Explore.** It opens your local app in Playwright, records every control (including hidden dialogs) and every API
-   call the page makes, and clicks "opener" controls to learn what they reveal.
+1. **Explore.** It opens your local app in Playwright, inventories supported, uniquely addressable controls
+   (including hidden dialogs), records observed same-origin fetch/XHR requests, and tries bounded "opener" actions.
 2. **Hypothesize (Muse).** A Meta Muse model reads that inventory and your goal ("users must never lose what they typed")
    and proposes competing, falsifiable hypotheses, each with one experiment: steps, a network fault to inject
    (hold the 1st `GET /api/profile` for 1.5 s, answer the next `POST` with HTTP 500) and invariants to check.
@@ -35,6 +35,21 @@ Faultline hunts for exactly these failures in an app you are building:
                                                                                                   │
                regression test (.spec.ts) ◄── Muse: diagnosis ◄── 3× confirmation ◄── minimizer ◄─┘
 ```
+
+## This development revision
+
+Faultline now supports [CI gates and JUnit reports](docs/CI.md), explicitly supplied
+Playwright login state, [review-only source patches](docs/PATCHES.md), and an optional
+[Meta open-weights endpoint](docs/MODELS.md). The notebook UI shows the actual hunt
+phase, the generated test and distinct fixed-build replay outcomes. New evaluation
+attempts are checkpointed in separate directories and summarized without hiding errors
+or fallback planners.
+
+See [release notes](docs/RELEASE_NOTES.md), [validation and readiness](docs/QUALITY_REVIEW.md),
+[upstream compatibility probes](docs/EXTERNAL_VALIDATION.md), and the
+[Muse Wonder handoff](docs/MUSE_WONDER_HANDOFF.md). Live Meta and open-weights runs still
+need the owner's configured endpoint; mocked tests and saved-plan replays are labelled
+as such. No real upstream bug has yet been established by the compatibility probes.
 
 ## Where Meta's models do the work
 
@@ -64,8 +79,9 @@ apps. `composer` and `newsletter` are held out: no rule and no prompt line may r
 | Rules only (`eval/results-heuristic.md`) | 6/6 | 2/4 | 0 |
 | Muse plans, `muse-spark-1.3` (`eval/results-recorded.md`) | not measured yet | **4/4** | 0 |
 
-The rules miss the held-out "draft is lost when switching tabs" and "failed signup clears the form" bugs; Muse's
-plans found both on the first call, from the page inventory alone.
+The rules miss the held-out "draft is lost when switching tabs" and "failed signup clears the form" bugs;
+the retained Muse plans found both using the page inventory. The copied responses do not establish a complete
+generation-attempt history or an independently measured first-attempt success rate.
 
 How the Muse numbers were produced: the planner prompt was sent to `muse-spark-1.3` in the Meta playground, once per
 held-out app (about 20 s and 1.2K input tokens per call; latency and tokens are in each file's `provenance`). The
@@ -76,8 +92,8 @@ answers are stored in `eval/recorded/` and replayed through the full pipeline wi
 Muse's composer hypothesis was "switch to Preview and back to Write"; the minimizer then proved a sharper version:
 clicking the already-active Write tab is enough to wipe the draft.
 
-A full Muse run over all six apps through the API (`python scripts/evaluate.py --planner meta`, writes
-`eval/results-meta.md`) needs a key and has not been run in this repository yet, so no numbers are claimed for it.
+A full Muse run over all six apps through the API (`python scripts/evaluate.py --planner meta`, writes a unique
+`eval/runs/<run-id>/result.json` and derived Markdown report) needs a key and has not been run in this repository yet, so no numbers are claimed for it.
 
 These are small, purpose-built apps. They show that the pipeline works end to end and that every check is falsifiable
 (each bug has a fixed twin that must pass); they are not a benchmark of real-world accuracy. A failure is only reported
@@ -108,7 +124,7 @@ Command line:
 python -m faultline hunt "http://127.0.0.1:8000/demo/search.html?mode=buggy"
 python -m faultline hunt "http://localhost:5173/settings" --goal "Edits must survive a failed save"
 python -m faultline replay artifacts/<hunt>/cx1/repro.json --url "http://127.0.0.1:8000/demo/search.html?mode=fixed"
-pytest -q                      # 30 tests: unit, browser end-to-end, and the Meta path against a fake endpoint
+pytest -q                      # unit, browser end-to-end, CI/auth, model and UI regression tests
 ```
 
 Exported tests run with Playwright Test:
@@ -130,21 +146,29 @@ pass `--send-source` on the command line) to include the inline scripts of the p
 
 ## Safety and scope
 
-- Local targets only by default (no user-info or backslash tricks in the URL), and the browser is kept on the target's
-  origin: redirects or links to other sites are blocked. Page content is treated as untrusted data in every prompt.
-- The model emits plans in a closed vocabulary; generated code is never executed. Model-written text is reduced to
-  single-line, control-character-free strings before it reaches an exported test.
+- Initial test targets must be local by default (no user-info or backslash tricks in the URL). Browser navigation
+  to another origin and all HTTP navigation redirects are blocked before their destination is contacted; use the
+  final local page URL directly. Ordinary unsigned-in contexts may still load external resources or make external
+  API requests: this is not a complete network sandbox. Authenticated runs apply the stricter limits in
+  [CI and authenticated apps](docs/CI.md). Page content is treated as untrusted data in every prompt.
+- The model emits plans in a closed vocabulary and every plan is validated before execution. Model-written patches
+  are never applied or executed by Faultline. The deterministic exporter produces Playwright tests from validated
+  experiments; developers can run those tests themselves. Model-written comment text is reduced to single-line,
+  control-character-free strings before it reaches an exported test.
 - Password fields are never typed into. Typed values are short synthetic strings.
 - Faultline proves that specific invariants fail under specific conditions. It does not prove that an app is correct,
   and it is not an accessibility audit.
 
 ## What was built during the hackathon
 
-Everything in this repository was written during the event, starting after the kickoff on 26 October 2026:
+The original author states that the initial project was written during the event, starting after the kickoff on 26 October 2026.
+The provided Drive snapshot did not include its Git history, so that timing was not independently audited.
+The original implementation includes:
 discovery, the validator and vocabulary, the Meta client, both planners, the executor with fault
 injection, invariants, the minimizer and ablation, export, the web UI, the six demo apps, tests and evaluation.
 Third-party components: Playwright, FastAPI, Uvicorn, httpx (their own licences). AI assistance: the code and docs were
-written with the help of an AI coding assistant (Anthropic Claude); Meta Muse models do all reasoning at runtime.
+written with Anthropic Claude for the original version and ChatGPT (OpenAI) for this development revision.
+Only Meta models are used for AI reasoning at runtime.
 See `docs/PROVENANCE.md`.
 
 ## Layout

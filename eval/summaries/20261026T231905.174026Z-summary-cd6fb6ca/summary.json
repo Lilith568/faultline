@@ -1,0 +1,696 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-26T23:19:05.173925+00:00",
+  "source_directory": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs",
+  "result_files_seen": 6,
+  "attempts_counted": 6,
+  "groups": [
+    {
+      "comparison_fingerprint": "fe4d3374c5b95c5f11eac2a45068f7071bfdb7923fa51d29ec63c4ae0b7ee8f4",
+      "configuration": {
+        "planner": "heuristic",
+        "apps": [
+          "checkout"
+        ],
+        "model": null,
+        "reasoning_effort": null,
+        "backend": "meta",
+        "rounds": 2,
+        "confirmation_runs": 3,
+        "endpoint": null
+      },
+      "runs": [
+        {
+          "run_id": "20261026T225832.091327Z-heuristic-12474d78",
+          "status": "completed",
+          "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs/20261026T225832.091327Z-heuristic-12474d78/result.json"
+        }
+      ],
+      "status_counts": {
+        "completed": 1
+      },
+      "metrics": {
+        "complete_evaluations": 0,
+        "total_attempts": 1,
+        "dev_apps": {
+          "runs": 0,
+          "found_each_run": [],
+          "expected_each_run": [],
+          "found_mean": null,
+          "found_min": null,
+          "found_max": null,
+          "false_alarms_each_run": []
+        },
+        "held_out_apps": {
+          "runs": 0,
+          "found_each_run": [],
+          "expected_each_run": [],
+          "found_mean": null,
+          "found_min": null,
+          "found_max": null,
+          "false_alarms_each_run": []
+        }
+      },
+      "bugs": {
+        "checkout-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        }
+      },
+      "fixed_builds": {
+        "checkout": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        }
+      },
+      "source_stability_counts": {
+        "not_recorded": 1
+      }
+    },
+    {
+      "comparison_fingerprint": "93d9dfdcce92a17c631719d2ac5468b52c2102177fd677f7a9149e07ab78ceca",
+      "configuration": {
+        "planner": "recorded",
+        "apps": [
+          "composer",
+          "newsletter"
+        ],
+        "model": null,
+        "reasoning_effort": null,
+        "backend": "meta",
+        "supports_vision": true,
+        "json_mode": "json_schema",
+        "rounds": 2,
+        "confirmation_runs": 3,
+        "endpoint": null,
+        "recorded_models": [
+          "muse-spark-1.3"
+        ]
+      },
+      "runs": [
+        {
+          "run_id": "20261026T225923.634329Z-recorded-cd9663d4",
+          "status": "completed",
+          "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs/20261026T225923.634329Z-recorded-cd9663d4/result.json"
+        }
+      ],
+      "status_counts": {
+        "completed": 1
+      },
+      "metrics": {
+        "complete_evaluations": 0,
+        "total_attempts": 1,
+        "dev_apps": {
+          "runs": 0,
+          "found_each_run": [],
+          "expected_each_run": [],
+          "found_mean": null,
+          "found_min": null,
+          "found_max": null,
+          "false_alarms_each_run": []
+        },
+        "held_out_apps": {
+          "runs": 0,
+          "found_each_run": [],
+          "expected_each_run": [],
+          "found_mean": null,
+          "found_min": null,
+          "found_max": null,
+          "false_alarms_each_run": []
+        }
+      },
+      "bugs": {
+        "composer-draft": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        },
+        "composer-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        },
+        "newsletter-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        },
+        "newsletter-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        }
+      },
+      "fixed_builds": {
+        "composer": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "newsletter": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        }
+      },
+      "source_stability_counts": {
+        "not_recorded": 1
+      }
+    },
+    {
+      "comparison_fingerprint": "2669ae5da8c03b79750badd6153967fd7867d6d24b2d9f0b11b6291827aca5b7",
+      "configuration": {
+        "planner": "heuristic",
+        "apps": [
+          "profile",
+          "search",
+          "checkout",
+          "settings",
+          "composer",
+          "newsletter"
+        ],
+        "model": null,
+        "reasoning_effort": null,
+        "backend": "meta",
+        "supports_vision": true,
+        "json_mode": "json_schema",
+        "rounds": 2,
+        "confirmation_runs": 3,
+        "endpoint": null
+      },
+      "runs": [
+        {
+          "run_id": "20261026T230757.259291Z-heuristic-3bb44875",
+          "status": "completed",
+          "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs/20261026T230757.259291Z-heuristic-3bb44875/result.json"
+        }
+      ],
+      "status_counts": {
+        "completed": 1
+      },
+      "metrics": {
+        "complete_evaluations": 1,
+        "total_attempts": 1,
+        "dev_apps": {
+          "runs": 1,
+          "found_each_run": [
+            6
+          ],
+          "expected_each_run": [
+            6
+          ],
+          "found_mean": 6,
+          "found_min": 6,
+          "found_max": 6,
+          "false_alarms_each_run": [
+            0
+          ]
+        },
+        "held_out_apps": {
+          "runs": 1,
+          "found_each_run": [
+            2
+          ],
+          "expected_each_run": [
+            4
+          ],
+          "found_mean": 2,
+          "found_min": 2,
+          "found_max": 2,
+          "false_alarms_each_run": [
+            0
+          ]
+        }
+      },
+      "bugs": {
+        "profile-overwrite": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "profile-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "search-order": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "checkout-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "settings-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "settings-stale-load": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "composer-draft": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 0,
+          "found_in_complete_evaluations": 0
+        },
+        "composer-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "newsletter-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "newsletter-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 0,
+          "found_in_complete_evaluations": 0
+        }
+      },
+      "fixed_builds": {
+        "profile": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "search": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "checkout": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "settings": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "composer": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "newsletter": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        }
+      },
+      "source_stability_counts": {
+        "unchanged": 1
+      }
+    },
+    {
+      "comparison_fingerprint": "a24993f6e7516fbf9c60e337bd11b657d0322d12f2e7c811e6b98166d5c5cb71",
+      "configuration": {
+        "planner": "recorded",
+        "apps": [
+          "composer",
+          "newsletter"
+        ],
+        "model": null,
+        "reasoning_effort": null,
+        "backend": "meta",
+        "supports_vision": true,
+        "json_mode": "json_schema",
+        "rounds": 2,
+        "confirmation_runs": 3,
+        "endpoint": null,
+        "recorded_models": [
+          "muse-spark-1.3"
+        ]
+      },
+      "runs": [
+        {
+          "run_id": "20261026T231123.089907Z-recorded-c0fd88b5",
+          "status": "degraded",
+          "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs/20261026T231123.089907Z-recorded-c0fd88b5/result.json"
+        }
+      ],
+      "status_counts": {
+        "degraded": 1
+      },
+      "metrics": {
+        "complete_evaluations": 0,
+        "total_attempts": 1,
+        "dev_apps": {
+          "runs": 0,
+          "found_each_run": [],
+          "expected_each_run": [],
+          "found_mean": null,
+          "found_min": null,
+          "found_max": null,
+          "false_alarms_each_run": []
+        },
+        "held_out_apps": {
+          "runs": 0,
+          "found_each_run": [],
+          "expected_each_run": [],
+          "found_mean": null,
+          "found_min": null,
+          "found_max": null,
+          "false_alarms_each_run": []
+        }
+      },
+      "bugs": {
+        "composer-draft": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        },
+        "composer-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        },
+        "newsletter-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        },
+        "newsletter-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 0
+        }
+      },
+      "fixed_builds": {
+        "composer": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "newsletter": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        }
+      },
+      "source_stability_counts": {
+        "changed_or_unverifiable": 1
+      }
+    },
+    {
+      "comparison_fingerprint": "6c09eeee0f84f690d55d93ccaf082a44e86d1e84b8135493dbfc8ea8ad24b6cf",
+      "configuration": {
+        "planner": "heuristic",
+        "apps": [
+          "profile",
+          "search",
+          "checkout",
+          "settings",
+          "composer",
+          "newsletter"
+        ],
+        "model": null,
+        "reasoning_effort": null,
+        "backend": "meta",
+        "supports_vision": true,
+        "json_mode": "json_schema",
+        "rounds": 2,
+        "confirmation_runs": 3,
+        "endpoint": null
+      },
+      "runs": [
+        {
+          "run_id": "20261026T231428.030908Z-heuristic-3ae17dba",
+          "status": "completed",
+          "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs/20261026T231428.030908Z-heuristic-3ae17dba/result.json"
+        }
+      ],
+      "status_counts": {
+        "completed": 1
+      },
+      "metrics": {
+        "complete_evaluations": 1,
+        "total_attempts": 1,
+        "dev_apps": {
+          "runs": 1,
+          "found_each_run": [
+            6
+          ],
+          "expected_each_run": [
+            6
+          ],
+          "found_mean": 6,
+          "found_min": 6,
+          "found_max": 6,
+          "false_alarms_each_run": [
+            0
+          ]
+        },
+        "held_out_apps": {
+          "runs": 1,
+          "found_each_run": [
+            2
+          ],
+          "expected_each_run": [
+            4
+          ],
+          "found_mean": 2,
+          "found_min": 2,
+          "found_max": 2,
+          "false_alarms_each_run": [
+            0
+          ]
+        }
+      },
+      "bugs": {
+        "profile-overwrite": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "profile-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "search-order": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "checkout-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "settings-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "settings-stale-load": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "composer-draft": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 0,
+          "found_in_complete_evaluations": 0
+        },
+        "composer-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "newsletter-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "newsletter-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 0,
+          "found_in_complete_evaluations": 0
+        }
+      },
+      "fixed_builds": {
+        "profile": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "search": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "checkout": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "settings": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "composer": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "newsletter": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        }
+      },
+      "source_stability_counts": {
+        "unchanged": 1
+      }
+    },
+    {
+      "comparison_fingerprint": "1ddc831994927cc0d7af546e570cce11250e1521d0bd81f1c97f22692b5b7d83",
+      "configuration": {
+        "planner": "recorded",
+        "apps": [
+          "composer",
+          "newsletter"
+        ],
+        "model": null,
+        "reasoning_effort": null,
+        "backend": "meta",
+        "supports_vision": true,
+        "json_mode": "json_schema",
+        "rounds": 2,
+        "confirmation_runs": 3,
+        "endpoint": null,
+        "recorded_models": [
+          "muse-spark-1.3"
+        ]
+      },
+      "runs": [
+        {
+          "run_id": "20261026T231758.114126Z-recorded-61131d58",
+          "status": "completed",
+          "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/runs/20261026T231758.114126Z-recorded-61131d58/result.json"
+        }
+      ],
+      "status_counts": {
+        "completed": 1
+      },
+      "metrics": {
+        "complete_evaluations": 1,
+        "total_attempts": 1,
+        "dev_apps": {
+          "runs": 1,
+          "found_each_run": [
+            0
+          ],
+          "expected_each_run": [
+            0
+          ],
+          "found_mean": 0,
+          "found_min": 0,
+          "found_max": 0,
+          "false_alarms_each_run": [
+            0
+          ]
+        },
+        "held_out_apps": {
+          "runs": 1,
+          "found_each_run": [
+            4
+          ],
+          "expected_each_run": [
+            4
+          ],
+          "found_mean": 4,
+          "found_min": 4,
+          "found_max": 4,
+          "false_alarms_each_run": [
+            0
+          ]
+        }
+      },
+      "bugs": {
+        "composer-draft": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "composer-double": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "newsletter-focus": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        },
+        "newsletter-errorloss": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "found_in_completed_targets": 1,
+          "found_in_complete_evaluations": 1
+        }
+      },
+      "fixed_builds": {
+        "composer": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        },
+        "newsletter": {
+          "targets_listed": 1,
+          "completed_targets": 1,
+          "false_alarms_on_completed_targets": 0
+        }
+      },
+      "source_stability_counts": {
+        "unchanged": 1
+      }
+    }
+  ],
+  "input_errors": [],
+  "interpretation": "Groups match code/configuration/dependency fingerprints. All attempt statuses are shown. Detection ranges require complete evaluations with applicable checks and unchanged runtime hashes; partial, fallback and source-unverified runs remain visible. Repeated runs on the same small apps do not measure real-world accuracy."
+}

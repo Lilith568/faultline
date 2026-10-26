@@ -57,3 +57,90 @@ apps; it needs a key and has not been run yet.
 - Two held-out apps with four bugs are a small sample; one recorded plan per app means run-to-run variation of the
   model is not measured.
 - Experiments use human-like pacing (120 ms between actions) so that races appear only when Faultline injects them.
+
+
+## Preserving live evaluation attempts
+
+The historical `eval/results-heuristic.*`, `eval/results-recorded.*` and all recorded
+plans remain unchanged. New evaluations never write to those paths.
+
+Run the live Meta evaluation from the repository root, with `MODEL_API_KEY` in your
+local `.env` or environment:
+
+```bash
+python scripts/evaluate.py --planner meta --repeat 3
+python scripts/summarize_eval.py
+```
+
+`--repeat` is the number of independent complete evaluation attempts, not the number
+of confirmation runs for one finding. Each attempt gets a uniquely reserved directory
+under `eval/runs/`, containing `result.json`, a derived `result.md`, and hunt artifacts.
+The JSON checkpoint is replaced atomically after each target. Earlier attempts are
+never overwritten. If the process is interrupted, completed targets remain available;
+unfinished targets remain explicitly untested. A process killed without cleanup may
+leave a `running` checkpoint, which is never counted as a completed evaluation.
+
+The evaluator records the requested and actual planner separately. A rules fallback,
+a failed follow-up request, a template diagnosis after a model failure, or an incomplete
+target prevents a live Meta attempt from being labelled complete. The command returns
+a nonzero exit code for these outcomes, even when a fallback found bugs. Such findings
+remain in the evidence instead of disappearing from the report. An API failure is not
+a clean fixed-build result.
+
+For a shorter operational check, explicitly select a subset:
+
+```bash
+python scripts/evaluate.py --planner heuristic --apps checkout
+python scripts/replay_recorded.py
+```
+
+Subset reports name the selected apps and denominators. A recorded replay is labelled
+`recorded` and cannot substitute for a live API run. Replays also receive independent
+run directories and never overwrite the historical recorded results.
+
+## Reproducibility and aggregation
+
+Each manifest records model configuration, dependency and Python versions, source and
+ground-truth SHA-256 hashes, and Git commit/dirty status when the project itself contains
+Git metadata. A downloaded source snapshot without `.git` records that history is
+unavailable; it does not invent a commit or borrow an ancestor repository's identity.
+The original demo bytes and ground truth remain the basis of the comparison.
+
+The summary command reads every `result.json` below the chosen run directory, shows
+completed, degraded, interrupted and failed attempts, and separates different source,
+model, app-selection or dependency fingerprints. Within a comparable group, it lists
+all complete-run detection counts and their mean/range. Per-bug and fixed-build tables
+also expose coverage from partial and fallback attempts, clearly separated from pure
+complete-model scores. Invalid result files and duplicate run identifiers are reported
+as input problems rather than silently discarded. Summary files receive their own
+unique directory under `eval/summaries/`.
+
+Do not run repeatedly and publish only the highest score. Decide the repetition count
+before starting, retain failures, and report the number of complete and incomplete
+attempts with every result. Repetitions on these same small apps measure run-to-run
+variation; they do not establish accuracy on real projects or create new held-out apps.
+API usage totals contain only usage returned by the provider and are not billing
+estimates. No API key, Authorization header or complete environment is recorded in
+evaluation metadata. Review artifacts before sharing them, especially when extending
+the evaluator beyond the bundled synthetic apps.
+
+Only promote measured results from these saved files into README or submission claims.
+The commands above are instructions, not evidence that a live Meta run has succeeded.
+
+
+## Coverage and a stable source snapshot
+
+A target report now records experiment outcomes, invariant outcomes, applicable
+experiment and invariant counts, and whether execution completed without an experiment
+error. A target with only inapplicable checks or no usable checks cannot supply a clean
+fixed-build verdict. Execution errors and absent coverage degrade the attempt while
+retaining confirmed findings, all planned targets, and their denominators. This applies
+to the baseline and recorded replay as well as the live Meta path.
+
+The evaluator hashes runtime, fixture and evaluation-tool sources again at the end of
+each attempt. A changed, added or removed source file degrades the attempt and is listed
+in its manifest. UI-only changes are recorded in the initial metadata but excluded from
+this detection comparison. The summary keeps all attempts visible, but complete-run
+ranges require applicable coverage and a successful unchanged-source check. Older
+integration manifests without an end-of-run hash remain available as source-unverified
+evidence; they are not silently upgraded into final comparable runs.

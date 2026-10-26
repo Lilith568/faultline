@@ -1,0 +1,177 @@
+{
+  "schema_version": 2,
+  "run_id": "20261026T225832.091327Z-heuristic-12474d78",
+  "planner": "heuristic",
+  "model": null,
+  "date": "2026-10-26T22:58:32.091422+00:00",
+  "status": "completed",
+  "repeat_index": 1,
+  "requested_apps": [
+    "checkout"
+  ],
+  "planned_targets": 2,
+  "metadata": {
+    "git": {
+      "commit": null,
+      "dirty": null,
+      "available": false
+    },
+    "python": "3.12.14",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "dependencies": {
+      "playwright": "1.56.0",
+      "fastapi": "0.162.0",
+      "httpx": "0.28.1",
+      "uvicorn": "0.54.0"
+    },
+    "source_sha256": {
+      "faultline/__init__.py": "2f22dacca6aa9a1aaf9bb5768736dd08e7172035a6592f171ea5da2826266257",
+      "faultline/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "faultline/auth.py": "cf3efcd8e76a493be94bb5e83b218f77cd7472107c08faf90d1917c5bee1b819",
+      "faultline/cli.py": "6564c46def875e67d6f591e57c52363b5f3ef68a0729959df838d77884ad948b",
+      "faultline/config.py": "d349d614cee4599f1a6b114f4b2f4b2096973f81e632a939a73ce45c967216be",
+      "faultline/demo/checkout.html": "8a1c02b62218003b76624ded06332faf8734af2bad3d55884fc853e872f8fcad",
+      "faultline/demo/composer.html": "e4832358307d6b2e5a0ca9969921cfa48f7fe33e9757eefa616f8ce0598c8c48",
+      "faultline/demo/demo.css": "bf69dfe087457375e2cbe7dca115ee52f16f643c421e1c75d48b304af6dfa56b",
+      "faultline/demo/newsletter.html": "74ccc87d4c66e13eece4763aca80fdcbac6c8b183c1811302c1966d087ec0053",
+      "faultline/demo/profile.html": "b718bc89705ffe59cd2fef94001c8129e4f51722f8b99fb9e6042bda427f3507",
+      "faultline/demo/search.html": "cc602f7dd816d97ea65e0442e59e18ebd53859d8a3ab7f58f830b6bac76d9581",
+      "faultline/demo/settings.html": "25b0ef95b6c8c03324109c501d8d70aa8cd2ec484a6f86f5d1fd01796be5cdf8",
+      "faultline/discover.py": "955219c39a05de1172f2094ac316b4b85d9e7fc34bdd7de014826b23d704947f",
+      "faultline/executor.py": "220ecae6ab96cc077a77ae0cbf85ba49a227aab647289d22b36615b615dc566e",
+      "faultline/export.py": "64e0bbf15824b71409b1be5a00210b05b3c5c343c4cedae77ccf6d30b0b7376d",
+      "faultline/hunt.py": "908479fdfb4362e00f0c737fa3769b149297037933949bb7d43ef4ebecc9951d",
+      "faultline/invariants.py": "97123563574fa07e7bff25fd417ecb44e4f461a3e5cba667be7526a4b0ee05fd",
+      "faultline/meta.py": "017243c3fb301f9b1726ee07f2a4e657431d5ea87db3dc3ea7a56e3ee45851e3",
+      "faultline/minimize.py": "6c4330d57d0ee3a187cfba847e87289adfbebc2a9514a126c5e581133a094df3",
+      "faultline/patches.py": "5fbc5a7c06a8d5cde52a493a2e4ba0dc450236aaa83726984c82f4abcc6bd79a",
+      "faultline/planners.py": "a775ab240482b39016a73a8ac33a337f0cd26aa8099ca8f834b2a6ebea64c9e5",
+      "faultline/reports.py": "174da31eaf2fae1943b4c46ee7e3d9e30aed4f73affd9470d937ec4b04212eb8",
+      "faultline/server.py": "126372e90cb23299c2b24d1f411bfe5f6bc4f486d01f9b45aa86deff45491eb0",
+      "faultline/static/index.html": "cdb3c5231430521e394a45da5873cac9108673395062707626039bc77ed8790a",
+      "faultline/vocab.py": "c56056d1fd0d98b9848e160d84fb46124f8fdd51f1cd0400525bfc48cda34460",
+      "scripts/check_external_fixtures.py": "55db395ca08967e4f5f62595ec219fa08a3fd894c106e9ef06b6f99d368a23b7",
+      "scripts/evaluate.py": "b0737550bedfc8b5d9bae3cf3d0de8cb227f3522909135321e5e9b76874d91b2",
+      "scripts/evaluate_external.py": "4d13d9bf2e815a15b53ab74c9c91192941111000013e2ee13a80133196e5a944",
+      "scripts/replay_recorded.py": "a8f29654cb305f478103a46ee47fc4b297f225ec1334b98fe51ac8dbabe212b2",
+      "scripts/summarize_eval.py": "2a9ab86bc10e9adbbd7aadc94d65d16bca7fe93f997478bf5cbcaa6554f977b8",
+      "pyproject.toml": "56803bacf39bcab3ffdb195c1a4192ad9b4ec5c63c6cd992f61241ea37159ac8"
+    },
+    "ground_truth_sha256": "e6d89a3098ee7946424bdd8f61e37611fb0929d5575673bf3456ff76833a737b",
+    "configuration": {
+      "planner": "heuristic",
+      "apps": [
+        "checkout"
+      ],
+      "model": null,
+      "reasoning_effort": null,
+      "backend": "meta",
+      "rounds": 2,
+      "confirmation_runs": 3,
+      "endpoint": null
+    },
+    "comparison_fingerprint": "fe4d3374c5b95c5f11eac2a45068f7071bfdb7923fa51d29ec63c4ae0b7ee8f4"
+  },
+  "rows": [
+    {
+      "app": "checkout",
+      "mode": "buggy",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [
+        "checkout-double"
+      ],
+      "found": [
+        "checkout-double"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiments": 2,
+      "browser_runs": 11,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 19.2,
+      "hunt_id": "20261026-225832-a47caa",
+      "minimized_steps": {
+        "cx1": 3
+      },
+      "diagnosis_sources": {
+        "template": 1
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "checkout",
+      "mode": "fixed",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiments": 2,
+      "browser_runs": 2,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.7,
+      "hunt_id": "20261026-225852-f7cfb4",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    }
+  ],
+  "errors": [],
+  "coverage": {
+    "planned": 2,
+    "completed": 2,
+    "errors": 0,
+    "not_completed": 0,
+    "meta_complete_targets": 0
+  },
+  "browser_runs": 13,
+  "meta_calls": 0,
+  "tokens": {
+    "input": 0,
+    "output": 0
+  },
+  "seconds": 25.9,
+  "dev_apps": {
+    "apps": [
+      "checkout"
+    ],
+    "found": 1,
+    "expected": 1,
+    "planned_expected": 1,
+    "false_positives_on_fixed_builds": 0,
+    "fixed_builds_completed": 1,
+    "fixed_builds_planned": 1,
+    "unexpected_on_buggy_builds": 0
+  },
+  "held_out_apps": {
+    "apps": [],
+    "found": 0,
+    "expected": 0,
+    "planned_expected": 0,
+    "false_positives_on_fixed_builds": 0,
+    "fixed_builds_completed": 0,
+    "fixed_builds_planned": 0,
+    "unexpected_on_buggy_builds": 0
+  },
+  "finished_at": "2026-10-26T22:58:58.937344+00:00"
+}

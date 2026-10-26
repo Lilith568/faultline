@@ -1,0 +1,101 @@
+{
+  "protected_files": [
+    {
+      "path": "faultline/demo/search.html",
+      "sha256": "cc602f7dd816d97ea65e0442e59e18ebd53859d8a3ab7f58f830b6bac76d9581",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/demo/composer.html",
+      "sha256": "e4832358307d6b2e5a0ca9969921cfa48f7fe33e9757eefa616f8ce0598c8c48",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/demo/checkout.html",
+      "sha256": "8a1c02b62218003b76624ded06332faf8734af2bad3d55884fc853e872f8fcad",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/demo/profile.html",
+      "sha256": "b718bc89705ffe59cd2fef94001c8129e4f51722f8b99fb9e6042bda427f3507",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/demo/newsletter.html",
+      "sha256": "74ccc87d4c66e13eece4763aca80fdcbac6c8b183c1811302c1966d087ec0053",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/demo/demo.css",
+      "sha256": "bf69dfe087457375e2cbe7dca115ee52f16f643c421e1c75d48b304af6dfa56b",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/demo/settings.html",
+      "sha256": "25b0ef95b6c8c03324109c501d8d70aa8cd2ec484a6f86f5d1fd01796be5cdf8",
+      "unchanged": true
+    },
+    {
+      "path": "eval/results-heuristic.json",
+      "sha256": "74e47f42a8296ba890b95656439b08ba708c2a3fceb721723d625d5dd9c2daf3",
+      "unchanged": true
+    },
+    {
+      "path": "eval/results-heuristic.md",
+      "sha256": "8f6bbd5e9ce7607e3321197d7b1453692b5948f4c3c81736f4eac215c430a0d0",
+      "unchanged": true
+    },
+    {
+      "path": "eval/results-recorded.md",
+      "sha256": "7851c796986b843b2e4d2255c04044e876f5d690165f527ca44148ed126950b3",
+      "unchanged": true
+    },
+    {
+      "path": "eval/results-recorded.json",
+      "sha256": "897effd82e11c9f5b7578a2c1258362c6cba480a8879eca69def2bd5a903a4e7",
+      "unchanged": true
+    },
+    {
+      "path": "eval/recorded/composer-muse-spark-1.3.json",
+      "sha256": "ec69a6685d6cc4e64bbb626d381590f6428dd547451e239c4382da6babf5e1b5",
+      "unchanged": true
+    },
+    {
+      "path": "eval/recorded/newsletter-muse-spark-1.3.json",
+      "sha256": "5488acc80f6131b7539e021b5bccaa53f6c0c6d5e905a0ada19ea2483d108c15",
+      "unchanged": true
+    },
+    {
+      "path": "eval/recorded/superseded/composer-muse-spark-1.3-prompt-v1.json",
+      "sha256": "23bdca0662511209396605f69637bbd7d35b83e94b962124b0795c5fc45b5154",
+      "unchanged": true
+    },
+    {
+      "path": "eval/recorded/superseded/newsletter-muse-spark-1.3-prompt-v1.json",
+      "sha256": "119f2f45eca5e71c51ad83a16b0b59dccf967d2491eaa38d729265dc68ec9bcc",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/planners.py",
+      "sha256": "a775ab240482b39016a73a8ac33a337f0cd26aa8099ca8f834b2a6ebea64c9e5",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/vocab.py",
+      "sha256": "c56056d1fd0d98b9848e160d84fb46124f8fdd51f1cd0400525bfc48cda34460",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/invariants.py",
+      "sha256": "97123563574fa07e7bff25fd417ecb44e4f461a3e5cba667be7526a4b0ee05fd",
+      "unchanged": true
+    },
+    {
+      "path": "faultline/minimize.py",
+      "sha256": "6c4330d57d0ee3a187cfba847e87289adfbebc2a9514a126c5e581133a094df3",
+      "unchanged": true
+    }
+  ],
+  "all_unchanged": true,
+  "ground_truth_unchanged": true
+}

@@ -1,0 +1,27 @@
+{
+  "scope": "manually_authored_fixture_smoke_checks",
+  "started_at": "2026-10-26T23:00:02.466646+00:00",
+  "meta_api_called": false,
+  "checks": [
+    {
+      "application": "todomvc",
+      "url": "http://127.0.0.1:8181/",
+      "status": "error",
+      "error": "TimeoutError: Locator.wait_for: Timeout 30000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"Faultline upstream smoke\", exact=True) to be visible\n",
+      "page_errors": []
+    },
+    {
+      "application": "2048",
+      "url": "http://127.0.0.1:8182/",
+      "status": "passed",
+      "operations": [
+        "initial board",
+        "keyboard moves",
+        "state persisted",
+        "new game resets board"
+      ],
+      "page_errors": []
+    }
+  ],
+  "finished_at": "2026-10-26T23:00:36.391453+00:00"
+}

@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 from playwright.async_api import Browser
 
+from .auth import install_authenticated_transport, scope_storage_state
 from .discover import ACTIVE_JS, guard_navigation, locator_for, origin_of
 from .invariants import evaluate, overall_status, signature
 from .vocab import endpoint_matches
@@ -48,7 +49,8 @@ async def _read_state(page, exp: dict, elements: dict) -> dict:
 
 async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict, *,
                          screenshot: Path | None = None, trace: Path | None = None,
-                         action_timeout: int = 3500, settle_ms: int = 450, pace_ms: int = 120) -> dict:
+                         action_timeout: int = 3500, settle_ms: int = 450, pace_ms: int = 120,
+                         storage_state: dict | None = None) -> dict:
     """Run one experiment in a fresh browser context and verify its invariants."""
     elements = {e["ref"]: e for e in inventory["elements"]}
     origin = origin_of(url)
@@ -58,7 +60,12 @@ async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict,
     page_errors: list[str] = []
     started = time.monotonic()
 
-    context = await browser.new_context(viewport={"width": 1280, "height": 800})
+    state = scope_storage_state(storage_state, url) if storage_state is not None else None
+    context = await browser.new_context(viewport={"width": 1280, "height": 800},
+                                        storage_state=state, service_workers="block")
+    if state is not None:
+        await install_authenticated_transport(context)
+        trace = None  # Playwright traces can contain authentication headers.
     if trace:
         await context.tracing.start(screenshots=True, snapshots=True)
 
@@ -82,7 +89,10 @@ async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict,
                         await route.fulfill(status=p["status"], content_type="application/json",
                                             body=INJECTED_BODY)
                         return
-            await route.continue_()
+            if state is not None:
+                await route.fallback()  # the authenticated transport refuses redirects
+            else:
+                await route.continue_()
         except Exception:
             pass  # the context may close while a delayed request is still held
 
@@ -93,7 +103,7 @@ async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict,
 
     if perturbations:
         await context.route("**/*", route_handler)
-    await guard_navigation(context, origin)  # registered last, so it runs first
+    await guard_navigation(context, origin, strict=state is not None)  # last registration runs first
     context.on("request", on_request)
     page = await context.new_page()
     page.on("pageerror", lambda exc: page_errors.append(str(exc)[:300]))
@@ -115,10 +125,15 @@ async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict,
                         await loc.click(timeout=action_timeout)
                     elif action == "dblclick":
                         await loc.dblclick(timeout=action_timeout)
-                    elif action == "fill":
-                        await loc.fill(step["value"], timeout=action_timeout)
-                    else:
-                        await loc.press_sequentially(step["value"], delay=120, timeout=action_timeout + 3000)
+                    elif action in ("fill", "type"):
+                        # Discovery is a snapshot; the page can change a field to
+                        # a password input before this step runs.
+                        if await loc.evaluate("el => el instanceof HTMLInputElement && el.type === 'password'"):
+                            raise ValueError("Refusing to type into a password field")
+                        if action == "fill":
+                            await loc.fill(step["value"], timeout=action_timeout)
+                        else:
+                            await loc.press_sequentially(step["value"], delay=120, timeout=action_timeout + 3000)
                 elif action == "press":
                     await page.keyboard.press(step["key"])
                 elif action == "wait":

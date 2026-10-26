@@ -1,0 +1,55 @@
+{
+  "method": "WCAG relative luminance sRGB contrast formula",
+  "scope": "Selected theme pairs and opaque backing for small warning/failure text; not a full accessibility audit",
+  "pairs": [
+    {
+      "foreground": "#48566e",
+      "background": "#c4d1d8",
+      "usage": "Muted text over darkest grid line",
+      "contrast_ratio": 4.753,
+      "meets_AA_normal_text": true
+    },
+    {
+      "foreground": "#1c2a45",
+      "background": "#c4d1d8",
+      "usage": "Ink over darkest grid line",
+      "contrast_ratio": 9.178,
+      "meets_AA_normal_text": true
+    },
+    {
+      "foreground": "#c4203e",
+      "background": "#e8eef0",
+      "usage": "Red status/verdict on opaque paper",
+      "contrast_ratio": 4.946,
+      "meets_AA_normal_text": true
+    },
+    {
+      "foreground": "#825000",
+      "background": "#e8eef0",
+      "usage": "Warning status on opaque paper",
+      "contrast_ratio": 5.787,
+      "meets_AA_normal_text": true
+    },
+    {
+      "foreground": "#c4203e",
+      "background": "#f9e8ec",
+      "usage": "Failed re-test",
+      "contrast_ratio": 4.908,
+      "meets_AA_normal_text": true
+    },
+    {
+      "foreground": "#17624d",
+      "background": "#e8f2ed",
+      "usage": "Passed re-test",
+      "contrast_ratio": 6.35,
+      "meets_AA_normal_text": true
+    },
+    {
+      "foreground": "#ffffff",
+      "background": "#c4203e",
+      "usage": "Start button",
+      "contrast_ratio": 5.796,
+      "meets_AA_normal_text": true
+    }
+  ]
+}

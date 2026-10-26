@@ -49,6 +49,7 @@ def to_playwright_spec(cx: dict, url: str) -> str:
         f"// Attribution: {_comment(cx['attribution'])}",
         "// This test asserts the CORRECT behaviour: it fails while the bug exists and passes once it is fixed.",
         "import { test, expect } from '@playwright/test';",
+        "test.use({ serviceWorkers: 'block' });",
         "",
         f"const TARGET = process.env.FAULTLINE_TARGET ?? {js(url)};",
         "",
@@ -89,8 +90,10 @@ def to_playwright_spec(cx: dict, url: str) -> str:
         elif action == "dblclick":
             lines.append(f"  await {loc(step['ref'])}.dblclick();")
         elif action == "fill":
+            lines.append(f"  if (await {loc(step['ref'])}.evaluate(el => el instanceof HTMLInputElement && el.type === 'password')) throw new Error('Refusing to type into a password field');")
             lines.append(f"  await {loc(step['ref'])}.fill({js(step['value'])});")
         elif action == "type":
+            lines.append(f"  if (await {loc(step['ref'])}.evaluate(el => el instanceof HTMLInputElement && el.type === 'password')) throw new Error('Refusing to type into a password field');")
             lines.append(f"  await {loc(step['ref'])}.pressSequentially({js(step['value'])}, {{ delay: 120 }});")
         elif action == "press":
             lines.append(f"  await page.keyboard.press({js(step['key'])});")

@@ -50,9 +50,16 @@ def main(argv: list[str] | None = None) -> None:
     hunt.add_argument("--plan", help="replay a recorded model plan (JSON) instead of calling the API")
     hunt.add_argument("--send-source", action="store_true",
                       help="let Muse read the page's inline scripts for a code-level diagnosis")
+    hunt.add_argument("--ci", action="store_true",
+                      help="exit 1 for confirmed bugs, 2 for incomplete checks, otherwise 0")
+    hunt.add_argument("--junit", metavar="PATH", help="write a JUnit XML report (also on run errors)")
+    hunt.add_argument("--storage-state", metavar="PATH",
+                      help="load saved Playwright cookies/localStorage for the target only")
     replay = sub.add_parser("replay", help="re-run a saved repro.json, e.g. against the fixed build")
     replay.add_argument("repro")
     replay.add_argument("--url")
+    replay.add_argument("--storage-state", metavar="PATH",
+                        help="load saved Playwright cookies/localStorage for the target only")
     args = parser.parse_args(argv)
 
     if args.command == "serve":
@@ -66,16 +73,34 @@ def main(argv: list[str] | None = None) -> None:
             if kind in ("phase", "plan", "counterexample", "warning", "error"):
                 print(f"- {message}", flush=True)
 
-        recorded = json.loads(Path(args.plan).read_text(encoding="utf-8")) if args.plan else None
-        report = asyncio.run(Hunt(args.url, goal=args.goal, planner=args.planner, rounds=args.rounds, emit=emit,
-                                  recorded_plan=recorded, include_source=args.send_source).run())
-        _print_report(report)
+        from .reports import ci_exit_code, ci_issues, write_error_junit, write_junit
+        try:
+            recorded = json.loads(Path(args.plan).read_text(encoding="utf-8")) if args.plan else None
+            report = asyncio.run(Hunt(args.url, goal=args.goal, planner=args.planner, rounds=args.rounds, emit=emit,
+                                      recorded_plan=recorded, include_source=args.send_source,
+                                      storage_state=args.storage_state).run())
+            _print_report(report)
+            if args.junit:
+                write_junit(report, args.junit)
+            if args.ci:
+                for issue in ci_issues(report):
+                    print(f"CI incomplete: {issue}", file=sys.stderr)
+                raise SystemExit(ci_exit_code(report))
+        except (Exception, KeyboardInterrupt) as exc:
+            message = "Hunt interrupted" if isinstance(exc, KeyboardInterrupt) else f"{type(exc).__name__}: {exc}"
+            print(message, file=sys.stderr)
+            if args.junit:
+                try:
+                    write_error_junit(args.junit, message)
+                except OSError:
+                    print("Could not write the JUnit report", file=sys.stderr)
+            raise SystemExit(2) from None
     elif args.command == "replay":
         from .hunt import replay as replay_fn
         repro = json.loads(Path(args.repro).read_text(encoding="utf-8"))
-        result = asyncio.run(replay_fn(repro, args.url))
+        result = asyncio.run(replay_fn(repro, args.url, storage_state=args.storage_state))
         print(json.dumps({k: result[k] for k in ("status", "error", "invariants", "duration_ms")}, indent=2))
-        sys.exit(0 if result["status"] == "passed" else 1)
+        sys.exit(0 if result["status"] == "passed" else 1 if result["status"] == "failed" else 2)
 
 
 if __name__ == "__main__":

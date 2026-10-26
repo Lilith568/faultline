@@ -1,0 +1,237 @@
+{
+  "created_at": "2026-10-26T23:07:56.641544+00:00",
+  "description": "Current deterministic TypeScript exports executed with Node Playwright against unchanged demo twins.",
+  "model_calls": 0,
+  "export_module_sha256": "ec0dca8d4dbeb6d2ebc0fd6d7d838ba7e96a94f9a83fa9fa0b5ac0de960b86ae",
+  "playwright_test_version": "1.56.0",
+  "chromium_executable": "/root/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell",
+  "node_version": "v24.22.1",
+  "cases": [
+    {
+      "app": "checkout",
+      "cx_id": "cx1",
+      "title": "Double-clicking \"Place order\" sends the request twice",
+      "source_report": "eval/runs/20261026T225832.091327Z-heuristic-12474d78/artifacts/20261026-225832-a47caa/report.json",
+      "source_report_sha256": "61e69ceea2890133715bbd66e9c0a1ee1a3222291ef2c5a1e49cc6531069276d",
+      "invariant_kinds": [
+        "max_requests"
+      ],
+      "exports": {
+        "buggy": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/buggy/checkout-cx1.spec.ts",
+          "sha256": "d23e3827104e0e8fd5f4b16558b640236ef2db489fa53ec64fffd48c68cd7fee"
+        },
+        "fixed": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/fixed/checkout-cx1.spec.ts",
+          "sha256": "1649b367967a774c3ab5ef02c6bc8e5e37cba180f14d1b6a56eaf3ffe93b354c"
+        }
+      }
+    },
+    {
+      "app": "composer",
+      "cx_id": "cx1",
+      "title": "Switching to Preview and back to Write discards the typed release notes",
+      "source_report": "eval/runs/20261026T225923.634329Z-recorded-cd9663d4/artifacts/20261026-225924-4ec873/report.json",
+      "source_report_sha256": "47f92e47c8ab1e03e6020a2d138030c6ac281e9d0f03304115653047a0c0f072",
+      "invariant_kinds": [
+        "value_equals"
+      ],
+      "exports": {
+        "buggy": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/buggy/composer-cx1.spec.ts",
+          "sha256": "cd2c81dbbb527643ada9d11b48b349f365e0dbd57a9eb126fcb2e3c78a61cd0a"
+        },
+        "fixed": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/fixed/composer-cx1.spec.ts",
+          "sha256": "e5dfa15766fd6bb21eacafd8deb760b8cb0f9aeb629ad7b96e34705f6b0bf6e9"
+        }
+      }
+    },
+    {
+      "app": "composer",
+      "cx_id": "cx2",
+      "title": "Double activation of Publish sends duplicate publish requests",
+      "source_report": "eval/runs/20261026T225923.634329Z-recorded-cd9663d4/artifacts/20261026-225924-4ec873/report.json",
+      "source_report_sha256": "47f92e47c8ab1e03e6020a2d138030c6ac281e9d0f03304115653047a0c0f072",
+      "invariant_kinds": [
+        "max_requests"
+      ],
+      "exports": {
+        "buggy": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/buggy/composer-cx2.spec.ts",
+          "sha256": "1bb4be8fe3f6316a482767043574fd170b099d332e534cf39d5725bcce7d8aa5"
+        },
+        "fixed": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/fixed/composer-cx2.spec.ts",
+          "sha256": "a67d3cb58c3de2867808caebb1f186374af2e720d2c9e1b0a0269ed254eadd9b"
+        }
+      }
+    },
+    {
+      "app": "newsletter",
+      "cx_id": "cx1",
+      "title": "Closing the signup dialog with Close does not return focus to the opener",
+      "source_report": "eval/runs/20261026T225923.634329Z-recorded-cd9663d4/artifacts/20261026-225955-44d2c8/report.json",
+      "source_report_sha256": "6a454950d13977132720be7512afc3524bf3222145e42f3ec17969c5d65faedd",
+      "invariant_kinds": [
+        "focus_returns"
+      ],
+      "exports": {
+        "buggy": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/buggy/newsletter-cx1.spec.ts",
+          "sha256": "54b661971632eb850692690d977a420fcb7e558cf88f2a8447404cd40671e599"
+        },
+        "fixed": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/fixed/newsletter-cx1.spec.ts",
+          "sha256": "d23aa63dfac4b13c4bf639e2cf662062206cae8b2deced648006ebcbdfd202ba"
+        }
+      }
+    },
+    {
+      "app": "newsletter",
+      "cx_id": "cx2",
+      "title": "Failed signup wipes the typed email and name instead of preserving them",
+      "source_report": "eval/runs/20261026T225923.634329Z-recorded-cd9663d4/artifacts/20261026-225955-44d2c8/report.json",
+      "source_report_sha256": "6a454950d13977132720be7512afc3524bf3222145e42f3ec17969c5d65faedd",
+      "invariant_kinds": [
+        "value_equals",
+        "value_equals"
+      ],
+      "exports": {
+        "buggy": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/buggy/newsletter-cx2.spec.ts",
+          "sha256": "8746683680e9f70fca1e2de9e5ae52f799021dec2b90bb80e247842db3cb59fc"
+        },
+        "fixed": {
+          "file": "eval/verification/exports/20261026T230756.112995Z/specs/fixed/newsletter-cx2.spec.ts",
+          "sha256": "f53ec1556511b569b7c5499b6c6edabf6051d57af9cfc48d68545dd95a1e68e7"
+        }
+      }
+    }
+  ],
+  "runs": [
+    {
+      "mode": "buggy",
+      "exit_code": 1,
+      "valid_expected_outcome": true,
+      "stats": {
+        "startTime": "2026-10-26T23:07:57.556Z",
+        "duration": 13422.623,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 5,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "faultline: Double-clicking \"Place order\" sends the request twice",
+          "file": "buggy/checkout-cx1.spec.ts",
+          "status": "failed",
+          "duration_ms": 1364,
+          "assertion_failure": true,
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m\n\n  30 |   await page.waitForTimeout(450);\n  31 |   // Invariant: At most 1 POST * request(s) are sent\n> 32 |   expect(requests.filter((r) => r.method === \"POST\").length).toBeLessThanOrEqual(1);\n     |                                                              ^\n  33 | });\n  34 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts:32:62"
+          ]
+        },
+        {
+          "title": "faultline: Switching to Preview and back to Write discards the typed release notes",
+          "file": "buggy/composer-cx1.spec.ts",
+          "status": "failed",
+          "duration_ms": 2214,
+          "assertion_failure": true,
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('notes-input')\nExpected: \u001b[32m\"cat release draft\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('notes-input')\u001b[22m\n\u001b[2m    5 \u00d7 locator resolved to <textarea rows=\"6\" id=\"notes\" data-testid=\"notes-input\"></textarea>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  26 |   await page.waitForTimeout(450);\n  27 |   // Invariant: \"Release notes\" still holds \"cat release draft\"\n> 28 |   await expect(page.getByTestId(\"notes-input\")).toHaveValue(\"cat release draft\", { timeout: 1000 });\n     |                                                 ^\n  29 | });\n  30 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts:28:49"
+          ]
+        },
+        {
+          "title": "faultline: Double activation of Publish sends duplicate publish requests",
+          "file": "buggy/composer-cx2.spec.ts",
+          "status": "failed",
+          "duration_ms": 1178,
+          "assertion_failure": true,
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m\n\n  26 |   await page.waitForTimeout(450);\n  27 |   // Invariant: At most 1 POST * request(s) are sent\n> 28 |   expect(requests.filter((r) => r.method === \"POST\").length).toBeLessThanOrEqual(1);\n     |                                                              ^\n  29 | });\n  30 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts:28:62"
+          ]
+        },
+        {
+          "title": "faultline: Closing the signup dialog with Close does not return focus to the opener",
+          "file": "buggy/newsletter-cx1.spec.ts",
+          "status": "failed",
+          "duration_ms": 2109,
+          "assertion_failure": true,
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('open-signup')\nExpected: focused\nReceived: inactive\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('open-signup')\u001b[22m\n\u001b[2m    5 \u00d7 locator resolved to <button id=\"open\" class=\"primary\" aria-haspopup=\"dialog\" data-testid=\"open-signup\">Get the newsletter</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n\n\n  25 |   await page.waitForTimeout(450);\n  26 |   // Invariant: Focus returns to \"Get the newsletter\" after the dialog closes\n> 27 |   await expect(page.getByTestId(\"open-signup\")).toBeFocused({ timeout: 1000 });\n     |                                                 ^\n  28 | });\n  29 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts:27:49"
+          ]
+        },
+        {
+          "title": "faultline: Failed signup wipes the typed email and name instead of preserving them",
+          "file": "buggy/newsletter-cx2.spec.ts",
+          "status": "failed",
+          "duration_ms": 2437,
+          "assertion_failure": true,
+          "errors": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('signup-email')\nExpected: \u001b[32m\"ada@example.com\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('signup-email')\u001b[22m\n\u001b[2m    5 \u00d7 locator resolved to <input type=\"email\" id=\"nl-email\" autocomplete=\"off\" data-testid=\"signup-email\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  45 |   await page.waitForTimeout(450);\n  46 |   // Invariant: \"Work email\" still holds \"ada@example.com\"\n> 47 |   await expect(page.getByTestId(\"signup-email\")).toHaveValue(\"ada@example.com\", { timeout: 1000 });\n     |                                                  ^\n  48 |   // Invariant: \"First name\" still holds \"Ada\"\n  49 |   await expect(page.getByTestId(\"signup-name\")).toHaveValue(\"Ada\", { timeout: 1000 });\n  50 | });\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts:47:50"
+          ]
+        }
+      ],
+      "global_errors": []
+    },
+    {
+      "mode": "fixed",
+      "exit_code": 0,
+      "valid_expected_outcome": true,
+      "stats": {
+        "startTime": "2026-10-26T23:08:11.773Z",
+        "duration": 7104.756,
+        "expected": 5,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "faultline: Double-clicking \"Place order\" sends the request twice",
+          "file": "fixed/checkout-cx1.spec.ts",
+          "status": "passed",
+          "duration_ms": 1306,
+          "assertion_failure": false,
+          "errors": []
+        },
+        {
+          "title": "faultline: Switching to Preview and back to Write discards the typed release notes",
+          "file": "fixed/composer-cx1.spec.ts",
+          "status": "passed",
+          "duration_ms": 1089,
+          "assertion_failure": false,
+          "errors": []
+        },
+        {
+          "title": "faultline: Double activation of Publish sends duplicate publish requests",
+          "file": "fixed/composer-cx2.spec.ts",
+          "status": "passed",
+          "duration_ms": 1089,
+          "assertion_failure": false,
+          "errors": []
+        },
+        {
+          "title": "faultline: Closing the signup dialog with Close does not return focus to the opener",
+          "file": "fixed/newsletter-cx1.spec.ts",
+          "status": "passed",
+          "duration_ms": 1142,
+          "assertion_failure": false,
+          "errors": []
+        },
+        {
+          "title": "faultline: Failed signup wipes the typed email and name instead of preserving them",
+          "file": "fixed/newsletter-cx2.spec.ts",
+          "status": "passed",
+          "duration_ms": 1430,
+          "assertion_failure": false,
+          "errors": []
+        }
+      ],
+      "global_errors": []
+    }
+  ],
+  "complete": true
+}

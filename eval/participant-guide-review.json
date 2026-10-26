@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "review_status": "participant_guide_review_of_user_supplied_copy_not_full_compliance_certification",
+  "source": {
+    "type": "user_supplied_text_copy",
+    "filename": "Eingefügter Text(6).txt",
+    "claimed_document_title": "Meta Global AI Developer Hackathon Participant Guide",
+    "claimed_page": "https://cerebralvalley.ai/e/meta-ai-developer-hackathon/details",
+    "reviewed_at_utc": "2026-10-26T23:13:47.456451Z",
+    "sha256": "61cfc69f1d55574484bfaf8ae5b0e38d9ded6955da0d3e9e11c6822ffe1d4018",
+    "size_bytes": 13377,
+    "hash_scope": "Exact supplied file bytes, including original line endings.",
+    "direct_authenticated_retrieval": false,
+    "document_revision_date": null,
+    "full_guide_bundled": false,
+    "interpretation": "Facts below are verified against the supplied text, not independently against the currently authenticated participant page."
+  },
+  "requirements": {
+    "theme_options": [
+      "Build for Your World",
+      "Push the Frontier"
+    ],
+    "must_incorporate_meta_models": true,
+    "named_meta_models": {
+      "meta_model_api": [
+        "Muse Spark series",
+        "Muse Wonder",
+        "Muse Image",
+        "Muse Voice Transcribe",
+        "SAM 3.1"
+      ],
+      "open_weights": [
+        "Muse Glimmer",
+        "Muse Spark Open"
+      ],
+      "coding_tool": [
+        "Muse Code"
+      ]
+    },
+    "public_repository_required": true,
+    "video_duration_minutes": 3,
+    "video_required": true,
+    "video_and_repository_links_accessible": true,
+    "human_contributors_listed_on_submission": true,
+    "solo_allowed": true,
+    "team_member_limit": 4,
+    "single_project_submission_per_team_or_startup": true,
+    "representative_required": true,
+    "late_submissions_accepted": false,
+    "new_work_only": {
+      "presented_work_built_during_event": true,
+      "demo_identifies_event_built_features_code_functionality": true,
+      "failure_to_identify_contributions_may_disqualify": true,
+      "startup_exception": "Existing products/codebases may be extended when newly developed event work is clearly identified.",
+      "indie_equivalent_exception_explicit": false
+    },
+    "rights_and_policy_compliance_required": true,
+    "generic_or_prohibited_project_examples": [
+      "medical-advice generation",
+      "basic RAG applications",
+      "simple image analyzers",
+      "simple education chatbots",
+      "AI job application screening",
+      "nutrition coaching",
+      "personality analysis",
+      "sports analysis or coaching",
+      "political or war-related projects"
+    ]
+  },
+  "schedule": {
+    "timezone_label": "Eastern Time (ET)",
+    "kickoff": {
+      "date": "2026-10-26",
+      "local_time": "12:00",
+      "utc": "2026-10-26T16:00:00Z",
+      "europe_berlin": "2026-10-26T17:00:00+01:00",
+      "conversion_note": "America/New_York is on daylight time on this date."
+    },
+    "stated_building_period": {
+      "start_date": "2026-10-27",
+      "end_date": "2026-11-04",
+      "start_time_unspecified": true
+    },
+    "submission_deadline": {
+      "organizer_local": "2026-11-04T21:00:00-05:00",
+      "utc": "2026-11-05T02:00:00Z",
+      "europe_berlin": "2026-11-05T03:00:00+01:00"
+    },
+    "last_full_day_submission_questions": "2026-11-03",
+    "judging_period": {
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-08"
+    },
+    "closing_and_live_finals": {
+      "date": "2026-11-09",
+      "local_time": "12:00",
+      "utc": "2026-11-09T17:00:00Z",
+      "europe_berlin": "2026-11-09T18:00:00+01:00"
+    },
+    "community_vote_opens": "2026-11-09",
+    "community_vote_winner_announced": "2026-11-16",
+    "workshops": [
+      {
+        "date": "2026-10-27",
+        "local_time": "12:00–13:00",
+        "topic": "Agents 101: Build a Multimodal AI Agent"
+      },
+      {
+        "date": "2026-10-28",
+        "local_time": "12:00–13:00",
+        "topic": "Agents 102: Best Practices for Verifiable Agents"
+      },
+      {
+        "date": "2026-10-30",
+        "local_time": "12:00–13:00",
+        "topic": "Fireworks inference and training with Muse open models"
+      }
+    ],
+    "weekday_text_office_hours": {
+      "local_start": "10:00",
+      "local_end": "11:00",
+      "channel": "#office-hours",
+      "weekends_excluded": true
+    }
+  },
+  "judging": {
+    "stages": 3,
+    "stage_one": "Pass/fail theme fit and reasonable Meta API/open-model use during the event.",
+    "stage_two_score_min": 0,
+    "stage_two_score_max": 10,
+    "weight_percent": {
+      "impact": 30,
+      "meta_ai_tooling": 25,
+      "technical_depth_execution": 20,
+      "demo": 25
+    },
+    "finalists_per_track": 5,
+    "finalists_total": 10,
+    "final_round_uses_same_rubric": true
+  },
+  "prizes_usd": {
+    "total_announced": 1000000,
+    "indie_total": 400000,
+    "startup_total": 550000,
+    "bonus_total": 50000,
+    "indie_by_rank": {
+      "1": 150000,
+      "2": 100000,
+      "3": 75000,
+      "4": 50000,
+      "5": 25000
+    },
+    "startup_by_rank": {
+      "1": 250000,
+      "2": 150000,
+      "3": 75000,
+      "4": 50000,
+      "5": 25000
+    }
+  },
+  "bonus_categories": [
+    {
+      "name": "Most Viral Project",
+      "amount_usd": 20000,
+      "eligibility": "Publish the project demo on X and submit its post link through the hackathon platform.",
+      "judging": "Total likes, reposts and comments.",
+      "engagement_cutoff_date": "2026-11-08",
+      "engagement_cutoff_wording": "EOD",
+      "exact_cutoff_timezone_not_explicit_in_bonus_section": true
+    },
+    {
+      "name": "Best Build on Meta Open Weight Models",
+      "amount_usd": 10000,
+      "eligible_models": [
+        "Muse Glimmer",
+        "Muse Spark Open"
+      ],
+      "hosting": [
+        "participant hardware",
+        "partner inference"
+      ],
+      "judging": "Flagged in the first judging round; infrastructure partner verifies the eligible Meta model actually runs."
+    },
+    {
+      "name": "Community Vote",
+      "amount_usd": 10000,
+      "judging": "Most public-gallery votes through the hackathon platform.",
+      "votes_per_verified_account": 1,
+      "winner_announced": "2026-11-16"
+    },
+    {
+      "name": "Best Agentic Use-Case",
+      "amount_usd": 5000,
+      "judging": [
+        "agent autonomy",
+        "effective task completion",
+        "practical usefulness"
+      ],
+      "scope": "Meaningful tasks, decisions or multi-step coordination."
+    },
+    {
+      "name": "Best Creative Build",
+      "amount_usd": 5000,
+      "eligible_models": [
+        "Muse Image",
+        "Muse Wonder"
+      ],
+      "judging": [
+        "creative originality",
+        "execution",
+        "effective model use in the final experience"
+      ],
+      "first_round_flagged": true
+    }
+  ],
+  "credits_and_partner_configuration": {
+    "meta": {
+      "credits_usd_per_participant": 150,
+      "claim_deadline_matches_submission": true,
+      "each_participant_claims_individually": true,
+      "claim_on_another_person_behalf_allowed": false,
+      "credit_card_required_for_api_use": true,
+      "temporary_preauthorization_described": true,
+      "spend_limit_notification_described": true,
+      "hard_spending_cap_established_by_guide": false
+    },
+    "partner_credits_discretionary_not_guaranteed": true,
+    "baseten": {
+      "credits_usd_per_selected_individual": 100,
+      "token_rate_limit_per_minute": 2000000,
+      "maximum_selected_participants": 2000,
+      "use_case_review": true,
+      "hackathon_model_id": "meta-models/muse-spark-open-1026",
+      "docs_model_id_replaced_for_hackathon": "meta-models/muse-spark-open"
+    },
+    "modal": {
+      "credits_usd_per_selected_participant": 100,
+      "first_participant_limit": 1000
+    },
+    "fireworks": {
+      "credits_usd_per_selected_team": 25,
+      "shortlist_review": true
+    }
+  },
+  "unresolved": [
+    "Whether October 26 post-kickoff code is within eligible event work despite the separately stated October 27 building-period start.",
+    "Whether one project may combine a track prize with multiple bonus prizes; no explicit stacking permission or maximum per project appears in the supplied Guide.",
+    "Exact timezone/cutoff instant for the Most Viral November 8 EOD deadline.",
+    "Current authenticated Guide revision and any subsequent organizer updates.",
+    "Explicit allowance or restriction for ChatGPT/Claude development assistance; they are not named in the supplied Guide.",
+    "Procedure or permission for changing the original application idea.",
+    "Actual original Git history and independent verification of initial creation times.",
+    "Any additional fields in the actual submission form."
+  ],
+  "relationship_to_public_legal_rules": {
+    "earlier_review": "eval/rules-review.json",
+    "preserve_earlier_snapshot": true,
+    "guide_supplies_missing_category_and_submission_details": true,
+    "legal_discretion_not_overridden_by_this_review": true,
+    "schedule_difference": "Earlier public legal text anticipates additional-prize announcements around November 10; supplied Guide specifies Community Vote winner on November 16. Preserve both source contexts and check later announcements.",
+    "compliance_verdict": "Not established by a source review alone."
+  },
+  "project_implications": [
+    "Faultline fits the software portion of Push the Frontier by project purpose; the organizer decides eligibility.",
+    "A public repository, accessible three-minute video and event-contribution summary are required according to the supplied Guide.",
+    "An optional adapter alone does not establish the Open Weight prize requirement; record a real eligible model deployment and run.",
+    "Using Muse Wonder alone does not establish Best Creative Build; a compelling creative outcome is also judged.",
+    "Preserve the original history and seek clarification of the kickoff/building-date boundary before certifying all original work as eligible.",
+    "Do not total hypothetical stacked winnings or promise any award."
+  ]
+}

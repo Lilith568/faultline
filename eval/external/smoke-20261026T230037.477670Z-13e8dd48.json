@@ -1,0 +1,32 @@
+{
+  "scope": "manually_authored_fixture_smoke_checks",
+  "started_at": "2026-10-26T23:00:33.650183+00:00",
+  "meta_api_called": false,
+  "checks": [
+    {
+      "application": "todomvc",
+      "url": "http://127.0.0.1:8181/",
+      "status": "passed",
+      "operations": [
+        "create todo on blur",
+        "complete todo",
+        "clear completed",
+        "reload resets documented in-memory storage"
+      ],
+      "page_errors": []
+    },
+    {
+      "application": "2048",
+      "url": "http://127.0.0.1:8182/",
+      "status": "passed",
+      "operations": [
+        "initial board",
+        "keyboard moves",
+        "state persisted",
+        "new game resets board"
+      ],
+      "page_errors": []
+    }
+  ],
+  "finished_at": "2026-10-26T23:00:37.477326+00:00"
+}

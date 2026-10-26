@@ -1,0 +1,428 @@
+{
+  "config": {
+    "configFile": "/workspace/scratch/17c0b57c4d3f/export-verification/playwright.config.ts",
+    "rootDir": "/workspace/scratch/17c0b57c4d3f/export-verification/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/workspace/scratch/17c0b57c4d3f/export-verification/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.56.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "buggy/checkout-cx1.spec.ts",
+      "file": "buggy/checkout-cx1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "faultline: Double-clicking \"Place order\" sends the request twice",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1364,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts:32:62",
+                    "location": {
+                      "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts",
+                      "column": 62,
+                      "line": 32
+                    },
+                    "snippet": "  30 |   await page.waitForTimeout(450);\n  31 |   // Invariant: At most 1 POST * request(s) are sent\n> 32 |   expect(requests.filter((r) => r.method === \"POST\").length).toBeLessThanOrEqual(1);\n     |                                                              ^\n  33 | });\n  34 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts",
+                        "column": 62,
+                        "line": 32
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m\n\n  30 |   await page.waitForTimeout(450);\n  31 |   // Invariant: At most 1 POST * request(s) are sent\n> 32 |   expect(requests.filter((r) => r.method === \"POST\").length).toBeLessThanOrEqual(1);\n     |                                                              ^\n  33 | });\n  34 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts:32:62"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T23:07:58.397Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-checkout-cx1-faultli-258bb-der-sends-the-request-twice/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts",
+                    "column": 62,
+                    "line": 32
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7271bafd56d5a963688d-db3363010b946f9ae32a",
+          "file": "buggy/checkout-cx1.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "buggy/composer-cx1.spec.ts",
+      "file": "buggy/composer-cx1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "faultline: Switching to Preview and back to Write discards the typed release notes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2214,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('notes-input')\nExpected: \u001b[32m\"cat release draft\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('notes-input')\u001b[22m\n\u001b[2m    5 × locator resolved to <textarea rows=\"6\" id=\"notes\" data-testid=\"notes-input\"></textarea>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('notes-input')\nExpected: \u001b[32m\"cat release draft\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('notes-input')\u001b[22m\n\u001b[2m    5 × locator resolved to <textarea rows=\"6\" id=\"notes\" data-testid=\"notes-input\"></textarea>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts:28:49",
+                    "location": {
+                      "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts",
+                      "column": 49,
+                      "line": 28
+                    },
+                    "snippet": "  26 |   await page.waitForTimeout(450);\n  27 |   // Invariant: \"Release notes\" still holds \"cat release draft\"\n> 28 |   await expect(page.getByTestId(\"notes-input\")).toHaveValue(\"cat release draft\", { timeout: 1000 });\n     |                                                 ^\n  29 | });\n  30 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts",
+                        "column": 49,
+                        "line": 28
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('notes-input')\nExpected: \u001b[32m\"cat release draft\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('notes-input')\u001b[22m\n\u001b[2m    5 × locator resolved to <textarea rows=\"6\" id=\"notes\" data-testid=\"notes-input\"></textarea>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  26 |   await page.waitForTimeout(450);\n  27 |   // Invariant: \"Release notes\" still holds \"cat release draft\"\n> 28 |   await expect(page.getByTestId(\"notes-input\")).toHaveValue(\"cat release draft\", { timeout: 1000 });\n     |                                                 ^\n  29 | });\n  30 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts:28:49"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T23:08:00.582Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-composer-cx1-faultli-c222d-rds-the-typed-release-notes/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts",
+                    "column": 49,
+                    "line": 28
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "52a5792e604a53fe57df-8f13d37f900a342f7534",
+          "file": "buggy/composer-cx1.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "buggy/composer-cx2.spec.ts",
+      "file": "buggy/composer-cx2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "faultline: Double activation of Publish sends duplicate publish requests",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1178,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts:28:62",
+                    "location": {
+                      "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts",
+                      "column": 62,
+                      "line": 28
+                    },
+                    "snippet": "  26 |   await page.waitForTimeout(450);\n  27 |   // Invariant: At most 1 POST * request(s) are sent\n> 28 |   expect(requests.filter((r) => r.method === \"POST\").length).toBeLessThanOrEqual(1);\n     |                                                              ^\n  29 | });\n  30 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts",
+                        "column": 62,
+                        "line": 28
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m1\u001b[39m\nReceived:    \u001b[31m2\u001b[39m\n\n  26 |   await page.waitForTimeout(450);\n  27 |   // Invariant: At most 1 POST * request(s) are sent\n> 28 |   expect(requests.filter((r) => r.method === \"POST\").length).toBeLessThanOrEqual(1);\n     |                                                              ^\n  29 | });\n  30 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts:28:62"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T23:08:03.555Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-composer-cx2-faultli-e6c3f--duplicate-publish-requests/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts",
+                    "column": 62,
+                    "line": 28
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7dcb2d572d5f71a90064-873ed1e746c7308393e4",
+          "file": "buggy/composer-cx2.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "buggy/newsletter-cx1.spec.ts",
+      "file": "buggy/newsletter-cx1.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "faultline: Closing the signup dialog with Close does not return focus to the opener",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2109,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('open-signup')\nExpected: focused\nReceived: inactive\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('open-signup')\u001b[22m\n\u001b[2m    5 × locator resolved to <button id=\"open\" class=\"primary\" aria-haspopup=\"dialog\" data-testid=\"open-signup\">Get the newsletter</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('open-signup')\nExpected: focused\nReceived: inactive\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('open-signup')\u001b[22m\n\u001b[2m    5 × locator resolved to <button id=\"open\" class=\"primary\" aria-haspopup=\"dialog\" data-testid=\"open-signup\">Get the newsletter</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts:27:49",
+                    "location": {
+                      "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts",
+                      "column": 49,
+                      "line": 27
+                    },
+                    "snippet": "  25 |   await page.waitForTimeout(450);\n  26 |   // Invariant: Focus returns to \"Get the newsletter\" after the dialog closes\n> 27 |   await expect(page.getByTestId(\"open-signup\")).toBeFocused({ timeout: 1000 });\n     |                                                 ^\n  28 | });\n  29 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts",
+                        "column": 49,
+                        "line": 27
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('open-signup')\nExpected: focused\nReceived: inactive\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('open-signup')\u001b[22m\n\u001b[2m    5 × locator resolved to <button id=\"open\" class=\"primary\" aria-haspopup=\"dialog\" data-testid=\"open-signup\">Get the newsletter</button>\u001b[22m\n\u001b[2m      - unexpected value \"inactive\"\u001b[22m\n\n\n  25 |   await page.waitForTimeout(450);\n  26 |   // Invariant: Focus returns to \"Get the newsletter\" after the dialog closes\n> 27 |   await expect(page.getByTestId(\"open-signup\")).toBeFocused({ timeout: 1000 });\n     |                                                 ^\n  28 | });\n  29 |\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts:27:49"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T23:08:05.518Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-newsletter-cx1-fault-5bbe7--return-focus-to-the-opener/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts",
+                    "column": 49,
+                    "line": 27
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8fcc675047075c69923d-80f1ef1683a52b4d58cd",
+          "file": "buggy/newsletter-cx1.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "buggy/newsletter-cx2.spec.ts",
+      "file": "buggy/newsletter-cx2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "faultline: Failed signup wipes the typed email and name instead of preserving them",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2437,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('signup-email')\nExpected: \u001b[32m\"ada@example.com\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('signup-email')\u001b[22m\n\u001b[2m    5 × locator resolved to <input type=\"email\" id=\"nl-email\" autocomplete=\"off\" data-testid=\"signup-email\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('signup-email')\nExpected: \u001b[32m\"ada@example.com\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('signup-email')\u001b[22m\n\u001b[2m    5 × locator resolved to <input type=\"email\" id=\"nl-email\" autocomplete=\"off\" data-testid=\"signup-email\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts:47:50",
+                    "location": {
+                      "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts",
+                      "column": 50,
+                      "line": 47
+                    },
+                    "snippet": "  45 |   await page.waitForTimeout(450);\n  46 |   // Invariant: \"Work email\" still holds \"ada@example.com\"\n> 47 |   await expect(page.getByTestId(\"signup-email\")).toHaveValue(\"ada@example.com\", { timeout: 1000 });\n     |                                                  ^\n  48 |   // Invariant: \"First name\" still holds \"Ada\"\n  49 |   await expect(page.getByTestId(\"signup-name\")).toHaveValue(\"Ada\", { timeout: 1000 });\n  50 | });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts",
+                        "column": 50,
+                        "line": 47
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('signup-email')\nExpected: \u001b[32m\"ada@example.com\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('signup-email')\u001b[22m\n\u001b[2m    5 × locator resolved to <input type=\"email\" id=\"nl-email\" autocomplete=\"off\" data-testid=\"signup-email\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n  45 |   await page.waitForTimeout(450);\n  46 |   // Invariant: \"Work email\" still holds \"ada@example.com\"\n> 47 |   await expect(page.getByTestId(\"signup-email\")).toHaveValue(\"ada@example.com\", { timeout: 1000 });\n     |                                                  ^\n  48 |   // Invariant: \"First name\" still holds \"Ada\"\n  49 |   await expect(page.getByTestId(\"signup-name\")).toHaveValue(\"Ada\", { timeout: 1000 });\n  50 | });\n    at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts:47:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T23:08:08.409Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/17c0b57c4d3f/faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-newsletter-cx2-fault-63f96--instead-of-preserving-them/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts",
+                    "column": 50,
+                    "line": 47
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e0945e47be68ee9a3a58-edccc202b984f788d505",
+          "file": "buggy/newsletter-cx2.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T23:07:57.556Z",
+    "duration": 13422.623,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 5,
+    "flaky": 0
+  }
+}

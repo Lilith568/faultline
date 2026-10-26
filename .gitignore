@@ -7,3 +7,7 @@ artifacts/
 *.egg-info/
 node_modules/
 test-results/
+
+# Authentication state and private local input
+.auth/
+*storage-state*.json

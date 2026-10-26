@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "run_id": "20261026T225820.905486Z-bc0d0bf6",
+  "started_at": "2026-10-26T22:58:20.905688+00:00",
+  "application": "2048",
+  "target_url": "http://127.0.0.1:8182/",
+  "scope": "exploratory_upstream_compatibility",
+  "planner": "heuristic",
+  "meta_api_called": false,
+  "upstream": {
+    "repository": "https://github.com/gabrielecirulli/2048",
+    "commit": "478b6ec346e3787f589e4af751378d06ded4cbbc",
+    "license": "MIT",
+    "license_url": "https://github.com/gabrielecirulli/2048/blob/478b6ec346e3787f589e4af751378d06ded4cbbc/LICENSE.txt",
+    "archive_sha256": "4f3e35b3b9124c5a5c16231b71684288d8d781c2d534754f6b36119336231e2e",
+    "source_modified": false
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39"
+  },
+  "faultline_source": {
+    "sha256": "24208f79bb34ce68badbc6b0ee6c6f7a4a044f2accf7037a360497ca1114783d",
+    "files": {
+      "faultline/__init__.py": "2f22dacca6aa9a1aaf9bb5768736dd08e7172035a6592f171ea5da2826266257",
+      "faultline/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "faultline/auth.py": "cf3efcd8e76a493be94bb5e83b218f77cd7472107c08faf90d1917c5bee1b819",
+      "faultline/cli.py": "6564c46def875e67d6f591e57c52363b5f3ef68a0729959df838d77884ad948b",
+      "faultline/config.py": "d349d614cee4599f1a6b114f4b2f4b2096973f81e632a939a73ce45c967216be",
+      "faultline/discover.py": "955219c39a05de1172f2094ac316b4b85d9e7fc34bdd7de014826b23d704947f",
+      "faultline/executor.py": "220ecae6ab96cc077a77ae0cbf85ba49a227aab647289d22b36615b615dc566e",
+      "faultline/export.py": "64e0bbf15824b71409b1be5a00210b05b3c5c343c4cedae77ccf6d30b0b7376d",
+      "faultline/hunt.py": "908479fdfb4362e00f0c737fa3769b149297037933949bb7d43ef4ebecc9951d",
+      "faultline/invariants.py": "97123563574fa07e7bff25fd417ecb44e4f461a3e5cba667be7526a4b0ee05fd",
+      "faultline/meta.py": "017243c3fb301f9b1726ee07f2a4e657431d5ea87db3dc3ea7a56e3ee45851e3",
+      "faultline/minimize.py": "6c4330d57d0ee3a187cfba847e87289adfbebc2a9514a126c5e581133a094df3",
+      "faultline/patches.py": "5fbc5a7c06a8d5cde52a493a2e4ba0dc450236aaa83726984c82f4abcc6bd79a",
+      "faultline/planners.py": "a775ab240482b39016a73a8ac33a337f0cd26aa8099ca8f834b2a6ebea64c9e5",
+      "faultline/reports.py": "174da31eaf2fae1943b4c46ee7e3d9e30aed4f73affd9470d937ec4b04212eb8",
+      "faultline/server.py": "126372e90cb23299c2b24d1f411bfe5f6bc4f486d01f9b45aa86deff45491eb0",
+      "faultline/vocab.py": "c56056d1fd0d98b9848e160d84fb46124f8fdd51f1cd0400525bfc48cda34460",
+      "scripts/evaluate_external.py": "4d13d9bf2e815a15b53ab74c9c91192941111000013e2ee13a80133196e5a944"
+    }
+  },
+  "status": "error",
+  "error": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8182/\nCall log:\n  - navigating to \"http://127.0.0.1:8182/\", waiting until \"load\"\n",
+  "finished_at": "2026-10-26T22:58:21.520232+00:00"
+}

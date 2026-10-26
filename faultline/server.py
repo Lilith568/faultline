@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import asyncio
+import ipaddress
 import json
+import os
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
@@ -13,6 +16,7 @@ from pydantic import BaseModel, Field
 from .config import get_settings
 from .export import spec_filename
 from .hunt import Hunt, replay
+from .patches import propose_patch
 
 HERE = Path(__file__).resolve().parent
 DEMO_DIR = HERE / "demo"
@@ -21,8 +25,37 @@ DEMO_APPS = ("profile", "search", "checkout", "settings", "composer", "newslette
 ID_RE = re.compile(r"^[0-9]{8}-[0-9]{6}-[0-9a-f]{6}$")
 CX_RE = re.compile(r"^cx[0-9]{1,3}$")
 
-app = FastAPI(title="Faultline", version="0.1.0")
+app = FastAPI(title="Faultline", version="0.2.0")
 HUNTS: dict[str, dict] = {}
+
+
+@app.middleware("http")
+async def protect_local_api(request: Request, call_next):
+    """A web page on another origin must not start local hunts or upload source."""
+    if request.url.path.startswith("/api/"):
+        # Origin equality alone is insufficient against DNS rebinding.
+        try:
+            host = urlsplit("//" + request.headers.get("host", "")).hostname or ""
+            local_host = host.lower() == "localhost" or ipaddress.ip_address(host).is_loopback
+        except ValueError:
+            local_host = host.lower() == "localhost"
+        configured = {h.strip().lower() for h in os.getenv("FAULTLINE_UI_HOSTS", "").split(",") if h.strip()}
+        if not local_host and host.lower() not in configured:
+            return JSONResponse({"detail": "Unrecognized Faultline host."}, status_code=400)
+    if request.url.path.startswith("/api/") and request.method not in ("GET", "HEAD", "OPTIONS"):
+        origin = request.headers.get("origin")
+        expected = f"{request.url.scheme}://{request.headers.get('host', '')}"
+        if (origin and origin.rstrip("/") != expected) or request.headers.get("sec-fetch-site") == "cross-site":
+            return JSONResponse({"detail": "Use the Faultline page on the same origin."}, status_code=403)
+        if request.url.path.endswith("/patch"):
+            # Bound the actual streamed body, not only the optional Content-Length header.
+            body = bytearray()
+            async for chunk in request.stream():
+                body.extend(chunk)
+                if len(body) > 300_000:
+                    return JSONResponse({"detail": "Selected source files are too large."}, status_code=413)
+            request._body = bytes(body)
+    return await call_next(request)
 
 
 # --------------------------------------------------------------------------- demo targets
@@ -119,6 +152,16 @@ class ReplayRequest(BaseModel):
     url: str
 
 
+class SourceFile(BaseModel):
+    path: str = Field(min_length=1, max_length=200)
+    content: str = Field(max_length=100_000)
+
+
+class PatchRequest(BaseModel):
+    files: list[SourceFile] = Field(min_length=1, max_length=5)
+    consent: bool = Field(False, strict=True)
+
+
 @app.get("/", response_class=HTMLResponse)
 def index() -> str:
     return (STATIC_DIR / "index.html").read_text(encoding="utf-8")
@@ -128,6 +171,7 @@ def index() -> str:
 def config() -> dict:
     s = get_settings()
     return {"meta_configured": s.meta_configured, "model": s.model, "reasoning_effort": s.reasoning_effort,
+            "backend": getattr(s, "backend", "meta"),
             "demo_apps": DEMO_APPS}
 
 
@@ -229,3 +273,10 @@ async def replay_cx(body: ReplayRequest) -> dict:
     failing = [r for r in result["invariants"] if r["status"] == "fail"]
     return {"status": result["status"], "error": result["error"], "failing": failing,
             "invariants": result["invariants"], "duration_ms": result["duration_ms"]}
+
+
+@app.post("/api/hunts/{hunt_id}/{cx_id}/patch")
+async def suggest_patch(hunt_id: str, cx_id: str, body: PatchRequest) -> dict:
+    """Return a review-only proposal. Source and diffs are never written or executed."""
+    cx = _cx(hunt_id, cx_id)
+    return await propose_patch(get_settings(), cx, [f.model_dump() for f in body.files], body.consent)

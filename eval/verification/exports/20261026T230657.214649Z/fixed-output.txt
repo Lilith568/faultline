@@ -1,0 +1,240 @@
+
+Running 5 tests using 1 worker
+
+  ✘  1 tests/fixed/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice (3ms)
+  ✘  2 tests/fixed/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes (4ms)
+  ✘  3 tests/fixed/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests (5ms)
+  ✘  4 tests/fixed/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener (3ms)
+  ✘  5 tests/fixed/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them (4ms)
+
+
+  1) tests/fixed/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice 
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-Hhr80l --remote-debugging-pipe --no-startup-window
+    <launched> pid=165
+    [pid=165][err] [165:165:1027/000731.490968:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)
+    [pid=165][err] [1027/000731.491166:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+    [pid=165][err] [1027/000731.491311:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491321:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491323:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491325:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491327:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491329:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491330:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491332:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491334:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491336:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491353:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491356:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491359:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491361:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=165][err] [1027/000731.491364:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    Call log:
+    [2m  - <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-Hhr80l --remote-debugging-pipe --no-startup-window[22m
+    [2m  - <launched> pid=165[22m
+    [2m  - [pid=165][err] [165:165:1027/000731.490968:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)[22m
+    [2m  - [pid=165][err] [1027/000731.491166:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)[22m
+    [2m  - [pid=165][err] [1027/000731.491311:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491321:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491323:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491325:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491327:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491329:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491330:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491332:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491334:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491336:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491353:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491356:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491359:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491361:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165][err] [1027/000731.491364:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=165] <gracefully close start>[22m
+    [2m  - [pid=165] <kill>[22m
+    [2m  - [pid=165] <will force kill>[22m
+    [2m  - [pid=165] <process did exit: exitCode=null, signal=SIGABRT>[22m
+    [2m  - [pid=165] starting temporary directories cleanup[22m
+    [2m  - [pid=165] finished temporary directories cleanup[22m
+    [2m  - [pid=165] <gracefully close end>[22m
+
+
+  2) tests/fixed/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes 
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-CZaTll --remote-debugging-pipe --no-startup-window
+    <launched> pid=187
+    [pid=187][err] [187:187:1027/000732.207602:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)
+    [pid=187][err] [1027/000732.207812:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+    [pid=187][err] [1027/000732.208074:ERROR:third_party/crashpad/crashpad/util/file/directory_reader_posix.cc:43] opendir /proc/187/task: No such file or directory (2)
+    Call log:
+    [2m  - <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-CZaTll --remote-debugging-pipe --no-startup-window[22m
+    [2m  - <launched> pid=187[22m
+    [2m  - [pid=187][err] [187:187:1027/000732.207602:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)[22m
+    [2m  - [pid=187][err] [1027/000732.207812:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)[22m
+    [2m  - [pid=187][err] [1027/000732.208074:ERROR:third_party/crashpad/crashpad/util/file/directory_reader_posix.cc:43] opendir /proc/187/task: No such file or directory (2)[22m
+    [2m  - [pid=187] <gracefully close start>[22m
+    [2m  - [pid=187] <kill>[22m
+    [2m  - [pid=187] <will force kill>[22m
+    [2m  - [pid=187] <process did exit: exitCode=null, signal=SIGABRT>[22m
+    [2m  - [pid=187] starting temporary directories cleanup[22m
+    [2m  - [pid=187] finished temporary directories cleanup[22m
+    [2m  - [pid=187] <gracefully close end>[22m
+
+
+  3) tests/fixed/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests 
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-ddTAfR --remote-debugging-pipe --no-startup-window
+    <launched> pid=209
+    [pid=209][err] [209:209:1027/000738.149364:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)
+    [pid=209][err] [1027/000738.149578:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+    [pid=209][err] [1027/000738.149683:ERROR:third_party/crashpad/crashpad/util/file/directory_reader_posix.cc:43] opendir /proc/209/task: No such file or directory (2)
+    Call log:
+    [2m  - <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-ddTAfR --remote-debugging-pipe --no-startup-window[22m
+    [2m  - <launched> pid=209[22m
+    [2m  - [pid=209][err] [209:209:1027/000738.149364:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)[22m
+    [2m  - [pid=209][err] [1027/000738.149578:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)[22m
+    [2m  - [pid=209][err] [1027/000738.149683:ERROR:third_party/crashpad/crashpad/util/file/directory_reader_posix.cc:43] opendir /proc/209/task: No such file or directory (2)[22m
+    [2m  - [pid=209] <gracefully close start>[22m
+    [2m  - [pid=209] <kill>[22m
+    [2m  - [pid=209] <will force kill>[22m
+    [2m  - [pid=209] <process did exit: exitCode=null, signal=SIGABRT>[22m
+    [2m  - [pid=209] starting temporary directories cleanup[22m
+    [2m  - [pid=209] finished temporary directories cleanup[22m
+    [2m  - [pid=209] <gracefully close end>[22m
+
+
+  4) tests/fixed/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener 
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-VnN8R9 --remote-debugging-pipe --no-startup-window
+    <launched> pid=231
+    [pid=231][err] [231:231:1027/000743.930560:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)
+    [pid=231][err] [1027/000743.930759:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+    [pid=231][err] [1027/000743.930979:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.930989:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.930991:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.930994:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.930996:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.930998:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931015:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931017:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931020:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931022:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931024:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931025:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=231][err] [1027/000743.931027:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    Call log:
+    [2m  - <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-VnN8R9 --remote-debugging-pipe --no-startup-window[22m
+    [2m  - <launched> pid=231[22m
+    [2m  - [pid=231][err] [231:231:1027/000743.930560:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)[22m
+    [2m  - [pid=231][err] [1027/000743.930759:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)[22m
+    [2m  - [pid=231][err] [1027/000743.930979:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.930989:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.930991:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.930994:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.930996:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.930998:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931015:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931017:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931020:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931022:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931024:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931025:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231][err] [1027/000743.931027:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=231] <gracefully close start>[22m
+    [2m  - [pid=231] <kill>[22m
+    [2m  - [pid=231] <will force kill>[22m
+    [2m  - [pid=231] <process did exit: exitCode=null, signal=SIGABRT>[22m
+    [2m  - [pid=231] starting temporary directories cleanup[22m
+    [2m  - [pid=231] finished temporary directories cleanup[22m
+    [2m  - [pid=231] <gracefully close end>[22m
+
+
+  5) tests/fixed/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them 
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-HXMj12 --remote-debugging-pipe --no-startup-window
+    <launched> pid=253
+    [pid=253][err] [253:253:1027/000744.673986:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)
+    [pid=253][err] [1027/000744.674300:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+    [pid=253][err] [1027/000744.674470:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674483:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674486:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674489:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674492:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674495:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674498:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674500:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674503:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674505:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674524:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674526:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674531:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    [pid=253][err] [1027/000744.674533:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)
+    Call log:
+    [2m  - <launching> /root/.cache/ms-playwright/chromium-1194/chrome-linux/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AcceptCHFrame,AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-HXMj12 --remote-debugging-pipe --no-startup-window[22m
+    [2m  - <launched> pid=253[22m
+    [2m  - [pid=253][err] [253:253:1027/000744.673986:FATAL:chrome/browser/process_singleton_posix.cc:292] Check failed: . socket() failed: Operation not permitted (1)[22m
+    [2m  - [pid=253][err] [1027/000744.674300:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)[22m
+    [2m  - [pid=253][err] [1027/000744.674470:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674483:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674486:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674489:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674492:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674495:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674498:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674500:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674503:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674505:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674524:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674526:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674531:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253][err] [1027/000744.674533:ERROR:third_party/crashpad/crashpad/handler/linux/exception_handler_server.cc:143] tgkill: No such process (3)[22m
+    [2m  - [pid=253] <gracefully close start>[22m
+    [2m  - [pid=253] <kill>[22m
+    [2m  - [pid=253] <will force kill>[22m
+    [2m  - [pid=253] <process did exit: exitCode=null, signal=SIGABRT>[22m
+    [2m  - [pid=253] starting temporary directories cleanup[22m
+    [2m  - [pid=253] finished temporary directories cleanup[22m
+    [2m  - [pid=253] <gracefully close end>[22m
+
+
+  5 failed
+    tests/fixed/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice 
+    tests/fixed/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes 
+    tests/fixed/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests 
+    tests/fixed/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener 
+    tests/fixed/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them 
+
+(node:152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:174) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:174) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

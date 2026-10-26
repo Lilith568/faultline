@@ -12,6 +12,7 @@ from typing import Any, Callable
 from playwright.async_api import Browser, async_playwright
 
 from .config import Settings, check_target, get_settings
+from .auth import load_storage_state, scope_storage_state
 from .discover import discover
 from .executor import run_experiment
 from .export import spec_filename, to_playwright_spec, to_repro
@@ -40,7 +41,7 @@ class Hunt:
     def __init__(self, url: str, goal: str = "", planner: str = "auto", rounds: int = 2,
                  confirm_runs: int = 3, include_source: bool = False, settings: Settings | None = None,
                  emit: Emit = _noop, meta_transport=None, hunt_id: str | None = None,
-                 recorded_plan: dict | None = None):
+                 recorded_plan: dict | None = None, storage_state: str | Path | dict | None = None):
         self.settings = settings or get_settings()
         check_target(url, self.settings)
         self.url = url
@@ -49,7 +50,11 @@ class Hunt:
         self.rounds = max(1, min(rounds, 3))
         self.confirm_runs = max(1, min(confirm_runs, 5))
         self.include_source = include_source
-        self.emit = emit
+        self._emit_callback = emit
+        self.warnings: list[str] = []
+        self.emit = self._emit
+        self.storage_state = (scope_storage_state(storage_state, url) if isinstance(storage_state, dict)
+                              else load_storage_state(storage_state, url))
         self.meta_transport = meta_transport
         self.id = hunt_id or datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:6]
         self.dir = Path(self.settings.artifacts) / self.id
@@ -57,9 +62,18 @@ class Hunt:
         self.recorded_plan = recorded_plan  # replay a saved model plan without calling the API
 
     # ------------------------------------------------------------------ helpers
+    def _emit(self, kind: str, message: str, data: dict | None = None) -> None:
+        if kind == "warning":
+            self.warnings.append(message)
+        self._emit_callback(kind, message, data)
+
+    def _phase(self, phase: str, message: str, **data) -> None:
+        self.emit("phase", message, {"phase": phase, "phase_status": "active", **data})
+
     async def _run(self, browser: Browser, exp: dict, inventory: dict, **kwargs) -> dict:
         self.browser_runs += 1
-        return await run_experiment(browser, self.url, exp, inventory, **kwargs)
+        self.emit("metrics", "Browser run started", {"browser_runs": self.browser_runs})
+        return await run_experiment(browser, self.url, exp, inventory, storage_state=self.storage_state, **kwargs)
 
     async def _run_round(self, browser: Browser, hypotheses: list[dict], inventory: dict, round_no: int) -> None:
         semaphore = asyncio.Semaphore(3)
@@ -80,8 +94,10 @@ class Hunt:
         report: dict[str, Any] = {
             "id": self.id, "url": self.url, "goal": self.goal,
             "started_at": datetime.now(timezone.utc).isoformat(),
-            "planner": {"requested": self.planner, "used": None, "model": None, "fallback_reason": None},
+            "planner": {"requested": self.planner, "used": None, "model": None, "fallback_reason": None,
+                        "backend": getattr(self.settings, "backend", "meta")},
             "rounds": [], "counterexamples": [], "unconfirmed": [], "meta_calls": [],
+            "warnings": self.warnings, "authenticated": bool(self.storage_state),
         }
         client = None
         use_meta = self.planner in ("auto", "meta") and self.settings.meta_configured
@@ -94,20 +110,21 @@ class Hunt:
         async with async_playwright() as pw:
             browser = await pw.chromium.launch()
             try:
-                self.emit("phase", "Exploring the page", None)
-                inventory = await discover(browser, self.url)
+                self._phase("explore", "Exploring the page")
+                inventory = await discover(browser, self.url, storage_state=self.storage_state)
                 report["inventory"] = {k: inventory[k] for k in ("title", "elements", "endpoints", "notes")}
                 self.emit("inventory", f"Found {len(inventory['elements'])} controls and "
                           f"{len(inventory['endpoints'])} API endpoints", {"endpoints": inventory["endpoints"]})
 
                 # Round 1
+                self._phase("hypotheses", "Preparing hypotheses")
                 hypotheses, rejected, source = [], [], "heuristic"
                 if self.recorded_plan:
                     hypotheses, rejected = normalize_plan(self.recorded_plan["plan"], inventory)
                     source = "recorded"
                     report["planner"]["model"] = self.recorded_plan.get("provenance", {}).get("model")
                 elif client:
-                    self.emit("phase", f"Asking {self.settings.model} for hypotheses", None)
+                    self._phase("hypotheses", f"Asking {self.settings.model} for hypotheses")
                     try:
                         hypotheses, rejected = await meta_plan(client, inventory, self.goal)
                         source = "meta"
@@ -123,6 +140,7 @@ class Hunt:
                 self.emit("plan", f"{len(hypotheses)} hypotheses ({source})",
                           {"hypotheses": [{"id": h["id"], "claim": h["claim"], "fault_class": h["fault_class"]}
                                           for h in hypotheses], "rejected": rejected})
+                self._phase("verify", "Testing the hypotheses", round=1)
                 await self._run_round(browser, hypotheses, inventory, 1)
                 report["rounds"].append({"round": 1, "source": source, "hypotheses": hypotheses,
                                          "rejected": rejected})
@@ -132,7 +150,7 @@ class Hunt:
                 for round_no in range(2, self.rounds + 1):
                     if source != "meta":
                         break
-                    self.emit("phase", f"Round {round_no}: Muse reviews the verified results", None)
+                    self._phase("followup", f"Round {round_no}: Muse reviews the verified results", round=round_no)
                     try:
                         follow, rejected2 = await meta_plan(client, inventory, self.goal, previous=all_hyps,
                                                             id_prefix=f"r{round_no}-")
@@ -144,10 +162,15 @@ class Hunt:
                         if hyp["id"] in existing:
                             hyp["id"] = f"r{round_no}-{hyp['id']}"
                     if not follow:
+                        if rejected2:
+                            report["rounds"].append({"round": round_no, "source": "meta", "hypotheses": [],
+                                                     "rejected": rejected2})
+                            self.emit("warning", "Follow-up round skipped: no valid experiments", None)
                         break
                     self.emit("plan", f"{len(follow)} follow-up experiments",
                               {"hypotheses": [{"id": h["id"], "claim": h["claim"], "fault_class": h["fault_class"]}
                                               for h in follow], "rejected": rejected2, "round": round_no})
+                    self._phase("verify", "Testing the follow-up hypotheses", round=round_no)
                     await self._run_round(browser, follow, inventory, round_no)
                     report["rounds"].append({"round": round_no, "source": "meta", "hypotheses": follow,
                                              "rejected": rejected2})
@@ -164,7 +187,7 @@ class Hunt:
                 for (target, fault_class), members in groups.items():
                     members.sort(key=lambda h: (len(h["steps"]), len(h["perturbations"])))
                     primary = members[0]
-                    self.emit("phase", f"Minimizing: {primary['claim']}", {"id": primary["id"]})
+                    self._phase("minimize", f"Minimizing: {primary['claim']}", id=primary["id"])
                     runner = lambda exp: self._run(browser, exp, inventory)  # noqa: E731
                     reduced = await minimize(runner, primary, target, inventory)
                     minimal = reduced["experiment"]
@@ -218,9 +241,10 @@ class Hunt:
                         "trace": first.get("trace"),
                     }
                     # Diagnosis
+                    self._phase("diagnose", f"Explaining {cx['id']}", id=cx["id"])
                     diagnosis = None
                     if client:
-                        self.emit("phase", f"Asking {self.settings.model} to diagnose {cx['id']}", None)
+                        self._phase("diagnose", f"Asking {self.settings.model} to diagnose {cx['id']}", id=cx["id"])
                         try:
                             png = Path(cx["screenshot"]).read_bytes() if cx.get("screenshot") else None
                             diagnosis = await meta_diagnosis(client, cx, inventory, self.include_source, png)
@@ -229,6 +253,7 @@ class Hunt:
                                       None)
                     cx["diagnosis"] = diagnosis or template_diagnosis(fault_class, {"title": cx["title"]})
                     # Exports
+                    self._phase("export", f"Exporting the test for {cx['id']}", id=cx["id"])
                     spec = to_playwright_spec(cx, self.url)
                     (shots / spec_filename(cx)).write_text(spec, encoding="utf-8")
                     (shots / "repro.json").write_text(json.dumps(to_repro(cx, self.url), indent=2), encoding="utf-8")
@@ -257,16 +282,19 @@ class Hunt:
         return report
 
 
-async def replay(repro: dict, url: str | None = None, settings: Settings | None = None) -> dict:
+async def replay(repro: dict, url: str | None = None, settings: Settings | None = None, *,
+                 storage_state: str | Path | dict | None = None) -> dict:
     """Re-run a saved minimized counterexample (e.g. against the fixed build)."""
     settings = settings or get_settings()
     target = url or repro["url"]
     check_target(target, settings)
+    state = (scope_storage_state(storage_state, target) if isinstance(storage_state, dict)
+             else load_storage_state(storage_state, target))
     inventory = {"elements": list(repro["elements"].values())}
     async with async_playwright() as pw:
         browser = await pw.chromium.launch()
         try:
-            result = await run_experiment(browser, target, repro["experiment"], inventory)
+            result = await run_experiment(browser, target, repro["experiment"], inventory, storage_state=state)
         finally:
             await browser.close()
     return result

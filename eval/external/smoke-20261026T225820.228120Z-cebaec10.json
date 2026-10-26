@@ -1,0 +1,22 @@
+{
+  "scope": "manually_authored_fixture_smoke_checks",
+  "started_at": "2026-10-26T22:58:18.721112+00:00",
+  "meta_api_called": false,
+  "checks": [
+    {
+      "application": "todomvc",
+      "url": "http://127.0.0.1:8181/",
+      "status": "error",
+      "error": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8181/\nCall log:\n  - navigating to \"http://127.0.0.1:8181/\", waiting until \"networkidle\"\n",
+      "page_errors": []
+    },
+    {
+      "application": "2048",
+      "url": "http://127.0.0.1:8182/",
+      "status": "error",
+      "error": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8182/\nCall log:\n  - navigating to \"http://127.0.0.1:8182/\", waiting until \"networkidle\"\n",
+      "page_errors": []
+    }
+  ],
+  "finished_at": "2026-10-26T22:58:20.227803+00:00"
+}

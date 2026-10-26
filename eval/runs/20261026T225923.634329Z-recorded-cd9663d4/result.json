@@ -1,0 +1,291 @@
+{
+  "schema_version": 2,
+  "run_id": "20261026T225923.634329Z-recorded-cd9663d4",
+  "planner": "recorded",
+  "model": null,
+  "date": "2026-10-26T22:59:23.634560+00:00",
+  "status": "completed",
+  "repeat_index": 1,
+  "requested_apps": [
+    "composer",
+    "newsletter"
+  ],
+  "planned_targets": 4,
+  "metadata": {
+    "git": {
+      "commit": null,
+      "dirty": null,
+      "available": false
+    },
+    "python": "3.12.14",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "dependencies": {
+      "playwright": "1.56.0",
+      "fastapi": "0.162.0",
+      "httpx": "0.28.1",
+      "uvicorn": "0.54.0"
+    },
+    "source_sha256": {
+      "faultline/__init__.py": "2f22dacca6aa9a1aaf9bb5768736dd08e7172035a6592f171ea5da2826266257",
+      "faultline/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "faultline/auth.py": "a87488aac3479d26c4a812b1deece39a81c66c19ae40c21235216be0c3a83814",
+      "faultline/cli.py": "6564c46def875e67d6f591e57c52363b5f3ef68a0729959df838d77884ad948b",
+      "faultline/config.py": "d349d614cee4599f1a6b114f4b2f4b2096973f81e632a939a73ce45c967216be",
+      "faultline/demo/checkout.html": "8a1c02b62218003b76624ded06332faf8734af2bad3d55884fc853e872f8fcad",
+      "faultline/demo/composer.html": "e4832358307d6b2e5a0ca9969921cfa48f7fe33e9757eefa616f8ce0598c8c48",
+      "faultline/demo/demo.css": "bf69dfe087457375e2cbe7dca115ee52f16f643c421e1c75d48b304af6dfa56b",
+      "faultline/demo/newsletter.html": "74ccc87d4c66e13eece4763aca80fdcbac6c8b183c1811302c1966d087ec0053",
+      "faultline/demo/profile.html": "b718bc89705ffe59cd2fef94001c8129e4f51722f8b99fb9e6042bda427f3507",
+      "faultline/demo/search.html": "cc602f7dd816d97ea65e0442e59e18ebd53859d8a3ab7f58f830b6bac76d9581",
+      "faultline/demo/settings.html": "25b0ef95b6c8c03324109c501d8d70aa8cd2ec484a6f86f5d1fd01796be5cdf8",
+      "faultline/discover.py": "be6c356232f6ffe91ef0b0224abe2261f6de7bcf208194aa14539eafe7cce945",
+      "faultline/executor.py": "59421da992622ea8e072623463120584dd18335e4bd20ed2fbaf93b54a13a42d",
+      "faultline/export.py": "64e0bbf15824b71409b1be5a00210b05b3c5c343c4cedae77ccf6d30b0b7376d",
+      "faultline/hunt.py": "908479fdfb4362e00f0c737fa3769b149297037933949bb7d43ef4ebecc9951d",
+      "faultline/invariants.py": "97123563574fa07e7bff25fd417ecb44e4f461a3e5cba667be7526a4b0ee05fd",
+      "faultline/meta.py": "017243c3fb301f9b1726ee07f2a4e657431d5ea87db3dc3ea7a56e3ee45851e3",
+      "faultline/minimize.py": "6c4330d57d0ee3a187cfba847e87289adfbebc2a9514a126c5e581133a094df3",
+      "faultline/patches.py": "5fbc5a7c06a8d5cde52a493a2e4ba0dc450236aaa83726984c82f4abcc6bd79a",
+      "faultline/planners.py": "a775ab240482b39016a73a8ac33a337f0cd26aa8099ca8f834b2a6ebea64c9e5",
+      "faultline/reports.py": "4d25483fdcf928530958f3e1c97a3c0b488528b63dbafd050f024af382a37949",
+      "faultline/server.py": "de4867df21739731fe9ae315b149526db2a416d791c51c26cb5ebfe65f2ffe96",
+      "faultline/static/index.html": "6b1b52bc905d0b25cf6301cb45805c33bdd7274919f2482574a0b73c6eb5b0a3",
+      "faultline/vocab.py": "c56056d1fd0d98b9848e160d84fb46124f8fdd51f1cd0400525bfc48cda34460",
+      "scripts/check_external_fixtures.py": "55db395ca08967e4f5f62595ec219fa08a3fd894c106e9ef06b6f99d368a23b7",
+      "scripts/evaluate.py": "72954bd803cd7d2c219bb0ece4dcce171695d7c73d2e3c9e8daff56d0661e93b",
+      "scripts/evaluate_external.py": "e315681dd24adc336b48066d1d1c03c5c1570628c57e34350486112621822d27",
+      "scripts/replay_recorded.py": "a8f29654cb305f478103a46ee47fc4b297f225ec1334b98fe51ac8dbabe212b2",
+      "scripts/summarize_eval.py": "2f175ecbbdc8a9b6303d7eb63ceae1bb9e321b7ec76797b31733641b2363559b",
+      "pyproject.toml": "56803bacf39bcab3ffdb195c1a4192ad9b4ec5c63c6cd992f61241ea37159ac8"
+    },
+    "ground_truth_sha256": "e6d89a3098ee7946424bdd8f61e37611fb0929d5575673bf3456ff76833a737b",
+    "configuration": {
+      "planner": "recorded",
+      "apps": [
+        "composer",
+        "newsletter"
+      ],
+      "model": null,
+      "reasoning_effort": null,
+      "backend": "meta",
+      "supports_vision": true,
+      "json_mode": "json_schema",
+      "rounds": 2,
+      "confirmation_runs": 3,
+      "endpoint": null,
+      "recorded_models": [
+        "muse-spark-1.3"
+      ]
+    },
+    "comparison_fingerprint": "93d9dfdcce92a17c631719d2ac5468b52c2102177fd677f7a9149e07ab78ceca"
+  },
+  "rows": [
+    {
+      "app": "composer",
+      "mode": "buggy",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [
+        "composer-draft",
+        "composer-double"
+      ],
+      "found": [
+        "composer-double",
+        "composer-draft"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "recorded",
+      "fallback": null,
+      "meta_complete": false,
+      "experiments": 4,
+      "browser_runs": 16,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 22.8,
+      "hunt_id": "20261026-225924-4ec873",
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 2
+      },
+      "diagnosis_sources": {
+        "template": 2
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "composer",
+      "mode": "fixed",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "recorded",
+      "fallback": null,
+      "meta_complete": false,
+      "experiments": 4,
+      "browser_runs": 4,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 8.5,
+      "hunt_id": "20261026-225946-b65375",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "newsletter",
+      "mode": "buggy",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [
+        "newsletter-focus",
+        "newsletter-errorloss"
+      ],
+      "found": [
+        "newsletter-errorloss",
+        "newsletter-focus"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "recorded",
+      "fallback": null,
+      "meta_complete": false,
+      "experiments": 4,
+      "browser_runs": 16,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 25.3,
+      "hunt_id": "20261026-225955-44d2c8",
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 4
+      },
+      "diagnosis_sources": {
+        "template": 2
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "newsletter",
+      "mode": "fixed",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "recorded",
+      "fallback": null,
+      "meta_complete": false,
+      "experiments": 4,
+      "browser_runs": 4,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.3,
+      "hunt_id": "20261026-230020-013ca3",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    }
+  ],
+  "errors": [],
+  "recorded_plans": {
+    "composer": {
+      "path": "eval/recorded/composer-muse-spark-1.3.json",
+      "sha256": "ec69a6685d6cc4e64bbb626d381590f6428dd547451e239c4382da6babf5e1b5",
+      "provenance": {
+        "model": "muse-spark-1.3",
+        "where": "Meta Model API playground (dev.meta.ai), response format JSON, reasoning effort medium, temperature 1",
+        "when": "2026-10-26T22:09:27Z",
+        "latency_s": 20.1,
+        "tokens": {
+          "input": 1200,
+          "output": 791,
+          "reasoning": 3200
+        },
+        "prompt_version": "v2: faultline.planners.PLANNER_SYSTEM after review (no UI-specific examples) plus a short paragraph listing the JSON keys; the playground uses JSON mode instead of the strict schema the app sends",
+        "user_message": "goal + model_view(inventory) of /demo/composer.html (held-out app)",
+        "note": "Copied from the playground response; rationales were cut at about 100 characters when copied (marked with ...)."
+      }
+    },
+    "newsletter": {
+      "path": "eval/recorded/newsletter-muse-spark-1.3.json",
+      "sha256": "5488acc80f6131b7539e021b5bccaa53f6c0c6d5e905a0ada19ea2483d108c15",
+      "provenance": {
+        "model": "muse-spark-1.3",
+        "where": "Meta Model API playground (dev.meta.ai), response format JSON, reasoning effort medium, temperature 1",
+        "when": "2026-10-26T22:12:12Z",
+        "latency_s": 19.5,
+        "tokens": {
+          "input": 1300,
+          "output": 999,
+          "reasoning": 2800
+        },
+        "prompt_version": "v2: faultline.planners.PLANNER_SYSTEM after review (no UI-specific examples) plus a short paragraph listing the JSON keys; the playground uses JSON mode instead of the strict schema the app sends",
+        "user_message": "goal + model_view(inventory) of /demo/newsletter.html (held-out app)",
+        "note": "Copied from the playground response; rationales were cut at about 100 characters when copied (marked with ...)."
+      }
+    }
+  },
+  "coverage": {
+    "planned": 4,
+    "completed": 4,
+    "errors": 0,
+    "not_completed": 0,
+    "meta_complete_targets": 0
+  },
+  "browser_runs": 40,
+  "meta_calls": 0,
+  "tokens": {
+    "input": 0,
+    "output": 0
+  },
+  "seconds": 62.9,
+  "dev_apps": {
+    "apps": [],
+    "found": 0,
+    "expected": 0,
+    "planned_expected": 0,
+    "false_positives_on_fixed_builds": 0,
+    "fixed_builds_completed": 0,
+    "fixed_builds_planned": 0,
+    "unexpected_on_buggy_builds": 0
+  },
+  "held_out_apps": {
+    "apps": [
+      "composer",
+      "newsletter"
+    ],
+    "found": 4,
+    "expected": 4,
+    "planned_expected": 4,
+    "false_positives_on_fixed_builds": 0,
+    "fixed_builds_completed": 2,
+    "fixed_builds_planned": 2,
+    "unexpected_on_buggy_builds": 0
+  },
+  "finished_at": "2026-10-26T23:00:27.243882+00:00"
+}

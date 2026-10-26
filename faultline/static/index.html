@@ -3,426 +3,251 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Faultline</title>
+<meta name="color-scheme" content="light">
+<title>Faultline — The experiment notebook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <style>
-/* Seismograph lab notebook: drafting-film paper, fountain-pen ink, a red recording pen. */
-:root{
-  --paper:#e8eef0; --grid:#d2dde2; --grid-strong:#bccbd2; --sheet:#f8fafa;
-  --ink:#1c2a45; --ink-soft:#4f5d78; --pen:#c4203e; --pen-soft:#f6d9df;
-  --ok:#0f7f68; --marker:#f3d55b; --amber:#b56b00;
-  --sans:"Archivo",system-ui,sans-serif; --serif:"Source Serif 4",Georgia,serif;
-}
-*{box-sizing:border-box}
-html{background:var(--paper)}
-body{margin:0;color:var(--ink);font:15px/1.5 var(--sans);font-variation-settings:"wdth" 100;
-  background-color:var(--paper);
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),
-    linear-gradient(var(--grid-strong) 1px,transparent 1px),linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px);
-  background-size:12px 12px,12px 12px,60px 60px,60px 60px;}
-a{color:var(--ink)}
-button,input,textarea{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--marker);outline-offset:2px}
-
-/* Instrument bar */
-.bar{display:grid;grid-template-columns:auto 1fr auto;gap:18px 26px;align-items:end;padding:22px 32px 18px;
-  background:var(--sheet);border-bottom:2px solid var(--ink)}
-.mark{display:flex;align-items:center;gap:12px}
-.mark svg{flex:none}
-.mark h1{margin:0;font-size:34px;line-height:1;font-weight:780;font-variation-settings:"wdth" 70;letter-spacing:-.01em}
-.mark p{margin:2px 0 0;font:italic 14px/1.3 var(--serif);color:var(--ink-soft);max-width:300px}
-.fields{display:grid;grid-template-columns:1fr;gap:8px;min-width:0}
-.field{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--ink);padding:2px 0}
-.field span{flex:none;font-size:13px;color:var(--ink-soft);width:112px}
-.field input{flex:1;min-width:0;border:0;background:transparent;padding:5px 0;font-size:15px;outline:none}
-.field:focus-within{border-color:var(--pen)}
-.switches{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.toggle{display:inline-flex;border:1.5px solid var(--ink);border-radius:20px;overflow:hidden}
-.toggle button{border:0;background:transparent;padding:6px 13px;cursor:pointer;font-size:13.5px;font-variation-settings:"wdth" 88}
-.toggle button[aria-pressed=true]{background:var(--ink);color:var(--sheet)}
-.start{border:0;background:var(--pen);color:#fff;border-radius:20px;padding:9px 20px;font-weight:700;font-size:15px;
-  font-variation-settings:"wdth" 92;cursor:pointer;box-shadow:0 2px 0 #7d1427}
-.start:disabled{background:var(--ink-soft);box-shadow:none;cursor:progress}
-.specimens{grid-column:1/-1;display:flex;gap:6px 18px;flex-wrap:wrap;align-items:baseline;font-size:14px}
-.specimens b{font-weight:600;color:var(--ink-soft);font-size:13px}
-.specimens button{border:0;background:none;padding:2px 0;cursor:pointer;border-bottom:2px solid transparent}
-.specimens button[aria-pressed=true]{border-bottom-color:var(--pen);font-weight:650}
-.specimens em{font:italic 12px var(--serif);color:var(--ink-soft);margin-left:3px}
-.model{font-size:12.5px;color:var(--ink-soft);text-align:right}
-
-/* Seismogram: the one loud element */
-.drum{margin:22px 32px 0;background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;position:relative;
-  display:grid;grid-template-columns:1fr 170px}
-.drum svg{display:block;width:100%;height:170px}
-.readouts{border-left:1.5px dashed var(--grid-strong);padding:12px 16px;display:grid;align-content:center;gap:6px}
-.readouts div{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--ink-soft)}
-.readouts b{color:var(--ink);font-size:20px;font-weight:700;font-variation-settings:"wdth" 75;font-variant-numeric:tabular-nums}
-.statusline{margin:10px 32px 0;font:italic 16px/1.4 var(--serif);min-height:24px}
-.statusline .pen{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pen);margin-right:9px;
-  vertical-align:1px;animation:blink 1s steps(2) infinite}
-@keyframes blink{50%{opacity:.15}}
-
-/* Notebook */
-.notebook{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:26px;padding:20px 32px 70px;align-items:start}
-.notebook h2{font-size:19px;margin:0 0 10px;font-weight:720;font-variation-settings:"wdth" 80}
-.idle{font:italic 17px/1.5 var(--serif);color:var(--ink-soft);max-width:62ch;margin-top:6px}
-.hyps{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
-.hyps li{border-bottom:1px solid var(--grid-strong);padding:9px 0 9px 26px;position:relative;font-size:14px;line-height:1.4}
-.hyps li::before{content:"";position:absolute;left:3px;top:13px;width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ink-soft)}
-.hyps li.running::before{border-color:var(--pen);animation:blink .8s steps(2) infinite}
-.hyps li.failed::before{background:var(--pen);border-color:var(--pen)}
-.hyps li.passed::before{background:var(--ok);border-color:var(--ok)}
-.hyps li.inapplicable::before{border-style:dashed}
-.hyps li.error::before{border-color:var(--amber);background:repeating-linear-gradient(45deg,var(--amber) 0 2px,transparent 2px 4px)}
-.hyps .verdict{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
-.hyps li.failed .verdict{color:var(--pen);font-weight:600}
-.hyps .round{font:italic 12px var(--serif);color:var(--ink-soft)}
-.rejected{font:italic 13px/1.45 var(--serif);color:var(--ink-soft);margin-top:10px}
-.goal{margin-top:20px}
-.goal label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
-.goal textarea{width:100%;min-height:70px;resize:vertical;background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;
-  padding:9px 11px;font:15px/1.45 var(--serif)}
-.how{margin-top:22px;font:14px/1.5 var(--serif);color:var(--ink-soft)}
-.optin{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:13px;color:var(--ink-soft)}
-.optin input{margin-top:3px;accent-color:var(--pen)}
-.unconfirmed{font:italic 14px/1.5 var(--serif);color:var(--ink-soft);margin:0 0 22px;padding-left:18px}
-.how ol{padding-left:20px;margin:6px 0 0}
-
-/* Findings: report sheets with a red margin line */
-.sheet{background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:22px;position:relative;
-  padding:20px 24px 18px 54px;box-shadow:5px 5px 0 var(--grid-strong)}
-.sheet::before{content:"";position:absolute;left:36px;top:0;bottom:0;border-left:2px solid var(--pen)}
-.sheet .num{position:absolute;left:8px;top:18px;width:22px;text-align:center;font-weight:800;font-size:15px;color:var(--pen);
-  font-variation-settings:"wdth" 70}
-.sheet h3{margin:0 0 4px;font-size:21px;line-height:1.25;font-weight:720;font-variation-settings:"wdth" 82;max-width:46ch}
-.facts{font-size:13.5px;color:var(--ink-soft);display:flex;gap:4px 16px;flex-wrap:wrap}
-.facts strong{color:var(--pen)}
-.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:22px;margin-top:16px}
-.steps{margin:0;padding-left:22px;font-size:15px;line-height:1.6}
-.inject{display:inline-block;margin-top:8px;padding:1px 6px;background:linear-gradient(transparent 12%,var(--marker) 12%,var(--marker) 88%,transparent 88%);font-size:14px}
-.inject.none{background:none;padding:0;font:italic 14px var(--serif);color:var(--ink-soft)}
-.compare{margin-top:14px;display:grid;grid-template-columns:auto 1fr;gap:3px 14px;align-items:baseline}
-.compare dt{font-size:13px;color:var(--ink-soft)}
-.compare dd{margin:0;font:17px/1.35 var(--serif)}
-.compare .exp{color:var(--ok)}
-.compare .act{color:var(--pen);text-decoration:underline wavy var(--pen);text-underline-offset:4px;text-decoration-thickness:1.2px}
-.why{margin-top:10px;font:italic 14px/1.45 var(--serif);color:var(--ink-soft)}
-figure{margin:0}
-figure img{width:100%;display:block;border:1.5px solid var(--ink);border-radius:3px;background:#fff}
-figcaption{font:italic 13px var(--serif);color:var(--ink-soft);margin-top:5px}
-.diag{margin-top:16px;border-top:1px dashed var(--grid-strong);padding-top:12px;font:16px/1.55 var(--serif);max-width:75ch}
-.diag h4{font:700 14px var(--sans);margin:0 0 6px;font-variation-settings:"wdth" 85}
-.diag h4 span{font:italic 400 13px var(--serif);color:var(--ink-soft);margin-left:6px}
-.diag p{margin:4px 0}
-.diag i{font-style:normal;font-family:var(--sans);font-size:13px;color:var(--ink-soft);margin-right:6px}
-.diag code{background:var(--pen-soft);padding:0 4px;border-radius:2px;font-size:14px}
-.tools{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;margin-top:16px;padding-top:12px;border-top:1px dashed var(--grid-strong)}
-.tool{border:1.5px solid var(--ink);background:var(--sheet);border-radius:20px;padding:5px 13px;font-size:13.5px;text-decoration:none;cursor:pointer}
-.tool.main{background:var(--ink);color:var(--sheet)}
-.retest{display:flex;flex:1;min-width:300px;align-items:center;gap:8px}
-.retest input{flex:1;min-width:0;border:0;border-bottom:1.5px solid var(--ink);background:transparent;padding:4px 0;font-size:13.5px}
-.result{font-weight:650;font-size:14px}
-.result.ok{color:var(--ok)}.result.bad{color:var(--pen)}
-details.log{margin-top:22px;font-size:13px;color:var(--ink-soft)}
-details.log div{max-height:220px;overflow:auto;padding:6px 0;font:13px/1.55 var(--serif)}
-@media (max-width:1000px){
-  .bar{grid-template-columns:1fr}.switches{justify-content:flex-start}.model{text-align:left}
-  .drum{grid-template-columns:1fr}.readouts{border-left:0;border-top:1.5px dashed var(--grid-strong);grid-template-columns:repeat(2,1fr)}
-  .notebook{grid-template-columns:1fr}.split{grid-template-columns:1fr}
-  .bar,.notebook{padding-left:16px;padding-right:16px}.drum,.statusline{margin-left:16px;margin-right:16px}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+/* Graph paper, blue ink and one red recording pen. */
+:root{--paper:#e8eef0;--grid:#d6e0e4;--grid-strong:#c4d1d8;--sheet:#f8fafa;--ink:#1c2a45;--ink-soft:#48566e;--pen:#c4203e;--pen-soft:#f9e8ec;--ok:#17624d;--ok-soft:#e8f2ed;--amber:#825000;--amber-soft:#fbf0df;--sans:"Archivo",system-ui,sans-serif;--serif:"Source Serif 4",Georgia,serif}
+*{box-sizing:border-box}html{background:var(--paper)}body{margin:0;color:var(--ink);font:15px/1.5 var(--sans);font-variation-settings:"wdth" 100;background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(var(--grid-strong) 1px,transparent 1px),linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px);background-size:12px 12px,12px 12px,60px 60px,60px 60px}
+a{color:inherit;text-underline-offset:3px}button,input,textarea{font:inherit;color:inherit}button,a,input,textarea,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:wait;opacity:.7}button,input,textarea{border-radius:2px}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,pre:focus-visible{outline:3px solid var(--ink);outline-offset:3px;box-shadow:0 0 0 2px var(--sheet)}button:focus-visible{position:relative;z-index:1}input,textarea{min-width:0;max-width:100%}input[type=checkbox]{accent-color:var(--ink);width:18px;height:18px;flex:none}input[type=file]{display:block;width:100%;font-size:14px}input::file-selector-button{font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--ink);padding:9px 12px;margin:5px 10px 5px 0;cursor:pointer}h1,h2,h3,h4,p{overflow-wrap:anywhere}button{overflow-wrap:anywhere}pre{max-width:100%;margin:0;overflow:auto;tab-size:2;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}summary{cursor:pointer;min-height:44px;padding:11px 0;font-weight:600}summary::marker{color:var(--ink-soft)}[hidden]{display:none!important}.skip{position:fixed;left:16px;top:12px;z-index:50;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;padding:12px 18px;background:var(--sheet);border:2px solid var(--ink)}.skip:focus{width:auto;height:auto;clip-path:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.workspace{max-width:1560px;margin:auto}.bar{background:var(--sheet);border-bottom:2px solid var(--ink);padding:25px 36px 17px}.bar-top{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:22px}.mark{display:flex;align-items:center;gap:14px;min-width:0}.mark svg{flex:none}.mark h1{margin:0;font-size:36px;line-height:1;font-weight:780;font-variation-settings:"wdth" 72;letter-spacing:-.025em}.mark p{margin:7px 0 0;font:16px/1.35 var(--serif);color:var(--ink-soft);max-width:450px}.edition{max-width:180px;padding-left:20px;border-left:1px solid var(--grid-strong);font:italic 14px/1.45 var(--serif);color:var(--ink-soft)}.fields{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:14px}.field{display:block;min-width:0}.field span,.field-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}.field input{width:100%;background:var(--sheet);border:1.5px solid var(--ink);padding:11px 12px;font-size:15px;height:46px}.start{border:1.5px solid var(--pen);background:var(--pen);color:white;min-height:46px;padding:10px 26px;font-weight:700;font-size:15px}.start:hover:not(:disabled){background:#a91631;border-color:#a91631}.switch-row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:15px}.switches{display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap}.toggle{display:inline-flex;border:1px solid var(--ink);background:var(--sheet)}.toggle button{border:0;background:transparent;padding:9px 13px;min-height:42px;font-size:13px;border-radius:0}.toggle button+button{border-left:1px solid var(--ink)}.toggle button[aria-pressed=true]{background:var(--ink);color:var(--sheet)}.model{font-size:12px;line-height:1.5;color:var(--ink-soft);max-width:340px;text-align:right;overflow-wrap:anywhere}.specimens{display:flex;gap:4px 18px;flex-wrap:wrap;align-items:center;padding-top:12px;margin-top:15px;border-top:1px solid var(--grid-strong);font-size:13px}.specimens b{font-weight:600;color:var(--ink-soft);margin-right:3px}.specimens button{border:0;background:none;padding:9px 0 7px;min-height:42px;border-bottom:2px solid transparent;border-radius:0}.specimens button[aria-pressed=true]{border-bottom-color:var(--pen);font-weight:700}.specimens em{font:italic 12px var(--serif);color:var(--ink-soft);margin-left:4px}
+.instrument{margin:26px 36px 0;background:var(--sheet);border:1.5px solid var(--ink)}.instrument-heading{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding:15px 20px 0}.instrument-heading h2{font-size:16px;margin:0;font-weight:700}.instrument-heading p{margin:0;font:italic 14px var(--serif);color:var(--ink-soft)}.drum{display:grid;grid-template-columns:minmax(0,1fr) 195px;min-width:0}.drum svg{display:block;width:100%;height:170px}.readouts{border-left:1px dashed var(--grid-strong);padding:15px 20px;display:grid;align-content:center;gap:8px;min-width:0}.readouts div{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12px;color:var(--ink-soft)}.readouts b{color:var(--ink);font-size:23px;line-height:1.15;font-weight:700;font-variation-settings:"wdth" 78;font-variant-numeric:tabular-nums}.phase-band{border-top:1.5px solid var(--ink);padding:14px 20px 15px}.phase-heading{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}.phase-heading strong{font-size:16px;font-weight:700}.phase-heading span{font:italic 14px var(--serif);color:var(--ink-soft)}.phases{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px}.phases li{border-top:2px solid var(--grid-strong);padding:8px 0 0;display:grid;grid-template-columns:auto 1fr;column-gap:6px;align-items:baseline;min-width:0}.phase-number{font:12px var(--serif);font-variant-numeric:tabular-nums;color:var(--ink-soft)}.phase-label{font-size:12px;font-weight:650;overflow-wrap:anywhere}.phase-note{grid-column:2;font-size:11px;color:var(--ink-soft);margin-top:2px;overflow-wrap:anywhere}.phases li[data-state=active]{border-color:var(--pen)}.phases li[data-state=active] .phase-label,.phases li[data-state=active] .phase-note{color:var(--pen);font-weight:700}.phases li[data-state=done]{border-color:var(--ink)}.phases li[data-state=stopped]{border-color:var(--amber)}.phases li[data-state=stopped] .phase-note{color:var(--amber)}.statusline{margin:14px 36px 0;font:16px/1.55 var(--serif);min-height:25px;overflow-wrap:anywhere}.statusline[data-tone=error]{color:var(--pen)}.statusline[data-tone=warning]{color:var(--amber)}
+/* Keep small red/amber text off graph lines so its contrast remains AA. */
+.statusline[data-tone=error],.statusline[data-tone=warning],.hyps li.failed .verdict,.hyps li.confirmed .verdict{background:var(--paper)}
+.notebook{display:grid;grid-template-columns:minmax(230px,285px) minmax(0,1fr);gap:30px;padding:26px 36px 60px;align-items:start}.notebook>*{min-width:0}.notebook h2{font-size:21px;line-height:1.25;margin:0 0 14px;font-weight:720;font-variation-settings:"wdth" 85}.notebook h3{font-size:16px;margin:0 0 8px}.section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:14px}.section-heading>span{font:italic 14px var(--serif);color:var(--ink-soft)}.idle{font:16px/1.6 var(--serif);color:var(--ink-soft);max-width:62ch;margin:0 0 16px}.empty-sheet{background:var(--sheet);border:1px solid var(--grid-strong);padding:30px;min-height:235px;position:relative}.empty-sheet h3{font:600 25px/1.25 var(--serif);margin-bottom:12px;max-width:28ch}.empty-sheet .idle{max-width:48ch}.empty-note{border-top:1px solid var(--grid-strong);padding-top:14px;font-size:13px;color:var(--ink-soft);margin:20px 0 0}.hyps{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}.hyps:empty{border:0}.hyps li{border-bottom:1px solid var(--grid-strong);padding:12px 0 12px 24px;position:relative;font-size:13px;line-height:1.55;overflow-wrap:anywhere}.hyps li::before{content:"";position:absolute;left:2px;top:17px;width:10px;height:10px;border:1.5px solid var(--ink-soft)}.hyps li.running::before{border-color:var(--pen);background:var(--pen-soft)}.hyps li.failed::before,.hyps li.confirmed::before{background:var(--pen);border-color:var(--pen)}.hyps li.passed::before{background:var(--ok);border-color:var(--ok)}.hyps li.inapplicable::before{border-style:dashed}.hyps li.error::before{border-color:var(--amber);background:var(--amber-soft)}.hyps .verdict{display:block;font-size:12px;color:var(--ink-soft);margin-top:4px}.hyps li.failed .verdict,.hyps li.confirmed .verdict{color:var(--pen);font-weight:600}.hyps .round{font:italic 12px var(--serif)}.rejected{font:14px/1.5 var(--serif);color:var(--ink-soft);margin-top:10px;overflow-wrap:anywhere}.goal{margin-bottom:26px}.goal label{display:block;font-size:13px;font-weight:600;margin-bottom:7px}.goal textarea{width:100%;min-height:104px;resize:vertical;background:var(--sheet);border:1px solid var(--ink);padding:10px 11px;font:15px/1.5 var(--serif)}.goal .optin,.optin{display:flex;gap:10px;align-items:flex-start;margin-top:11px;font-size:12px;font-weight:400;line-height:1.55;color:var(--ink-soft)}.optin input{margin:1px 0 0}.how{margin-top:20px;border-top:1px solid var(--grid-strong);font:14px/1.6 var(--serif);color:var(--ink-soft)}.how summary{font:600 13px/1.5 var(--sans)}.how ol{padding-left:20px;margin:0 0 8px}.how li{margin-bottom:8px}.log{font-size:13px;color:var(--ink-soft);border-top:1px solid var(--grid-strong);margin-top:8px}.log div{max-height:250px;overflow:auto;font:13px/1.6 var(--serif);overflow-wrap:anywhere}.log div>div{padding:5px 0;border-bottom:1px solid var(--grid)}.unconfirmed{font:14px/1.6 var(--serif);color:var(--ink-soft);background:var(--sheet);padding:18px 20px 18px 38px;border:1px dashed var(--ink-soft)}
+/* Findings are report sheets, each with its own red ruled margin. */
+.sheet{background:var(--sheet);border:1.5px solid var(--ink);margin-bottom:25px;position:relative;padding:24px 26px 24px 53px;min-width:0}.sheet::before{content:"";position:absolute;left:35px;top:0;bottom:0;border-left:1.5px solid var(--pen)}.sheet .num{position:absolute;left:7px;top:23px;width:22px;text-align:center;font-size:15px;font-weight:750;color:var(--pen);font-variation-settings:"wdth" 72}.sheet h3{margin:0 0 10px;font-size:25px;line-height:1.25;font-weight:720;font-variation-settings:"wdth" 85;max-width:48ch}.facts{font-size:12px;color:var(--ink-soft);display:flex;gap:7px 16px;flex-wrap:wrap}.facts strong{color:var(--pen);font-weight:650}.check-name{margin:21px 0 8px;font-size:13px;line-height:1.5;color:var(--ink-soft)}.compare{display:grid;grid-template-columns:1fr 1fr;margin:0;border:1px solid var(--grid-strong)}.compare>div{padding:15px 17px;min-width:0}.compare>div+div{border-left:1px solid var(--grid-strong);background:var(--pen-soft)}.compare dt{font-size:12px;font-weight:650;margin-bottom:7px}.compare dd{margin:0;font:21px/1.45 var(--serif);overflow-wrap:anywhere;white-space:pre-wrap}.compare .act{color:var(--pen)}.compare .exp{color:var(--ink)}.evidence{margin-top:20px}.evidence figure{margin:0}.evidence figure a{display:block}.evidence img{width:100%;height:auto;display:block;border:1px solid var(--ink);background:#fff}.evidence figcaption{font:italic 13px/1.5 var(--serif);color:var(--ink-soft);margin-top:8px}.reproduction{margin-top:19px;padding-top:16px;border-top:1px solid var(--grid-strong)}.reproduction h4,.diag h4,.retest-block h4{font:700 14px/1.5 var(--sans);margin:0 0 9px}.steps{margin:0;padding-left:22px;font-size:14px;line-height:1.65;overflow-wrap:anywhere}.steps li{padding-left:3px;margin-bottom:3px}.inject{display:block;margin-top:9px;font-size:13px;padding:7px 10px;border-left:3px solid var(--ink-soft);background:var(--paper);overflow-wrap:anywhere}.inject.none{padding-left:0;border:0;background:none;font:italic 14px var(--serif);color:var(--ink-soft)}.why{margin:10px 0 0;font:14px/1.6 var(--serif);color:var(--ink-soft)}.diag{margin-top:18px;border-top:1px solid var(--grid-strong);padding-top:16px;font:16px/1.6 var(--serif)}.diag h4 span{font:italic 400 13px var(--serif);color:var(--ink-soft);margin-left:7px}.diag dl{margin:0;display:grid;grid-template-columns:55px minmax(0,1fr);gap:7px 12px}.diag dt{font:600 12px/1.9 var(--sans);color:var(--ink-soft)}.diag dd{margin:0;overflow-wrap:anywhere}.diag code{font-size:13px;background:var(--paper);padding:2px 4px;white-space:pre-wrap}.code-panel{margin-top:18px;border-top:1px solid var(--ink)}.code-panel summary{font-size:13px}.code-panel pre{padding:16px;background:#eaf0f2;border:1px solid var(--grid-strong);color:var(--ink);max-height:400px}.code-panel .code-state{font:13px/1.5 var(--sans);color:var(--ink-soft);margin:0 0 10px}.tools{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:13px}.tool{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border:1px solid var(--ink);background:var(--sheet);padding:9px 13px;font-size:12px;font-weight:600;text-decoration:none;line-height:1.4}.tool:hover:not(:disabled){background:var(--paper)}.tool.main{background:var(--ink);color:var(--sheet)}.tool.main:hover:not(:disabled){background:#344461}.retest-block{border-top:2px solid var(--ink);margin-top:22px;padding-top:18px}.retest-block .explain{font:14px/1.5 var(--serif);color:var(--ink-soft);margin:0 0 12px}.retest{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.retest label{font-size:12px;font-weight:600;min-width:0}.retest input{display:block;width:100%;margin-top:5px;border:1px solid var(--ink);background:transparent;padding:10px;font-size:13px;height:42px}.result{margin-top:14px;border:1px solid var(--ink-soft);padding:15px 16px;overflow-wrap:anywhere}.result:empty{display:none}.result strong{display:block;font-size:18px;line-height:1.3;font-weight:700}.result p{font:14px/1.5 var(--serif);margin:7px 0 0}.result .tested-url{font:12px/1.5 var(--sans);color:var(--ink-soft);margin-top:8px;word-break:break-word}.result.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}.result.bad{border-color:var(--pen);background:var(--pen-soft);color:var(--pen)}.result.issue{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}.patch-panel{margin-top:20px;border-top:1px solid var(--grid-strong)}.patch-panel summary{font-size:13px}.patch-panel p{font:14px/1.6 var(--serif);color:var(--ink-soft);margin:2px 0 12px}.patch-files{margin:10px 0}.source-file{padding:10px 0;border-bottom:1px solid var(--grid-strong);min-width:0}.source-file label{display:block;font-size:12px}.source-file input{display:block;width:100%;border:1px solid var(--grid-strong);background:var(--sheet);padding:8px;margin-top:4px}.source-file summary{font-size:12px;font-weight:400}.source-file pre{max-height:170px;padding:10px;background:var(--paper)}.patch-actions{margin:12px 0}.patch-output{max-height:420px;background:var(--paper);padding:14px;border:1px solid var(--grid-strong)}.patch-state{margin-top:12px!important;font-family:var(--sans)!important;font-size:13px!important}.footer{padding:0 36px 25px;color:var(--ink-soft);font:italic 13px/1.5 var(--serif)}
+@media(min-width:1280px){.reproduction{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}.reproduction h4{grid-column:1/-1;margin-bottom:-12px}.reproduction .inject:first-child{margin-top:0}}
+@media(max-width:1080px){.notebook{grid-template-columns:minmax(210px,245px) minmax(0,1fr);gap:22px}.bar{padding-left:24px;padding-right:24px}.instrument{margin-left:24px;margin-right:24px}.statusline{margin-left:24px;margin-right:24px}.notebook{padding-left:24px;padding-right:24px}.sheet{padding-right:19px}.retest{grid-template-columns:1fr}.retest .tool{justify-self:start}.switch-row{align-items:flex-start;flex-direction:column}.model{text-align:left;max-width:none}.phase-band{padding-left:16px;padding-right:16px}.phases{gap:7px}.phase-label{font-size:11px}}
+@media(max-width:760px){.bar{padding:20px 16px 14px}.edition{display:none}.mark h1{font-size:33px}.mark p{font-size:15px}.bar-top{padding-bottom:19px}.fields{grid-template-columns:1fr}.start{justify-self:stretch}.instrument{margin:20px 16px 0}.instrument-heading{padding:13px 14px 0;gap:10px}.instrument-heading p{font-size:12px}.drum{grid-template-columns:1fr}.drum svg{height:145px}.readouts{border-left:0;border-top:1px dashed var(--grid-strong);grid-template-columns:1fr 1fr;column-gap:22px;row-gap:10px;padding:14px}.readouts b{font-size:21px}.phase-band{padding:13px 14px 14px}.phase-heading{display:block}.phase-heading span{display:block;margin-top:3px}.phases{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 8px}.phase-label{font-size:12px}.phase-note{font-size:11px}.statusline{margin:13px 16px 0;font-size:15px}.notebook{grid-template-columns:1fr;padding:23px 16px 35px;gap:25px}.setup{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}.setup .goal{margin-bottom:0}.setup .hyp-section{grid-column:2;grid-row:1/4}.setup .how,.setup .log{grid-column:1}.sheet{padding:20px 19px 20px 42px}.sheet::before{left:28px}.sheet .num{left:4px;top:21px;width:19px;font-size:13px}.sheet h3{font-size:22px}.compare>div{padding:12px}.compare dd{font-size:19px}.footer{padding-left:16px;padding-right:16px}}
+@media(max-width:520px){.mark{gap:10px}.mark svg{width:40px;height:40px}.mark p{max-width:250px}.switches{gap:10px}.toggle button{font-size:12px;padding-left:10px;padding-right:10px}.specimens{gap:2px 15px}.specimens b{flex-basis:100%}.setup{display:block}.goal{margin-bottom:25px!important}.setup .hyp-section{margin-bottom:20px}.phases{grid-template-columns:repeat(3,minmax(0,1fr))}.phase-number{font-size:11px}.instrument-heading p{max-width:140px;text-align:right}.empty-sheet{padding:22px;min-height:210px}.empty-sheet h3{font-size:23px}.sheet{padding:19px 14px 20px 35px}.sheet::before{left:23px}.sheet .num{left:2px;width:18px;top:20px;font-size:12px}.sheet h3{font-size:21px}.facts{gap:5px 12px}.compare{grid-template-columns:1fr}.compare>div+div{border-left:0;border-top:1px solid var(--grid-strong)}.diag dl{grid-template-columns:1fr;gap:3px}.diag dd{margin-bottom:7px}.diag h4 span{display:block;margin:4px 0 0}.tool{padding:9px 11px}.retest .tool{width:100%}.section-heading>span{font-size:12px}.code-panel pre{padding:11px}.result{padding:13px}.result strong{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
+<a class="skip" href="#findings">Skip to findings</a>
+<div class="workspace">
 <header class="bar">
-  <div class="mark">
-    <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
-      <circle cx="23" cy="23" r="21.5" fill="#f8fafa" stroke="#1c2a45" stroke-width="1.5"/>
-      <polyline points="5,25 12,25 15,20 18,29 21,8 25,38 28,18 31,27 34,23 41,23" fill="none" stroke="#c4203e" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
-    </svg>
-    <div><h1>Faultline</h1><p>Breaks your web app on purpose, then hands you the failing test.</p></div>
+  <div class="bar-top">
+    <div class="mark">
+      <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#f8fafa" stroke="#1c2a45" stroke-width="1.5"/><path d="M5 26H13L16 20 19 30 22 9 26 39 29 19 32 28 35 24H42" fill="none" stroke="#c4203e" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <div><h1>Faultline</h1><p>Break your app on purpose. Keep the failing test.</p></div>
+    </div>
+    <p class="edition">An experiment notebook<br>for the bugs that depend on timing.</p>
   </div>
   <div class="fields">
-    <label class="field"><span>Your local app</span><input id="url" spellcheck="false" autocomplete="off"></label>
+    <label class="field"><span>Your local app</span><input id="url" type="url" spellcheck="false" autocomplete="off" aria-describedby="targetHelp" required></label>
+    <button class="start" id="run" type="button">Start hunt</button>
   </div>
-  <div>
+  <span id="targetHelp" class="sr-only">Enter the URL of a local development server. Choose a demo below to try Faultline.</span>
+  <div class="switch-row">
     <div class="switches">
-      <div class="toggle" role="group" aria-label="Build">
-        <button type="button" data-mode="buggy" aria-pressed="true">Buggy build</button>
-        <button type="button" data-mode="fixed" aria-pressed="false">Fixed build</button>
-      </div>
-      <div class="toggle" role="group" aria-label="Planner">
-        <button type="button" data-planner="meta" aria-pressed="true">Muse plans</button>
-        <button type="button" data-planner="heuristic" aria-pressed="false">Rules only</button>
-      </div>
-      <button class="start" id="run">Start hunt</button>
+      <div class="toggle" role="group" aria-label="Demo build"><button type="button" data-mode="buggy" aria-pressed="true">Buggy build</button><button type="button" data-mode="fixed" aria-pressed="false">Fixed build</button></div>
+      <div class="toggle" role="group" aria-label="Planner"><button type="button" data-planner="meta" aria-pressed="true">Muse plans</button><button type="button" data-planner="heuristic" aria-pressed="false">Rules only</button></div>
     </div>
-    <div class="model" id="model">&nbsp;</div>
+    <div class="model" id="model" role="status">Checking the model connection…</div>
   </div>
-  <nav class="specimens" id="demos" aria-label="Demo apps"><b>Demo apps</b></nav>
+  <nav class="specimens" id="demos" aria-label="Demo apps"><b>Try a specimen</b></nav>
 </header>
-
-<section class="drum" aria-label="Seismogram of the hunt">
-  <svg id="seis" viewBox="0 0 1000 170" preserveAspectRatio="none" role="img" aria-label="Each experiment draws a tick; verified failures spike in red"></svg>
-  <div class="readouts">
-    <div>Hypotheses <b id="sExp">0</b></div>
-    <div>Browser runs <b id="sRuns">0</b></div>
-    <div>Muse calls <b id="sCalls">0</b></div>
-    <div>Elapsed <b id="sTime">0.0s</b></div>
-  </div>
-</section>
-<p class="statusline" id="status">Pick a demo app, or paste the URL of your own app running on localhost, then start a hunt.</p>
-
-<div class="notebook">
-  <aside>
-    <h2>Hypotheses</h2>
-    <p class="idle" id="hypIdle">Muse reads the page and proposes ways it could lose the user's work. Each one becomes an experiment.</p>
-    <ul class="hyps" id="hyps"></ul>
-    <div class="rejected" id="rejected"></div>
-    <div class="goal">
-      <label for="goal">What must never break?</label>
-      <textarea id="goal" maxlength="600">Users must never lose what they typed or see stale data, even on a slow or failing network.</textarea>
-      <label class="optin"><input type="checkbox" id="sendSource"> Let Muse read this page's own scripts, so the diagnosis can point at the faulty code. Only use this for apps you are allowed to share.</label>
+<main>
+  <section class="instrument" aria-labelledby="instrumentTitle">
+    <div class="instrument-heading"><h2 id="instrumentTitle">The seismograph</h2><p>A red spike marks a verified failure.</p></div>
+    <div class="drum">
+      <svg id="seis" viewBox="0 0 1000 170" preserveAspectRatio="none" role="img" aria-label="No experiments recorded yet"></svg>
+      <div class="readouts" aria-label="Run totals"><div>Hypotheses <b id="sExp">0</b></div><div>Browser runs <b id="sRuns">0</b></div><div>Model calls <b id="sCalls">0</b></div><div>Elapsed <b id="sTime">0.0s</b></div></div>
     </div>
-    <div class="how">How a hunt works:
-      <ol>
-        <li>Faultline explores the page, its hidden dialogs and API calls.</li>
-        <li>Muse proposes competing hypotheses and designs one experiment for each.</li>
-        <li>Playwright runs them with slowed or failing requests and checks the invariants. The model never grades itself.</li>
-        <li>Muse reads the verified results and designs follow-ups.</li>
-        <li>Every failure is minimized, re-run three times, diagnosed and exported as a Playwright test.</li>
-      </ol>
+    <div class="phase-band">
+      <div class="phase-heading"><strong id="phaseCurrent">Ready to explore</strong><span id="phaseDetail">Each step leaves evidence in the notebook.</span></div>
+      <ol class="phases" id="phases" aria-label="Hunt phases"></ol>
     </div>
-    <details class="log"><summary>Event log</summary><div id="log"></div></details>
-  </aside>
-  <section>
-    <h2>Verified failures</h2>
-    <div id="cxs"><p class="idle">Nothing recorded yet. Failures appear here only after Playwright has reproduced them.</p></div>
   </section>
-</div>
-
-<script>
-const DEMOS = [['profile','Profile editor'],['search','Live search'],['checkout','Checkout'],['settings','Settings'],
-  ['composer','Release notes','held out'],['newsletter','Newsletter','held out']];
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let demo = 'profile', mode = 'buggy', planner = 'meta', hunt = null, since = 0, t0 = 0, running = false;
-const hyp = {};      // id -> {h, status}
-let trace = [];      // seismogram segments
-
-const demoUrl = (name, m) => `${location.origin}/demo/${name}.html?mode=${m}`;
-const setUrl = () => { if (demo) $('url').value = demoUrl(demo, mode); };
-$('demos').insertAdjacentHTML('beforeend', DEMOS.map(([k, label, note]) =>
-  `<button type="button" data-demo="${k}" aria-pressed="${k === demo}">${label}${note ? `<em>${note}</em>` : ''}</button>`).join(''));
-function press(attr, value) { document.querySelectorAll(`[data-${attr}]`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[attr] === value))); }
-document.addEventListener('click', e => {
-  const d = e.target.closest('[data-demo]'); if (d) { demo = d.dataset.demo; press('demo', demo); setUrl(); }
-  const m = e.target.closest('[data-mode]'); if (m) { mode = m.dataset.mode; press('mode', mode); setUrl(); }
-  const p = e.target.closest('[data-planner]'); if (p) { planner = p.dataset.planner; press('planner', planner); }
-});
-$('url').addEventListener('input', () => { demo = null; press('demo', ''); });
-setUrl();
-
-fetch('/api/config').then(r => r.json()).then(c => {
-  $('model').textContent = c.meta_configured ? `Meta Model API: ${c.model}, reasoning ${c.reasoning_effort || 'default'}`
-    : 'No MODEL_API_KEY set, so hunts use the rules-only planner.';
-});
-
-/* ---------- seismogram ---------- */
-let seed = 7;
-const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-function addTrace(kind, label) { trace.push({ kind, label, n: Array.from({ length: 9 }, rnd) }); drawTrace(); }
-function drawTrace() {
-  const W = 1000, H = 170, mid = 98;
-  const unit = Math.min(26, (W - 30) / Math.max(trace.length, 1));
-  let x = 10, d = `M0 ${mid} L${x} ${mid}`, marks = '', flags = '';
-  for (const seg of trace) {
-    const amp = { quiet: 3, tick: 7, passed: 12, inapplicable: 1, error: 18, failed: 66 }[seg.kind] ?? 4;
-    const steps = seg.n.length, dx = unit / steps;
-    let fail = `M${x} ${mid}`;
-    seg.n.forEach((v, i) => {
-      const sign = i % 2 ? 1 : -1;
-      const a = seg.kind === 'failed' ? amp * (i === 4 ? 1 : i === 3 || i === 5 ? .55 : .12 + v * .2) : amp * (.35 + v * .65);
-      x += dx;
-      const y = (mid + sign * a).toFixed(1);
-      d += ` L${x.toFixed(1)} ${y}`;
-      if (seg.kind === 'failed') fail += ` L${x.toFixed(1)} ${y}`;
-    });
-    if (seg.kind === 'failed') marks += `<path d="${fail}" fill="none" stroke="#c4203e" stroke-width="2.4" stroke-linejoin="round"/>`;
-    if (seg.label) flags += `<g transform="translate(${(x - unit / 2).toFixed(1)},14)"><line x1="0" y1="10" x2="0" y2="${mid - 80}" stroke="#c4203e" stroke-dasharray="2 3"/>
-      <text x="0" y="6" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="13" fill="#c4203e">${esc(seg.label)}</text></g>`;
-  }
-  const grid = Array.from({ length: 9 }, (_, i) => `<line x1="0" x2="${W}" y1="${10 + i * 19}" y2="${10 + i * 19}" stroke="#d2dde2" stroke-width="1"/>`).join('');
-  const pen = running ? `<circle cx="${x}" cy="${mid}" r="5" fill="#c4203e"><animate attributeName="opacity" values="1;.2;1" dur="1s" repeatCount="indefinite"/></circle>` : '';
-  $('seis').innerHTML = `${grid}<path d="${d}" fill="none" stroke="#1c2a45" stroke-width="1.6" stroke-linejoin="round"/>${marks}${flags}${pen}`;
-}
-drawTrace();
-
-/* ---------- hypotheses ---------- */
-function describe(h, names) {
-  const n = ref => `“${names[ref] || ref}”`;
-  return h.steps.map(s => ({ click: () => `Click ${n(s.ref)}`, dblclick: () => `Double-click ${n(s.ref)}`,
-    fill: () => `Enter “${s.value}” into ${n(s.ref)}`, type: () => `Type “${s.value}” into ${n(s.ref)}`,
-    press: () => `Press ${s.key}`, wait: () => `Wait ${s.ms} ms`, reload: () => 'Reload the page' }[s.action] || (() => s.action))());
-}
-const VERDICT = { queued: 'waiting', running: 'running in the browser…', passed: 'held up', failed: 'broke',
-  inapplicable: 'did not apply to this page', error: 'could not run' };
-function renderHyps() {
-  const items = Object.values(hyp);
-  $('hypIdle').hidden = items.length > 0;
-  $('hyps').innerHTML = items.map(({ h, status }) =>
-    `<li class="${status}">${esc(h.claim)}<span class="verdict">${VERDICT[status] || status}${h.round > 1 ? ` <span class="round">follow-up round ${h.round}</span>` : ''}</span></li>`).join('');
-  $('sExp').textContent = items.length;
-}
-
-/* ---------- findings ---------- */
-function renderCx(cx, huntId, i) {
-  const d = cx.diagnosis || {};
-  const fixedUrl = $('url').value.includes('mode=buggy') ? $('url').value.replace('mode=buggy', 'mode=fixed') : $('url').value;
-  const inject = cx.text.perturbations.length
-    ? cx.text.perturbations.map(p => `<span class="inject">${esc(p)}</span>`).join('<br>')
-    : '<span class="inject none">No network fault needed: it breaks every time.</span>';
-  return `<article class="sheet"><span class="num">${i + 1}</span>
-    <h3>${esc(cx.title)}</h3>
-    <div class="facts"><span><strong>Reproduced ${cx.confirmation.failures} of ${cx.confirmation.runs} runs</strong></span>
-      <span>Minimized from ${cx.original_steps} to ${cx.experiment.steps.length} steps</span>
-      <span>${esc(cx.fault_class.replaceAll('_', ' '))}</span></div>
-    <div class="split">
-      <div>
-        <ol class="steps">${cx.text.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
-        ${inject}
-        <dl class="compare"><dt>Check</dt><dd>${esc(cx.failure.invariant)}</dd>
-          <dt>Expected</dt><dd class="exp">${esc(cx.failure.expected)}</dd>
-          <dt>Actual</dt><dd class="act">${esc(cx.failure.actual)}</dd></dl>
-        <p class="why">${esc(cx.attribution)}</p>
+  <p class="statusline" id="status" role="status" aria-live="polite" aria-atomic="true">Pick a demo or enter your local app, then start a hunt.</p>
+  <div class="notebook">
+    <aside class="setup" aria-label="Experiment setup and hypotheses">
+      <div class="goal">
+        <label for="goal">What must never break?</label>
+        <textarea id="goal" maxlength="600">Users must never lose what they typed or see stale data, even on a slow or failing network.</textarea>
+        <label class="optin"><input type="checkbox" id="sendSource"><span>Share this page’s inline scripts with Muse for diagnosis. Only share code you are allowed to send.</span></label>
       </div>
-      ${cx.screenshot ? `<figure><a href="/api/hunts/${huntId}/${cx.id}/screenshot" target="_blank"><img alt="The failing state" src="/api/hunts/${huntId}/${cx.id}/screenshot"></a>
-        <figcaption>Captured by Playwright at the moment the check failed.</figcaption></figure>` : '<div></div>'}
-    </div>
-    <div class="diag"><h4>${d.source === 'meta' ? 'Muse diagnosis' : 'Rule-based explanation'}<span>${d.source === 'meta' ? `confidence ${esc(d.confidence)}` : 'no model involved'}</span></h4>
-      <p><i>Cause</i>${esc(d.root_cause)}</p>
-      ${d.code_reference ? `<p><i>Where</i><code>${esc(d.code_reference)}</code></p>` : ''}
-      <p><i>Impact</i>${esc(d.user_impact)}</p>
-      <p><i>Fix</i>${esc(d.fix)}</p></div>
-    <div class="tools">
-      <a class="tool main" href="/api/hunts/${huntId}/${cx.id}/spec">Download Playwright test</a>
-      <a class="tool" href="/api/hunts/${huntId}/${cx.id}/repro">repro.json</a>
-      ${cx.trace ? `<a class="tool" href="/api/hunts/${huntId}/${cx.id}/trace">Trace</a>` : ''}
-      <span class="retest"><input id="rt-${cx.id}" value="${esc(fixedUrl)}" aria-label="Build to re-test" spellcheck="false">
-        <button class="tool" data-retest="${cx.id}">Re-test this build</button></span>
-      <span class="result" id="v-${cx.id}"></span>
-    </div></article>`;
-}
+      <section class="hyp-section" aria-labelledby="hypTitle"><h2 id="hypTitle">Hypotheses</h2><p class="idle" id="hypIdle">Muse proposes an experiment. Playwright checks what actually happens.</p><ul class="hyps" id="hyps"></ul><div class="rejected" id="rejected"></div></section>
+      <details class="how"><summary>How a hunt works</summary><ol><li>Explore controls, dialogs and requests.</li><li>Ask Muse for testable hypotheses.</li><li>Run experiments with network faults.</li><li>Use the results to plan a follow-up.</li><li>Minimize failures, confirm them, then export a test.</li></ol><p>The model proposes. The browser provides the evidence.</p></details>
+      <details class="log"><summary>Event log</summary><div id="log" tabindex="0" aria-label="Timestamped run events"></div></details>
+    </aside>
+    <section id="findings" tabindex="-1" aria-labelledby="findingsTitle">
+      <div class="section-heading"><h2 id="findingsTitle">Verified failures</h2><span id="findingCount">No findings yet</span></div>
+      <div id="cxs"><div class="empty-sheet"><h3>Some bugs only appear when the timing is wrong.</h3><p class="idle">Slow a response. Interrupt a save. Repeat a click. Each confirmed failure becomes a reproducible experiment and a test you can keep.</p><p class="empty-note">Findings appear after browser checks and repeated confirmation.</p></div></div>
+    </section>
+  </div>
+</main>
+<footer class="footer">Local experiments. Meta reasoning. Browser-verified evidence.</footer>
+</div>
+<script>
+'use strict';
+const DEMOS = [['profile','Profile editor'],['search','Live search'],['checkout','Checkout'],['settings','Settings'],['composer','Release notes','held out'],['newsletter','Newsletter','held out']];
+const PHASES = [['explore','Explore'],['hypotheses','Hypotheses'],['verify','Verify'],['followup','Follow-up'],['minimize','Minimize'],['diagnose','Diagnose'],['export','Export']];
+const $ = id => document.getElementById(id);
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const route = (huntId, cxId, part) => `/api/hunts/${encodeURIComponent(huntId)}/${encodeURIComponent(cxId)}/${part}`;
+let demo='profile', mode='buggy', planner='meta', hunt=null, since=0, t0=0, running=false, generation=0, timer=null, currentPhase=null, runTarget='', pollErrors=0, cxCount=0, modelReady=false;
+const hyp = Object.create(null), phaseStates = Object.create(null), patchSources = new Map();
+let trace=[], seed=7;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const demoUrl = (name, build) => `${location.origin}/demo/${name}.html?mode=${build}`;
+const setUrl = () => { if (demo) $('url').value=demoUrl(demo,mode); };
+function press(attr,value){document.querySelectorAll(`[data-${attr}]`).forEach(button=>button.setAttribute('aria-pressed',String(button.dataset[attr]===value)));}
+$('demos').insertAdjacentHTML('beforeend',DEMOS.map(([key,label,note])=>`<button type="button" data-demo="${key}" aria-pressed="${key===demo}">${label}${note?`<em>${note}</em>`:''}</button>`).join(''));
+document.addEventListener('click',event=>{
+  if(running)return;
+  const d=event.target.closest('[data-demo]');if(d){demo=d.dataset.demo;press('demo',demo);setUrl();}
+  const m=event.target.closest('[data-mode]');if(m){mode=m.dataset.mode;press('mode',mode);setUrl();}
+  const p=event.target.closest('[data-planner]');if(p){planner=p.dataset.planner;press('planner',planner);updatePlannerCopy();}
+});
+$('url').addEventListener('input',()=>{demo=null;press('demo','');});setUrl();
+function updatePlannerCopy(){$('hypIdle').textContent=planner==='heuristic'||!modelReady?'Rules propose experiments. Playwright checks what actually happens.':'Muse proposes an experiment. Playwright checks what actually happens.';}
+function status(message,tone=''){$('status').textContent=message;$('status').dataset.tone=tone;}
+async function jsonResponse(response){const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(detailText(data.detail)||`Request failed (HTTP ${response.status}).`);return data;}
+function detailText(detail){if(!detail)return '';if(Array.isArray(detail))return detail.map(x=>x.msg||'Invalid request').join('; ');return typeof detail==='string'?detail:JSON.stringify(detail);}
+fetch('/api/config').then(jsonResponse).then(config=>{modelReady=Boolean(config.meta_configured);$('model').textContent=modelReady?`${config.model} · ${config.reasoning_effort||'default'} reasoning`:'No Meta key configured. Hunts will use rules only.';updatePlannerCopy();}).catch(()=>{$('model').textContent='Could not read model settings. Check the local server.';});
+function lockSetup(locked){document.querySelectorAll('#url,#goal,#sendSource,#run,[data-demo],[data-mode],[data-planner]').forEach(el=>{el.disabled=locked;});$('run').textContent=locked?'Hunt in progress…':'Start hunt';}
 
-document.addEventListener('click', async e => {
-  const b = e.target.closest('[data-retest]'); if (!b || !hunt) return;
-  const id = b.dataset.retest, out = $('v-' + id);
-  out.className = 'result'; out.textContent = 'Replaying…'; b.disabled = true;
-  try {
-    const r = await fetch('/api/replay', { method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ hunt_id: hunt, cx_id: id, url: $('rt-' + id).value }) });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.detail || 'Replay failed');
-    if (data.status === 'passed') { out.className = 'result ok'; out.textContent = 'Passes. The bug is gone in this build.'; }
-    else if (data.status === 'failed') { out.className = 'result bad'; out.textContent = `Still fails: ${data.failing[0]?.actual ?? ''}`; }
-    else { out.textContent = `${data.status}${data.error ? ': ' + data.error : ''}`; }
-  } catch (err) { out.className = 'result bad'; out.textContent = String(err.message || err); }
-  b.disabled = false;
+/* Phase states are driven by server events, never by a simulated percentage. */
+function renderPhases(){const labels={pending:'Waiting',active:'In progress',done:'Complete',skipped:'Skipped',unused:'Not needed',stopped:'Stopped'};$('phases').innerHTML=PHASES.map(([key,label],index)=>`<li data-phase="${key}" data-state="${phaseStates[key]||'pending'}"${phaseStates[key]==='active'?' aria-current="step"':''}><span class="phase-number">${String(index+1).padStart(2,'0')}</span><span class="phase-label">${label}</span><span class="phase-note">${labels[phaseStates[key]||'pending']}</span></li>`).join('');}
+function resetPhases(){PHASES.forEach(([key])=>phaseStates[key]='pending');currentPhase=null;renderPhases();}
+function setPhase(key,state='active',detail=''){
+  if(!PHASES.some(([name])=>name===key))return;
+  if(state==='skipped'){phaseStates[key]='skipped';renderPhases();return;}
+  if(currentPhase&&currentPhase!==key&&phaseStates[currentPhase]==='active')phaseStates[currentPhase]='done';
+  currentPhase=key;phaseStates[key]='active';$('phaseCurrent').textContent=PHASES.find(([name])=>name===key)[1];$('phaseDetail').textContent=detail||'Working through the evidence.';renderPhases();
+}
+function settlePhases(failed=false){if(currentPhase&&phaseStates[currentPhase]==='active')phaseStates[currentPhase]=failed?'stopped':'done';if(!failed)PHASES.forEach(([key])=>{if(phaseStates[key]==='pending')phaseStates[key]='unused';});$('phaseCurrent').textContent=failed?'Hunt stopped':'Hunt complete';$('phaseDetail').textContent=failed?'Keep the event log for diagnosis.':'Review the evidence and re-test your fix.';renderPhases();}
+resetPhases();
+
+/* The trace updates only when real events arrive. No animation is emitted for reduced motion. */
+const rnd=()=> (seed=(seed*16807)%2147483647)/2147483647;
+function addTrace(kind,label){trace.push({kind,label,n:Array.from({length:9},rnd)});drawTrace();}
+function drawTrace(){
+  const width=1000,mid=99,unit=Math.min(27,(width-32)/Math.max(trace.length,1));let x=12,path=`M0 ${mid} L${x} ${mid}`,marks='',flags='';
+  for(const segment of trace){const amp={quiet:2,tick:7,passed:10,inapplicable:2,error:17,failed:65}[segment.kind]??3,dx=unit/segment.n.length;let red=`M${x.toFixed(1)} ${mid}`;
+    segment.n.forEach((value,index)=>{const sign=index%2?1:-1;const a=segment.kind==='failed'?amp*(index===4?1:index===3||index===5?.55:.12+value*.2):amp*(.35+value*.65);x+=dx;const y=(mid+sign*a).toFixed(1);path+=` L${x.toFixed(1)} ${y}`;if(segment.kind==='failed')red+=` L${x.toFixed(1)} ${y}`;});
+    if(segment.kind==='failed')marks+=`<path d="${red}" fill="none" stroke="#c4203e" stroke-width="2.6" stroke-linejoin="round"/>`;
+    if(segment.label)flags+=`<text x="${(x-unit/2).toFixed(1)}" y="23" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="700" fill="#c4203e">${esc(segment.label)}</text>`;
+  }
+  const grid=Array.from({length:8},(_,i)=>`<line x1="0" x2="1000" y1="${22+i*19}" y2="${22+i*19}" stroke="#d6e0e4"/>`).join('');
+  const pen=running?`<circle cx="${x.toFixed(1)}" cy="${mid}" r="4" fill="#c4203e">${reducedMotion.matches?'':'<animate attributeName="opacity" values="1;.35;1" dur="1.3s" repeatCount="indefinite"/>'}</circle>`:'';
+  $('seis').innerHTML=`${grid}<path d="${path} H1000" fill="none" stroke="#1c2a45" stroke-width="1.7" stroke-linejoin="round"/>${marks}${flags}${pen}`;
+  const failures=trace.filter(item=>item.kind==='failed'&&item.label).length;$('seis').setAttribute('aria-label',`${failures} verified failure${failures===1?'':'s'} marked by red spikes. Detailed results follow below.`);
+}
+reducedMotion.addEventListener('change',drawTrace);drawTrace();
+const VERDICT={queued:'Waiting',running:'Checking in the browser',passed:'Check passed',failed:'Check failed; awaiting confirmation',confirmed:'Verified failure',unconfirmed:'Not consistently reproducible',inapplicable:'Did not apply',error:'Could not run'};
+function renderHyps(){const items=Object.values(hyp);$('hypIdle').hidden=items.length>0;$('hyps').innerHTML=items.map(({h,status:state})=>`<li class="${esc(Object.hasOwn(VERDICT,state)?state:'error')}">${esc(h.claim)}<span class="verdict">${esc(VERDICT[state]||state)}${h.round>1?` <span class="round">· round ${esc(h.round)}</span>`:''}</span></li>`).join('');$('sExp').textContent=String(items.length);}
+function fixedBuild(url){try{const parsed=new URL(url);if(parsed.searchParams.get('mode')==='buggy')parsed.searchParams.set('mode','fixed');return parsed.href;}catch{return url;}}
+function evidenceValue(value){if(value==='')return '“” (empty text)';if(value===null)return 'null';if(value===undefined)return 'Not recorded';return typeof value==='object'?JSON.stringify(value,null,2):String(value);}
+function renderCx(cx,huntId,index){
+  const diagnosis=cx.diagnosis||{},id=esc(cx.id),base=part=>esc(route(huntId,cx.id,part));
+  const perturbations=cx.text.perturbations.length?cx.text.perturbations.map(p=>`<span class="inject">${esc(p)}</span>`).join(''):'<span class="inject none">Reproduced without an injected network fault.</span>';
+  return `<article class="sheet" data-finding="${id}" data-hunt="${esc(huntId)}" aria-labelledby="title-${id}"><span class="num" aria-hidden="true">${String(index+1).padStart(2,'0')}</span>
+    <h3 id="title-${id}">${esc(cx.title)}</h3><div class="facts"><strong>Reproduced ${esc(cx.confirmation.failures)} / ${esc(cx.confirmation.runs)} times</strong><span>${esc(cx.original_steps)} steps reduced to ${esc(cx.experiment.steps.length)}</span><span>${esc(cx.fault_class.replaceAll('_',' '))}</span></div>
+    <p class="check-name">Check: ${esc(cx.failure.invariant)}</p><dl class="compare"><div><dt>Expected</dt><dd class="exp">${esc(evidenceValue(cx.failure.expected))}</dd></div><div><dt>Observed</dt><dd class="act">${esc(evidenceValue(cx.failure.actual))}</dd></div></dl>
+    ${cx.screenshot?`<div class="evidence"><figure><a href="${base('screenshot')}" target="_blank" rel="noopener" aria-label="Open the full screenshot for finding ${index+1}"><img loading="lazy" alt="Browser state when the check failed: ${esc(cx.title)}" src="${base('screenshot')}"></a><figcaption>Captured when the check failed. Select the image to inspect it at full size.</figcaption></figure></div>`:''}
+    <div class="reproduction"><h4>The reduced experiment</h4><ol class="steps">${cx.text.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol><div>${perturbations}<p class="why">${esc(cx.attribution)}</p></div></div>
+    <div class="diag"><h4>${diagnosis.source==='meta'?'Muse diagnosis':'Rule-based explanation'}<span>${diagnosis.source==='meta'?`Model confidence: ${esc(diagnosis.confidence)}`:'No model diagnosis'}</span></h4><dl><dt>Cause</dt><dd>${esc(diagnosis.root_cause)}</dd>${diagnosis.code_reference?`<dt>Where</dt><dd><code>${esc(diagnosis.code_reference)}</code></dd>`:''}<dt>Impact</dt><dd>${esc(diagnosis.user_impact)}</dd><dt>Fix</dt><dd>${esc(diagnosis.fix)}</dd></dl></div>
+    <details class="code-panel" data-spec="${id}"><summary>Preview the generated Playwright test</summary><p class="code-state">The exact exported test will load here.</p><pre tabindex="0" aria-label="Generated Playwright test"><code></code></pre></details>
+    <div class="tools"><a class="tool main" href="${base('spec')}">Download Playwright test</a><a class="tool" href="${base('repro')}">Download repro.json</a>${cx.trace?`<a class="tool" href="${base('trace')}">Download trace</a>`:''}</div>
+    <div class="retest-block"><h4>Did your fix hold?</h4><p class="explain">Run this same counterexample against the build you repaired.</p><div class="retest"><label for="rt-${id}">Build to re-test<input id="rt-${id}" type="url" value="${esc(fixedBuild(runTarget))}" spellcheck="false" autocomplete="off"></label><button class="tool main" type="button" data-retest="${id}">Re-test this build</button></div><div class="result" id="v-${id}" role="status" aria-live="polite" aria-atomic="true"></div></div>
+    <details class="patch-panel" data-patch-panel="${id}"><summary>Ask Muse for a review-only patch</summary><p>Select the source files you want to share, check their paths and contents, then approve sending them. Faultline displays a diff. It never applies or runs it.</p><label class="field-label" for="sources-${id}">Source files to share</label><input id="sources-${id}" type="file" multiple data-patch-files="${id}" accept=".html,.css,.js,.jsx,.ts,.tsx,.vue,.svelte,.py"><div class="patch-files" id="files-${id}"></div><label class="optin"><input type="checkbox" data-patch-consent="${id}"><span>Send only the files shown above to the configured Meta model. I have permission to share them.</span></label><div class="patch-actions"><button class="tool" type="button" data-patch="${id}" disabled>Propose a patch</button></div><p class="patch-state" id="patch-state-${id}" role="status" aria-live="polite">No files selected. Nothing has been sent.</p><pre class="patch-output" id="patch-output-${id}" tabindex="0" aria-label="Proposed diff, for manual review only" hidden><code></code></pre></details>
+  </article>`;
+}
+function findingContext(element){const sheet=element.closest('[data-finding]');return sheet?{sheet,id:sheet.dataset.finding,huntId:sheet.dataset.hunt,token:generation}:null;}
+function current(context){return context.token===generation&&context.huntId===hunt&&context.sheet.isConnected;}
+function showResult(out,tone,title,message,url){out.className=`result ${tone}`;out.replaceChildren();const heading=document.createElement('strong');heading.textContent=title;out.appendChild(heading);if(message){const p=document.createElement('p');p.textContent=message;out.appendChild(p);}const address=document.createElement('p');address.className='tested-url';address.textContent=`Tested build: ${url}`;out.appendChild(address);}
+document.addEventListener('toggle',async event=>{
+  const panel=event.target;if(!(panel instanceof HTMLDetailsElement)||!panel.matches('[data-spec]')||!panel.open||panel.dataset.loaded==='true'||panel.dataset.loading==='true')return;
+  const context=findingContext(panel);if(!context)return;panel.dataset.loading='true';panel.querySelector('.code-state').textContent='Loading the exported test…';
+  try{const response=await fetch(route(context.huntId,context.id,'spec'));if(!response.ok)throw new Error(`Could not load the test (HTTP ${response.status}).`);const code=await response.text();if(!current(context))return;panel.querySelector('code').textContent=code;panel.querySelector('.code-state').textContent='This is the same file as the test download.';panel.dataset.loaded='true';}
+  catch(error){if(current(context))panel.querySelector('.code-state').textContent=`${error.message} Close and reopen to retry.`;}
+  finally{panel.dataset.loading='false';}
+},true);
+document.addEventListener('click',async event=>{
+  const button=event.target.closest('[data-retest]');if(!button||button.disabled||running)return;const context=findingContext(button);if(!context)return;
+  const input=$('rt-'+context.id),out=$('v-'+context.id);if(!input.reportValidity())return;const target=input.value.trim();if(!target){input.focus();return;}
+  button.disabled=true;input.disabled=true;showResult(out,'','Replaying the counterexample…','The same actions and faults are being checked.',target);
+  try{const data=await fetch('/api/replay',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({hunt_id:context.huntId,cx_id:context.id,url:target})}).then(jsonResponse);if(!current(context))return;
+    if(data.status==='passed')showResult(out,'ok','Check passed on this build','This counterexample did not recur. Keep the exported test to catch regressions.',target);
+    else if(data.status==='failed')showResult(out,'bad','The failure still reproduces',`Observed: ${data.failing?.[0]?.actual??'The invariant failed again.'}`,target);
+    else showResult(out,'issue','Re-test was inconclusive',data.error||`The experiment returned “${data.status||'unknown'}”. This does not confirm a fix.`,target);
+  }catch(error){if(current(context))showResult(out,'issue','Re-test could not finish',error.message,target);}
+  finally{if(current(context)){button.disabled=false;input.disabled=false;}}
 });
 
-/* ---------- run loop ---------- */
-function log(msg) {
-  const line = document.createElement('div');
-  line.textContent = `${((performance.now() - t0) / 1000).toFixed(1)} s  ${msg}`;
-  $('log').appendChild(line);
-}
-$('run').addEventListener('click', async () => {
-  for (const k in hyp) delete hyp[k];
-  trace = []; seed = 7; running = true; since = 0; t0 = performance.now();
-  $('run').disabled = true; $('log').innerHTML = ''; $('rejected').innerHTML = ''; renderHyps();
-  ['sRuns', 'sCalls'].forEach(id => $(id).textContent = '0');
-  $('cxs').innerHTML = '<p class="idle">Hunting. Failures appear here once Playwright has reproduced them.</p>';
-  addTrace('quiet');
-  const r = await fetch('/api/hunts', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ url: $('url').value.trim(), goal: $('goal').value, planner,
-      include_source: $('sendSource').checked }) }).catch(() => null);
-  const data = r ? await r.json().catch(() => ({})) : {};
-  if (!r || !r.ok) {
-    $('status').textContent = detailText(data.detail) || `Could not start the hunt${r ? ` (HTTP ${r.status})` : ''}.`;
-    $('run').disabled = false; running = false; drawTrace(); return;
-  }
-  hunt = data.id; pollErrors = 0; loop();
+/* Source stays in browser memory until a separate, explicit consent action. */
+function sourceKey(context){return `${context.huntId}/${context.id}`;}
+function updatePatchButton(context){if(!current(context))return;const ready=(patchSources.get(sourceKey(context))||[]).length>0;const consent=context.sheet.querySelector('[data-patch-consent]').checked;const button=context.sheet.querySelector('[data-patch]');button.disabled=!(ready&&consent)||button.dataset.busy==='true';}
+document.addEventListener('change',async event=>{
+  const input=event.target;if(input.matches('[data-patch-consent]')){const context=findingContext(input);if(context)updatePatchButton(context);return;}if(!input.matches('[data-patch-files]'))return;
+  const context=findingContext(input);if(!context)return;const key=sourceKey(context),state=$('patch-state-'+context.id),list=$('files-'+context.id);patchSources.delete(key);context.sheet.querySelector('[data-patch-consent]').checked=false;list.replaceChildren();$('patch-output-'+context.id).hidden=true;updatePatchButton(context);
+  const selection=Symbol();input.selection=selection;const files=Array.from(input.files||[]);if(!files.length){state.textContent='No files selected. Nothing has been sent.';return;}
+  if(files.length>5||files.some(file=>file.size>64000)||files.reduce((sum,file)=>sum+file.size,0)>160000){state.textContent='Choose at most 5 text files, up to 64 KB each and 160 KB in total. Nothing was sent.';input.value='';return;}
+  state.textContent='Reading the selected files locally…';
+  try{const sources=await Promise.all(files.map(async file=>({path:file.webkitRelativePath||file.name,content:await file.text()})));if(!current(context)||input.selection!==selection)return;
+    if(sources.some(file=>file.content.includes('\u0000')))throw new Error('Select text source files only.');patchSources.set(key,sources);
+    sources.forEach((source,index)=>{const row=document.createElement('div');row.className='source-file';const label=document.createElement('label');label.textContent='Relative path in your project';const path=document.createElement('input');path.type='text';path.value=source.path;path.spellcheck=false;path.dataset.sourceIndex=String(index);label.appendChild(path);row.appendChild(label);const details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=`Review ${source.path}`;pre.textContent=source.content;pre.tabIndex=0;details.append(summary,pre);row.appendChild(details);list.appendChild(row);});state.textContent=`${sources.length} file${sources.length===1?'':'s'} ready for review. Nothing has been sent.`;
+  }catch(error){if(current(context)){state.textContent=`${error.message} Nothing was sent.`;patchSources.delete(key);}}
+  updatePatchButton(context);
+});
+document.addEventListener('input',event=>{if(!event.target.matches('[data-source-index]'))return;const context=findingContext(event.target);if(context){context.sheet.querySelector('[data-patch-consent]').checked=false;updatePatchButton(context);}});
+document.addEventListener('click',async event=>{
+  const button=event.target.closest('[data-patch]');if(!button||button.disabled||running)return;const context=findingContext(button);if(!context)return;const saved=patchSources.get(sourceKey(context))||[],paths=Array.from(context.sheet.querySelectorAll('[data-source-index]'));const files=saved.map((file,index)=>({...file,path:paths[index].value.trim()}));const state=$('patch-state-'+context.id),output=$('patch-output-'+context.id);
+  if(files.some(file=>!file.path||file.path.startsWith('/')||file.path.includes('\\')||file.path.split('/').includes('..')||/^[a-z]:/i.test(file.path))){state.textContent='Use relative project paths without “..”. Nothing was sent.';return;}
+  if(new Set(files.map(file=>file.path)).size!==files.length){state.textContent='Give each file a different relative path. Nothing was sent.';return;}
+  if(!context.sheet.querySelector('[data-patch-consent]').checked)return;
+  button.dataset.busy='true';updatePatchButton(context);const controls=context.sheet.querySelectorAll('[data-patch-files],[data-patch-consent],[data-source-index]');controls.forEach(control=>control.disabled=true);output.hidden=true;state.textContent='Muse is reviewing the selected source and verified failure…';
+  try{const data=await fetch(route(context.huntId,context.id,'patch'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({files,consent:true})}).then(jsonResponse);if(!current(context))return;
+    if(data.status==='proposed'&&typeof data.diff==='string'&&data.diff.trim()){output.querySelector('code').textContent=data.diff;output.hidden=false;state.textContent=`${data.model||'Muse'} proposed this diff. Review and apply it yourself, then re-test this build. It has not been applied or validated as a fix.`;}
+    else state.textContent=data.reason||'No valid patch was returned. No files were changed.';
+  }catch(error){if(current(context))state.textContent=`Could not propose a patch: ${error.message}`;}
+  finally{if(current(context)){button.dataset.busy='false';controls.forEach(control=>control.disabled=false);context.sheet.querySelector('[data-patch-consent]').checked=false;updatePatchButton(context);}}
 });
 
-function detailText(detail) {
-  if (!detail) return '';
-  if (Array.isArray(detail)) return detail.map(d => d.msg || JSON.stringify(d)).join('; ');
-  return String(detail);
+/* Each asynchronous callback belongs to one run generation. */
+function log(message){const line=document.createElement('div');line.textContent=`${((performance.now()-t0)/1000).toFixed(1)} s  ${message}`;$('log').appendChild(line);}
+function stopRun(){running=false;lockSetup(false);if(timer){clearInterval(timer);timer=null;}drawTrace();}
+$('run').addEventListener('click',async()=>{
+  if(running||!$('url').reportValidity())return;const target=$('url').value.trim();if(!target){$('url').focus();return;}
+  const token=++generation;runTarget=target;hunt=null;since=0;pollErrors=0;cxCount=0;trace=[];seed=7;running=true;t0=performance.now();patchSources.clear();for(const key of Object.keys(hyp))delete hyp[key];
+  lockSetup(true);resetPhases();$('phaseCurrent').textContent='Starting the hunt';$('phaseDetail').textContent='Preparing a clean browser.';$('log').replaceChildren();$('rejected').replaceChildren();renderHyps();$('findingCount').textContent='Hunt in progress';$('sRuns').textContent='…';$('sCalls').textContent='…';$('sTime').textContent='0.0s';$('cxs').innerHTML='<div class="empty-sheet"><h3>Collecting evidence.</h3><p class="idle">An initial failure is only a lead. Findings appear after minimization and repeated browser checks.</p><p class="empty-note">Follow the current phase and hypotheses as the hunt runs.</p></div>';status('Starting a hunt against '+target);drawTrace();
+  timer=setInterval(()=>{$('sTime').textContent=((performance.now()-t0)/1000).toFixed(1)+'s';},500);
+  const request={url:target,goal:$('goal').value,planner,include_source:$('sendSource').checked};
+  try{const data=await fetch('/api/hunts',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(request)}).then(jsonResponse);if(token!==generation)return;if(!data.id)throw new Error('The server returned no hunt ID.');hunt=data.id;await loop(token);}
+  catch(error){if(token===generation){stopRun();settlePhases(true);status('Could not start the hunt: '+error.message,'error');$('findingCount').textContent='Hunt did not start';}}
+});
+function legacyPhase(message){if(message.startsWith('Exploring'))return 'explore';if(message.startsWith('Minimizing'))return 'minimize';if(message.startsWith('Round'))return 'followup';if(message.includes('diagnos'))return 'diagnose';if(message.startsWith('Asking'))return 'hypotheses';return null;}
+async function loop(token){
+  if(token!==generation||!running)return;let response;
+  try{response=await fetch(`/api/hunts/${encodeURIComponent(hunt)}?since=${since}`).then(jsonResponse);if(token!==generation)return;pollErrors=0;}
+  catch(error){if(token!==generation)return;pollErrors++;if(pollErrors<8){status(`Waiting for the local server. Retry ${pollErrors} of 8.`,'warning');setTimeout(()=>loop(token),1000);return;}stopRun();settlePhases(true);status(`Lost contact with the local server: ${error.message}`,'error');$('findingCount').textContent='Connection lost';return;}
+  for(const event of response.events||[]){since++;log(event.message||event.kind);
+    if(event.kind==='phase'){const key=event.data?.phase||legacyPhase(event.message||'');if(key)setPhase(key,event.data?.phase_status||'active',event.message||'');status(event.message||'Working…');addTrace('quiet');}
+    if(event.kind==='plan'){for(const h of event.data?.hypotheses||[])hyp[h.id]={h:{...h,round:event.data.round||1},status:'queued'};for(const rejected of event.data?.rejected||[]){const p=document.createElement('p');p.textContent=`Validator rejected: ${rejected.claim||rejected.id} (${rejected.reason}).`;$('rejected').appendChild(p);}renderHyps();}
+    if(event.kind==='experiment'&&hyp[event.data?.id]){hyp[event.data.id].status='running';renderHyps();if(currentPhase!=='verify')setPhase('verify','active',event.message);addTrace('tick');}
+    if(event.kind==='result'&&hyp[event.data?.id]){hyp[event.data.id].status=event.data.status;renderHyps();addTrace(event.data.status==='failed'?'error':event.data.status);}
+    if(event.kind==='counterexample'){cxCount++;addTrace('failed',`#${cxCount}`);$('findingCount').textContent=`${cxCount} confirmed so far`;}
+    if(event.kind==='metrics'){if(Number.isFinite(event.data?.browser_runs))$('sRuns').textContent=String(event.data.browser_runs);if(Number.isFinite(event.data?.meta_calls))$('sCalls').textContent=String(event.data.meta_calls);}
+    if(event.kind==='warning')status(event.message,'warning');
+  }
+  if(response.status==='running'){setTimeout(()=>loop(token),450);return;}
+  stopRun();if(response.status==='error'){settlePhases(true);status(`The hunt stopped: ${response.error||'Unknown error'}`,'error');$('findingCount').textContent='Hunt stopped';return;}
+  if(!response.report){settlePhases(true);status('The hunt ended without a report. Check the event log.','error');return;}
+  settlePhases();finish(response.report);
 }
-
-let cxCount = 0, pollErrors = 0;
-async function loop() {
-  let res;
-  try {
-    const r = await fetch(`/api/hunts/${hunt}?since=${since}`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    res = await r.json();
-    pollErrors = 0;
-  } catch (err) {
-    pollErrors++;
-    if (pollErrors < 8) { setTimeout(loop, 1000); return; }
-    running = false; $('run').disabled = false; drawTrace();
-    $('status').textContent = `Lost contact with the Faultline server (${err.message}). Is it still running?`;
-    return;
-  }
-  for (const ev of res.events) {
-    since++; log(ev.message);
-    if (ev.kind === 'phase') {
-      $('status').innerHTML = `<span class="pen"></span>${esc(ev.message)}`;
-      addTrace('quiet');
-      if (ev.message.startsWith('Asking') || ev.message.startsWith('Round')) $('sCalls').textContent = +$('sCalls').textContent + 1;
-    }
-    if (ev.kind === 'plan') {
-      ev.data.hypotheses.forEach(h => { hyp[h.id] = { h: { ...h, round: ev.data.round || 1 }, status: 'queued' }; });
-      if (ev.data.rejected?.length) $('rejected').innerHTML += ev.data.rejected.map(x => `Rejected by the validator: ${esc(x.claim || x.id)} (${esc(x.reason)}).`).join('<br>') + '<br>';
-      renderHyps();
-    }
-    if (ev.kind === 'experiment' && hyp[ev.data.id]) { hyp[ev.data.id].status = 'running'; renderHyps(); addTrace('tick'); }
-    if (ev.kind === 'result' && hyp[ev.data.id]) {
-      hyp[ev.data.id].status = ev.data.status; renderHyps(); addTrace(ev.data.status);
-      $('sRuns').textContent = +$('sRuns').textContent + 1;
-    }
-    if (ev.kind === 'counterexample') { cxCount++; addTrace('failed', `#${cxCount}`); }
-    if (ev.kind === 'warning') $('status').textContent = ev.message;
-  }
-  $('sTime').textContent = ((performance.now() - t0) / 1000).toFixed(1) + 's';
-  if (res.status === 'running') { setTimeout(loop, 450); return; }
-  running = false; $('run').disabled = false; cxCount = 0; drawTrace();
-  if (res.status === 'error') { $('status').textContent = `The hunt stopped: ${res.error}`; return; }
-  finish(res.report);
-}
-
-function finish(rep) {
-  const names = Object.fromEntries((rep.inventory?.elements || []).map(e => [e.ref, e.name || e.testid || e.ref]));
-  for (const round of rep.rounds) for (const h of round.hypotheses) {
-    hyp[h.id] = { h: { ...h, round: round.round, text: describe(h, names) }, status: h.result.status };
-  }
-  renderHyps();
-  $('sRuns').textContent = rep.stats.browser_runs; $('sCalls').textContent = rep.stats.meta_calls;
-  $('sTime').textContent = rep.stats.duration_s + 's';
-  const who = rep.planner.used === 'meta' ? `Muse (${rep.planner.model}) planned the experiments`
-    : rep.planner.used === 'recorded' ? `A recorded ${rep.planner.model || 'Muse'} plan was replayed` : 'The rules-only planner planned the experiments';
-  const n = rep.counterexamples.length;
-  $('status').textContent = `${n ? `${n} verified failure${n > 1 ? 's' : ''}` : 'No failures'} in ${rep.stats.duration_s} s. ${who}.` +
-    (rep.planner.fallback_reason ? ` (${rep.planner.fallback_reason})` : '');
-  const flaky = (rep.unconfirmed || []).map(u =>
-    `<li>${esc(u.title)}: failed in ${u.confirmation.failures} of ${u.confirmation.runs} re-runs, so it is not reported as verified.</li>`).join('');
-  $('cxs').innerHTML = (n ? rep.counterexamples.map((cx, i) => renderCx(cx, rep.id, i)).join('')
-    : '<p class="idle">Every experiment held up or did not apply. Try a different goal, or switch to the buggy build.</p>')
-    + (flaky ? `<ul class="unconfirmed">${flaky}</ul>` : '');
+function finish(report){
+  runTarget=report.url||runTarget;for(const round of report.rounds||[])for(const h of round.hypotheses||[])hyp[h.id]={h:{...h,round:round.round},status:h.result?.status||'error'};for(const cx of report.counterexamples||[])for(const id of cx.hypothesis_ids||[])if(hyp[id])hyp[id].status='confirmed';for(const item of report.unconfirmed||[])for(const id of item.hypothesis_ids||[])if(hyp[id])hyp[id].status='unconfirmed';renderHyps();$('sRuns').textContent=String(report.stats.browser_runs);$('sCalls').textContent=String(report.stats.meta_calls);$('sTime').textContent=report.stats.duration_s+'s';
+  const who=report.planner.used==='meta'?`${report.planner.model} planned the experiments.`:report.planner.used==='recorded'?`Replayed recorded ${report.planner.model||'Muse'} plans.`:'The rules-only planner designed the experiments.';const count=report.counterexamples.length,proposed=Object.keys(hyp).length,checked=Object.values(hyp).filter(item=>['passed','failed','confirmed','unconfirmed'].includes(item.status)).length;
+  status(`${checked?`${count} verified failure${count===1?'':'s'}`:'No applicable checks completed'} in ${report.stats.duration_s}s. ${who}${report.planner.fallback_reason?' Fallback: '+report.planner.fallback_reason:''}`,report.planner.fallback_reason?'warning':'');$('findingCount').textContent=checked?`${count} finding${count===1?'':'s'}`:'No coverage';
+  const unconfirmed=(report.unconfirmed||[]).map(item=>`<li>${esc(item.title)}: reproduced ${esc(item.confirmation.failures)} / ${esc(item.confirmation.runs)} times. Not counted as verified.</li>`).join('');
+  $('cxs').innerHTML=(count?report.counterexamples.map((cx,index)=>renderCx(cx,report.id,index)).join(''):`<div class="empty-sheet"><h3>${!proposed?'No experiments were available.':!checked?'No applicable checks completed.':'No confirmed failures in this hunt.'}</h3><p class="idle">${!checked?'Faultline did not establish test coverage on this page. A lack of findings is not a passing result.':'Review the hypotheses for coverage and any inconclusive checks. This does not prove the app is free of bugs.'}</p><p class="empty-note">Try another goal or a different page.</p></div>`)+(unconfirmed?`<ul class="unconfirmed">${unconfirmed}</ul>`:'');
 }
 </script>
 </body>

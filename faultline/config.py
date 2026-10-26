@@ -34,23 +34,67 @@ class Settings:
     reasoning_effort: str | None
     allow_remote: bool
     artifacts: Path
+    backend: str = "meta"
+    supports_vision: bool = True
+    json_mode: str = "json_schema"
 
     @property
     def meta_configured(self) -> bool:
-        return bool(self.api_key)
+        return bool(self.api_key) or (self.backend == "open_weights" and is_local_url(self.base_url))
 
 
 def get_settings() -> Settings:
     load_dotenv()
-    effort = os.getenv("META_REASONING_EFFORT", "medium").strip() or None
+    backend = os.getenv("FAULTLINE_MODEL_BACKEND", "meta").strip()
+    if backend not in ("meta", "open_weights"):
+        raise ValueError("FAULTLINE_MODEL_BACKEND must be meta or open_weights")
+    open_weights = backend == "open_weights"
+    prefix = "META_OPEN_" if open_weights else "META_"
+    effort = os.getenv(prefix + "REASONING_EFFORT", "" if open_weights else "medium").strip() or None
     return Settings(
-        api_key=os.getenv("MODEL_API_KEY") or None,
-        base_url=os.getenv("META_BASE_URL", "https://api.meta.ai/v1").rstrip("/"),
-        model=os.getenv("META_MODEL", "muse-spark-1.3"),
+        api_key=os.getenv("META_OPEN_API_KEY" if open_weights else "MODEL_API_KEY") or None,
+        base_url=os.getenv(prefix + "BASE_URL", "http://127.0.0.1:11434/v1" if open_weights
+                           else "https://api.meta.ai/v1").rstrip("/"),
+        model=os.getenv(prefix + "MODEL", "muse-glimmer" if open_weights else "muse-spark-1.3"),
         reasoning_effort=effort,
         allow_remote=os.getenv("FAULTLINE_ALLOW_REMOTE", "0") == "1",
         artifacts=Path(os.getenv("FAULTLINE_ARTIFACTS", str(ROOT / "artifacts"))),
+        backend=backend,
+        supports_vision=not open_weights or os.getenv("META_OPEN_VISION", "0") == "1",
+        json_mode=os.getenv("META_OPEN_JSON_MODE", "json_schema") if open_weights else "json_schema",
     )
+
+
+# Exact published model IDs; endpoint compatibility does not permit another provider's model.
+META_MODELS = frozenset({"muse-spark-1.3", "muse-wonder-1.0"})
+META_OPEN_MODELS = frozenset({
+    "muse-glimmer", "meta-models/Muse-Glimmer-30B",
+    "meta-models/Muse-Spark-Open-816B-A42B",
+    "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "meta/muse-spark-open",
+    "meta-models/muse-spark-open-1026",
+})
+
+
+def validate_model_settings(settings: Settings, *, test_transport: bool = False) -> None:
+    """Refuse unknown model families and credential-bearing or insecure endpoint URLs."""
+    allowed = META_MODELS if settings.backend == "meta" else META_OPEN_MODELS
+    if settings.backend not in ("meta", "open_weights") or settings.model not in allowed:
+        raise ValueError("Only the documented Meta Muse models are supported by this backend")
+    parsed = urlparse(settings.base_url)
+    if (parsed.scheme not in ("http", "https") or not parsed.hostname or parsed.username
+            or parsed.password or parsed.query or parsed.fragment or _SUSPICIOUS.search(settings.base_url)):
+        raise ValueError("Model endpoint must be a plain HTTP(S) base URL without credentials or query parameters")
+    if parsed.scheme != "https" and not is_local_url(settings.base_url):
+        raise ValueError("Remote model endpoints require HTTPS")
+    if settings.backend == "meta" and parsed.hostname != "api.meta.ai" and not test_transport:
+        raise ValueError("The meta backend requires api.meta.ai; use open_weights for a Meta model deployment")
+    if parsed.hostname.lower().endswith(("openai.com", "anthropic.com")):
+        raise ValueError("Only Meta model deployments are supported")
+    if settings.json_mode not in ("json_schema", "json_object"):
+        raise ValueError("Model JSON mode must be json_schema or json_object")
+    if settings.reasoning_effort not in (None, "none", "minimal", "low", "medium", "high", "xhigh"):
+        raise ValueError("Unknown Meta reasoning effort")
 
 
 LOCAL_SUFFIXES = (".localhost", ".test")

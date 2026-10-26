@@ -1,0 +1,150 @@
+
+Running 5 tests using 1 worker
+
+  ✘  1 tests/buggy/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice (1.4s)
+  ✘  2 tests/buggy/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes (2.2s)
+  ✘  3 tests/buggy/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests (1.2s)
+  ✘  4 tests/buggy/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener (2.1s)
+  ✘  5 tests/buggy/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them (2.4s)
+
+
+  1) tests/buggy/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m1[39m
+    Received:    [31m2[39m
+
+      30 |   await page.waitForTimeout(450);
+      31 |   // Invariant: At most 1 POST * request(s) are sent
+    > 32 |   expect(requests.filter((r) => r.method === "POST").length).toBeLessThanOrEqual(1);
+         |                                                              ^
+      33 | });
+      34 |
+        at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/checkout-cx1.spec.ts:32:62
+
+    Error Context: ../faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-checkout-cx1-faultli-258bb-der-sends-the-request-twice/error-context.md
+
+  2) tests/buggy/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveValue[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('notes-input')
+    Expected: [32m"cat release draft"[39m
+    Received: [31m""[39m
+    Timeout:  1000ms
+
+    Call log:
+    [2m  - Expect "toHaveValue" with timeout 1000ms[22m
+    [2m  - waiting for getByTestId('notes-input')[22m
+    [2m    5 × locator resolved to <textarea rows="6" id="notes" data-testid="notes-input"></textarea>[22m
+    [2m      - unexpected value ""[22m
+
+
+      26 |   await page.waitForTimeout(450);
+      27 |   // Invariant: "Release notes" still holds "cat release draft"
+    > 28 |   await expect(page.getByTestId("notes-input")).toHaveValue("cat release draft", { timeout: 1000 });
+         |                                                 ^
+      29 | });
+      30 |
+        at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx1.spec.ts:28:49
+
+    Error Context: ../faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-composer-cx1-faultli-c222d-rds-the-typed-release-notes/error-context.md
+
+  3) tests/buggy/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m1[39m
+    Received:    [31m2[39m
+
+      26 |   await page.waitForTimeout(450);
+      27 |   // Invariant: At most 1 POST * request(s) are sent
+    > 28 |   expect(requests.filter((r) => r.method === "POST").length).toBeLessThanOrEqual(1);
+         |                                                              ^
+      29 | });
+      30 |
+        at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/composer-cx2.spec.ts:28:62
+
+    Error Context: ../faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-composer-cx2-faultli-e6c3f--duplicate-publish-requests/error-context.md
+
+  4) tests/buggy/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeFocused[2m([22m[2m)[22m failed
+
+    Locator:  getByTestId('open-signup')
+    Expected: focused
+    Received: inactive
+    Timeout:  1000ms
+
+    Call log:
+    [2m  - Expect "toBeFocused" with timeout 1000ms[22m
+    [2m  - waiting for getByTestId('open-signup')[22m
+    [2m    5 × locator resolved to <button id="open" class="primary" aria-haspopup="dialog" data-testid="open-signup">Get the newsletter</button>[22m
+    [2m      - unexpected value "inactive"[22m
+
+
+      25 |   await page.waitForTimeout(450);
+      26 |   // Invariant: Focus returns to "Get the newsletter" after the dialog closes
+    > 27 |   await expect(page.getByTestId("open-signup")).toBeFocused({ timeout: 1000 });
+         |                                                 ^
+      28 | });
+      29 |
+        at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx1.spec.ts:27:49
+
+    Error Context: ../faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-newsletter-cx1-fault-5bbe7--return-focus-to-the-opener/error-context.md
+
+  5) tests/buggy/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveValue[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByTestId('signup-email')
+    Expected: [32m"ada@example.com"[39m
+    Received: [31m""[39m
+    Timeout:  1000ms
+
+    Call log:
+    [2m  - Expect "toHaveValue" with timeout 1000ms[22m
+    [2m  - waiting for getByTestId('signup-email')[22m
+    [2m    5 × locator resolved to <input type="email" id="nl-email" autocomplete="off" data-testid="signup-email"/>[22m
+    [2m      - unexpected value ""[22m
+
+
+      45 |   await page.waitForTimeout(450);
+      46 |   // Invariant: "Work email" still holds "ada@example.com"
+    > 47 |   await expect(page.getByTestId("signup-email")).toHaveValue("ada@example.com", { timeout: 1000 });
+         |                                                  ^
+      48 |   // Invariant: "First name" still holds "Ada"
+      49 |   await expect(page.getByTestId("signup-name")).toHaveValue("Ada", { timeout: 1000 });
+      50 | });
+        at /workspace/scratch/17c0b57c4d3f/export-verification/tests/buggy/newsletter-cx2.spec.ts:47:50
+
+    Error Context: ../faultline-next/eval/verification/exports/20261026T230756.112995Z/playwright-artifacts/buggy-newsletter-cx2-fault-63f96--instead-of-preserving-them/error-context.md
+
+  5 failed
+    tests/buggy/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice 
+    tests/buggy/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes 
+    tests/buggy/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests 
+    tests/buggy/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener 
+    tests/buggy/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them 
+
+(node:29) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:105) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:105) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:178) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:178) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:326) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:326) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

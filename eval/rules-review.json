@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "review_status": "partial_official_source_review_not_a_compliance_certification",
+  "source": {
+    "source_url": "https://cerebralvalley.ai/e/meta-ai-developer-hackathon/details",
+    "retrieved_at_utc": "2026-10-26T22:56:41.968747Z",
+    "extracted_content_sha256": "2a0383698be5dc3004c94fc6873b7ba634ffcc5120da11980643ee5a8edd905b",
+    "extracted_content_bytes": 21900,
+    "source_heading": "Hackathon Terms & Conditions (“Official Rules”) and Event Waiver",
+    "source_document_date": "2026-10-25",
+    "extraction_method": "Public HTML Next.js hydration; rich-text document; concatenated text nodes, newline after paragraph or heading.",
+    "content_hash_scope": "Official Rules rich-text document only; the same response also contains the public event overview.",
+    "full_terms_bundled": false
+  },
+  "verified_facts": {
+    "submission_deadline": {
+      "organizer_local": "2026-11-04T21:00:00-05:00",
+      "utc": "2026-11-05T02:00:00Z",
+      "europe_berlin": "2026-11-05T03:00:00+01:00",
+      "source_section": "Public event overview / Key Dates",
+      "conversion": "IANA America/New_York to Europe/Berlin on the deadline date"
+    },
+    "judging_weight_percent": {
+      "impact": 30,
+      "use_of_meta_ai_tooling": 25,
+      "technical_depth_and_execution": 20,
+      "demo": 25
+    },
+    "indie_prize_usd_by_rank": {
+      "1": 150000,
+      "2": 100000,
+      "3": 75000,
+      "4": 50000,
+      "5": 25000
+    },
+    "indie_maximum_team_members": 4,
+    "maximum_tracks_per_participant_and_project": 1,
+    "bonus_prizes": {
+      "aggregate_ceiling_usd": 50000,
+      "guaranteed": false,
+      "category_examples": [
+        "community vote",
+        "most viral project"
+      ],
+      "individual_awards_at_organizer_discretion": true,
+      "announced_on_or_about": "2026-11-10",
+      "reduce_track_prizes": false
+    },
+    "meta_ai_products_used_for_build": true,
+    "third_party_technical_assistance_permitted_subject_to_ownership": true,
+    "open_source_components_permitted_subject_to_licenses_and_building_upon_them": true,
+    "originality_ownership_and_noninfringement_required": true,
+    "submission_portal": "https://cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit"
+  },
+  "not_verified_from_retrieved_sources": [
+    "Best Agentic Use-Case category, amount, and conditions",
+    "Best Open Weights Build category, amount, and mandatory Muse Spark Open or Muse Glimmer use",
+    "Permission to stack multiple bonus prizes with a track prize",
+    "Mandatory public repository or exact demo video length of three minutes",
+    "Explicit policy on ChatGPT or Claude as development assistants",
+    "Specific restriction on pre-existing work or mandatory code creation after kickoff",
+    "Permission or procedure for changing the application idea",
+    "Participant-only submission fields and accepted rules version"
+  ],
+  "provenance_assessment": {
+    "original_author_declaration_retained_in": "docs/PROVENANCE.md",
+    "declaration_summary": "Original author states all project work and commits were made during the hackathon with no prior-project code reused.",
+    "independently_verified": false,
+    "reason": "The reviewed working copy has no .git directory or original commit history. Authorship dates and prior-code origin cannot be established independently from this copy."
+  },
+  "implementation_choices_not_event_requirements": [
+    "Retain evidence for all evaluation runs, including errors and worse results.",
+    "Keep runtime model calls limited to Meta models and disclose development assistance.",
+    "Keep generated diffs review-only and never apply or execute them automatically.",
+    "Prepare a concise video and an accessible reproducible repository, then confirm actual submission requirements.",
+    "Do not claim bonus eligibility or complete rules compliance until participant-specific conditions are verified."
+  ]
+}

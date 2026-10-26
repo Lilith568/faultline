@@ -1,0 +1,15 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 tests/fixed/checkout-cx1.spec.ts:10:5 › faultline: Double-clicking "Place order" sends the request twice (1.3s)
+  ✓  2 tests/fixed/composer-cx1.spec.ts:10:5 › faultline: Switching to Preview and back to Write discards the typed release notes (1.1s)
+  ✓  3 tests/fixed/composer-cx2.spec.ts:10:5 › faultline: Double activation of Publish sends duplicate publish requests (1.1s)
+  ✓  4 tests/fixed/newsletter-cx1.spec.ts:10:5 › faultline: Closing the signup dialog with Close does not return focus to the opener (1.1s)
+  ✓  5 tests/fixed/newsletter-cx2.spec.ts:10:5 › faultline: Failed signup wipes the typed email and name instead of preserving them (1.4s)
+
+  5 passed (7.1s)
+
+(node:416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
