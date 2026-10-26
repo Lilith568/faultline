@@ -34,8 +34,8 @@ MAX_WAIT_TOTAL_MS = 15000
 MAX_VALUE_LEN = 80
 MAX_HYPOTHESES = 6
 
-_PRINTABLE = re.compile(r"^[^\x00-\x1f\x7f-\x9f\u2028\u2029]+$")
-_UNSAFE_TEXT = re.compile(r"[\x00-\x1f\x7f-\x9f\u2028\u2029]+")
+_PRINTABLE = re.compile(r"^[^\x00-\x1f\x7f-\x9f\N{LINE SEPARATOR}\N{PARAGRAPH SEPARATOR}]+$")
+_UNSAFE_TEXT = re.compile(r"[\x00-\x1f\x7f-\x9f\N{LINE SEPARATOR}\N{PARAGRAPH SEPARATOR}]+")
 
 
 def clean_text(value: Any, limit: int) -> str:

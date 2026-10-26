@@ -157,16 +157,16 @@ def test_model_text_cannot_break_out_of_comments_in_exported_tests():
         "steps": [step("fill", "e2", "Ada")], "perturbations": [],
         "invariants": [{"kind": "value_equals", "ref": "e2", "value": "Ada"}]}]}, INV)
     assert "\n" not in accepted[0]["claim"]
-    element = dict(INV["elements"][1], tag="input", locator={"by": "testid", "value": "name\u2028x"})
-    cx = {"title": "a\u2028b\nc", "attribution": "x\ny", "experiment": accepted[0], "elements": {"e2": element}}
+    element = dict(INV["elements"][1], tag="input", locator={"by": "testid", "value": "name\N{LINE SEPARATOR}x"})
+    cx = {"title": "a\N{LINE SEPARATOR}b\nc", "attribution": "x\ny", "experiment": accepted[0], "elements": {"e2": element}}
     spec = to_playwright_spec(cx, "http://localhost:1/")
-    assert "\u2028" not in spec and "\u2029" not in spec
+    assert "\N{LINE SEPARATOR}" not in spec and "\N{PARAGRAPH SEPARATOR}" not in spec
     assert all(not line.lstrip().startswith("await fetch") for line in spec.splitlines())
 
 
 def test_line_separators_are_not_accepted_as_typed_values():
     with pytest.raises(PlanError, match="printable"):
-        normalize_experiment(exp([step("fill", "e2", "a\u2028b")], invs=[{"kind": "no_page_errors"}]), INV)
+        normalize_experiment(exp([step("fill", "e2", "a\N{LINE SEPARATOR}b")], invs=[{"kind": "no_page_errors"}]), INV)
 
 
 def test_malformed_model_output_is_rejected_not_crashing():

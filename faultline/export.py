@@ -7,7 +7,7 @@ import re
 from .vocab import describe_experiment
 
 js = json.dumps  # JSON string literals (ASCII-escaped) are valid JavaScript string literals
-_LINE_BREAKS = re.compile(r"[\x00-\x1f\x7f-\x9f\u2028\u2029]+")
+_LINE_BREAKS = re.compile(r"[\x00-\x1f\x7f-\x9f\N{LINE SEPARATOR}\N{PARAGRAPH SEPARATOR}]+")
 
 
 def _comment(text: str) -> str:
