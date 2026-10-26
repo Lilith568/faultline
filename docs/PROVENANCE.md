@@ -3,8 +3,8 @@
 ## Built during the hackathon
 
 All code, demo apps, prompts, tests, evaluation scripts and documents in this repository were created during the
-Meta Global AI Developer Hackathon, starting after the kickoff on 26 October 2026. The git history records the order
-in which they were written. No code from earlier projects was reused.
+Meta Global AI Developer Hackathon, starting after the kickoff on 26 October 2026. The repository and all of its
+commits date from the event. No code from earlier projects was reused.
 
 | Part | Files |
 |---|---|

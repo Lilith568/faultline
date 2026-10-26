@@ -79,17 +79,20 @@ class MetaClient:
                 if response.status_code in (401, 403, 404):
                     break
                 continue
-            payload = response.json()
-            usage = payload.get("usage") or {}
-            self.calls.append({"purpose": purpose, "model": payload.get("model", self.model),
-                               "seconds": elapsed,
-                               "input_tokens": usage.get("prompt_tokens"),
-                               "output_tokens": usage.get("completion_tokens")})
             try:
+                payload = response.json()
+                usage = payload.get("usage") or {}
+                self.calls.append({"purpose": purpose, "model": payload.get("model", self.model),
+                                   "seconds": elapsed,
+                                   "input_tokens": usage.get("prompt_tokens"),
+                                   "output_tokens": usage.get("completion_tokens")})
                 message = payload["choices"][0]["message"]
-                return _parse_json(message.get("content") or "")
-            except (KeyError, IndexError, ValueError) as exc:
-                last_error = f"unparseable model output: {exc}"
+                parsed = _parse_json(message.get("content") or "")
+                if not isinstance(parsed, dict):
+                    raise ValueError("model output is not a JSON object")
+                return parsed
+            except (KeyError, IndexError, TypeError, AttributeError, ValueError) as exc:
+                last_error = f"unparseable model output: {type(exc).__name__}: {exc}"[:300]
                 continue
         raise MetaError(last_error)
 

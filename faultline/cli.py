@@ -17,6 +17,9 @@ def _print_report(report: dict) -> None:
             print(f"  round {rnd['round']}  {hyp['result']['status']:12}  {hyp['claim']}")
         for rej in rnd["rejected"]:
             print(f"  round {rnd['round']}  rejected      {rej['claim'] or rej['id']}: {rej['reason']}")
+    for item in report.get("unconfirmed", []):
+        conf = item["confirmation"]
+        print(f"  not reproducible every time ({conf['failures']}/{conf['runs']}), not reported: {item['title']}")
     print(f"\n{len(report['counterexamples'])} verified failure(s):")
     for cx in report["counterexamples"]:
         conf = cx["confirmation"]
@@ -45,6 +48,8 @@ def main(argv: list[str] | None = None) -> None:
     hunt.add_argument("--planner", choices=["auto", "meta", "heuristic"], default="auto")
     hunt.add_argument("--rounds", type=int, default=2)
     hunt.add_argument("--plan", help="replay a recorded model plan (JSON) instead of calling the API")
+    hunt.add_argument("--send-source", action="store_true",
+                      help="let Muse read the page's inline scripts for a code-level diagnosis")
     replay = sub.add_parser("replay", help="re-run a saved repro.json, e.g. against the fixed build")
     replay.add_argument("repro")
     replay.add_argument("--url")
@@ -63,7 +68,7 @@ def main(argv: list[str] | None = None) -> None:
 
         recorded = json.loads(Path(args.plan).read_text(encoding="utf-8")) if args.plan else None
         report = asyncio.run(Hunt(args.url, goal=args.goal, planner=args.planner, rounds=args.rounds, emit=emit,
-                                  recorded_plan=recorded).run())
+                                  recorded_plan=recorded, include_source=args.send_source).run())
         _print_report(report)
     elif args.command == "replay":
         from .hunt import replay as replay_fn

@@ -1,12 +1,12 @@
 ### Planner: heuristic
-Run: 2026-10-26T21:15:05.898550+00:00
+Run: 2026-10-26T22:10:56.304755+00:00
 
 | Set | Bugs found | False positives on fixed builds | Unexpected findings on buggy builds |
 |---|---|---|---|
 | Dev apps (profile, search, checkout, settings) | 6/6 | 0 | 0 |
-| Held-out apps (composer, newsletter) | 3/4 | 0 | 0 |
+| Held-out apps (composer, newsletter) | 2/4 | 0 | 0 |
 
-Browser runs: 120 · Meta calls: 0 · Tokens in/out: 0/0 · Wall time: 212.9 s
+Browser runs: 106 · Meta calls: 0 · Tokens in/out: 0/0 · Wall time: 194.7 s
 
 | App | Build | Found | Missed | Unexpected | Browser runs |
 |---|---|---|---|---|---|
@@ -20,5 +20,5 @@ Browser runs: 120 · Meta calls: 0 · Tokens in/out: 0/0 · Wall time: 212.9 s
 | settings | fixed | - | - | - | 4 |
 | composer (held-out) | buggy | composer-double | composer-draft | - | 10 |
 | composer (held-out) | fixed | - | - | - | 2 |
-| newsletter (held-out) | buggy | newsletter-errorloss, newsletter-focus | - | - | 19 |
-| newsletter (held-out) | fixed | - | - | - | 5 |
+| newsletter (held-out) | buggy | newsletter-focus | newsletter-errorloss | - | 7 |
+| newsletter (held-out) | fixed | - | - | - | 3 |

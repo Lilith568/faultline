@@ -105,3 +105,25 @@ async def test_meta_errors_fall_back_to_heuristic(server_url, tmp_path):
 async def test_remote_targets_are_refused(tmp_path):
     with pytest.raises(ValueError, match="local"):
         Hunt("https://example.com/", settings=settings(tmp_path))
+
+
+@pytest.mark.asyncio
+async def test_garbage_model_output_falls_back_instead_of_crashing(server_url, tmp_path):
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, text="<html>gateway hiccup</html>"))
+    report = await Hunt(f"{server_url}/demo/checkout.html?mode=buggy", planner="meta",
+                        settings=settings(tmp_path, key="test-key"), meta_transport=transport).run()
+    assert report["planner"]["used"] == "heuristic"
+    assert "Meta planner failed" in report["planner"]["fallback_reason"]
+    assert report["counterexamples"], "the rules-only planner still finds the double submit"
+
+
+@pytest.mark.asyncio
+async def test_page_source_is_only_sent_when_allowed(server_url, tmp_path):
+    for allowed in (False, True):
+        calls = []
+        await Hunt(f"{server_url}/demo/composer.html?mode=buggy", planner="meta", rounds=1, include_source=allowed,
+                   settings=settings(tmp_path, key="test-key"), meta_transport=fake_muse(calls)).run()
+        diagnosis = [c for c in calls if c["response_format"]["json_schema"]["name"] == "faultline_diagnosis"][0]
+        user = diagnosis["messages"][1]["content"]
+        text = user if isinstance(user, str) else user[0]["text"]
+        assert ("page_inline_source" in json.loads(text)) is allowed

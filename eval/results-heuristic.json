@@ -1,7 +1,7 @@
 {
   "planner": "heuristic",
   "model": null,
-  "date": "2026-10-26T21:15:05.898550+00:00",
+  "date": "2026-10-26T22:10:56.304755+00:00",
   "dev_apps": {
     "found": 6,
     "expected": 6,
@@ -9,24 +9,24 @@
     "unexpected_on_buggy_builds": 0
   },
   "held_out_apps": {
-    "found": 3,
+    "found": 2,
     "expected": 4,
     "false_positives_on_fixed_builds": 0,
     "unexpected_on_buggy_builds": 0
   },
-  "browser_runs": 120,
+  "browser_runs": 106,
   "meta_calls": 0,
   "tokens": {
     "input": 0,
     "output": 0
   },
-  "seconds": 212.9,
+  "seconds": 194.7,
   "rows": [
     {
       "app": "profile",
       "mode": "buggy",
       "held_out": false,
-      "hunt_id": "20261026-211133-f7ecb0",
+      "hunt_id": "20261026-220741-6514d3",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [
@@ -49,13 +49,13 @@
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 44.7
+      "seconds": 45.1
     },
     {
       "app": "profile",
       "mode": "fixed",
       "held_out": false,
-      "hunt_id": "20261026-211217-f3c036",
+      "hunt_id": "20261026-220826-0194e4",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [],
@@ -68,13 +68,13 @@
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 7.8
+      "seconds": 7.9
     },
     {
       "app": "search",
       "mode": "buggy",
       "held_out": false,
-      "hunt_id": "20261026-211225-a9ace7",
+      "hunt_id": "20261026-220834-9ade32",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [
@@ -93,13 +93,13 @@
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 22.8
+      "seconds": 23.1
     },
     {
       "app": "search",
       "mode": "fixed",
       "held_out": false,
-      "hunt_id": "20261026-211248-8847dc",
+      "hunt_id": "20261026-220857-c5a688",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [],
@@ -118,7 +118,7 @@
       "app": "checkout",
       "mode": "buggy",
       "held_out": false,
-      "hunt_id": "20261026-211254-c7f97c",
+      "hunt_id": "20261026-220903-dd84dd",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [
@@ -137,13 +137,13 @@
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 17.0
+      "seconds": 17.1
     },
     {
       "app": "checkout",
       "mode": "fixed",
       "held_out": false,
-      "hunt_id": "20261026-211311-c1a6f9",
+      "hunt_id": "20261026-220920-b405d6",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [],
@@ -162,7 +162,7 @@
       "app": "settings",
       "mode": "buggy",
       "held_out": false,
-      "hunt_id": "20261026-211317-896d01",
+      "hunt_id": "20261026-220927-cec918",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [
@@ -185,13 +185,13 @@
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 44.6
+      "seconds": 44.7
     },
     {
       "app": "settings",
       "mode": "fixed",
       "held_out": false,
-      "hunt_id": "20261026-211402-4399f7",
+      "hunt_id": "20261026-221011-63f7b0",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [],
@@ -204,13 +204,13 @@
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 8.8
+      "seconds": 8.7
     },
     {
       "app": "composer",
       "mode": "buggy",
       "held_out": true,
-      "hunt_id": "20261026-211411-cfbba2",
+      "hunt_id": "20261026-221020-9fcb8f",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [
@@ -236,7 +236,7 @@
       "app": "composer",
       "mode": "fixed",
       "held_out": true,
-      "hunt_id": "20261026-211426-fc27df",
+      "hunt_id": "20261026-221036-c3a213",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [],
@@ -255,7 +255,7 @@
       "app": "newsletter",
       "mode": "buggy",
       "held_out": true,
-      "hunt_id": "20261026-211434-bb3bcf",
+      "hunt_id": "20261026-221043-c5ebd4",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [
@@ -263,27 +263,25 @@
         "newsletter-errorloss"
       ],
       "found": [
-        "newsletter-errorloss",
         "newsletter-focus"
       ],
       "unexpected": [],
       "flaky": [],
       "minimized_steps": {
-        "cx1": 2,
-        "cx2": 3
+        "cx1": 2
       },
-      "experiments": 5,
-      "browser_runs": 19,
+      "experiments": 3,
+      "browser_runs": 7,
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 25.7
+      "seconds": 8.6
     },
     {
       "app": "newsletter",
       "mode": "fixed",
       "held_out": true,
-      "hunt_id": "20261026-211459-3c3c8e",
+      "hunt_id": "20261026-221052-18af5e",
       "planner_used": "heuristic",
       "fallback": null,
       "expected_bugs": [],
@@ -291,12 +289,12 @@
       "unexpected": [],
       "flaky": [],
       "minimized_steps": {},
-      "experiments": 5,
-      "browser_runs": 5,
+      "experiments": 3,
+      "browser_runs": 3,
       "meta_calls": 0,
       "input_tokens": 0,
       "output_tokens": 0,
-      "seconds": 6.1
+      "seconds": 4.1
     }
   ]
 }

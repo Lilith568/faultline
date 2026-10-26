@@ -15,7 +15,13 @@ the inactive code path, so each build contains only its own code, like two real 
 | newsletter | focus lost after closing the dialog; failed signup clears the form | yes |
 
 Ground truth is in `scripts/evaluate.py` and was written together with the apps, before any planner was run.
-`composer` and `newsletter` were not used while writing the prompts or the rules-only planner.
+`composer` and `newsletter` are held out: no rule and no prompt line may refer to them.
+
+An independent review on 26 October found two violations of that rule, and both were fixed before the numbers below
+were measured: the rules-only planner recognised the newsletter's exact button label ("sign me up"), and the planner
+prompt's list of fault classes said "drafts lost when panels or tabs are switched", which is close to the composer
+bug. The prompt now names fault classes without UI-specific examples ("unsaved input discarded when part of the page
+is re-rendered").
 
 ## Scoring
 
@@ -32,14 +38,22 @@ listed as unexpected and reviewed by hand.
 
 ## Results
 
-See `eval/results-heuristic.md` for the latest rules-only run and `eval/recorded/` for model plans captured from the
-Meta playground and replayed with `faultline hunt URL --plan FILE`. Run `python scripts/evaluate.py --planner meta`
-with a key to produce `eval/results-meta.md`.
+| Planner | Dev apps | Held-out apps | False alarms on fixed builds | Raw results |
+|---|---|---|---|---|
+| Rules only | 6/6 | 2/4 | 0 | `eval/results-heuristic.md` |
+| Muse (`muse-spark-1.3`, recorded plans) | not measured | 4/4 | 0 | `eval/results-recorded.md`, `eval/recorded/` |
+
+The Muse plans were produced in the Meta playground with the shipped planner prompt (one call per app) and replayed
+with `python scripts/replay_recorded.py`. Plans recorded with the earlier prompt are in `eval/recorded/superseded/`
+and are not counted. `python scripts/evaluate.py --planner meta` runs the same comparison through the API on all six
+apps; it needs a key and has not been run yet.
 
 ## Known limitations
 
 - Small, purpose-built apps; results show the method works end to end, not real-world accuracy.
-- The planner prompt lists common fault classes (including drafts lost when switching tabs). The rules-only planner
-  has no rule for that class. The comparison therefore shows that the model turns a one-line description into a
-  working experiment for an unseen UI; it does not show that the model invented the class.
+- The planner prompt still names generic fault classes (for example "unsaved input discarded when part of the page is
+  re-rendered"). The comparison shows that the model turns such a generic description into a working experiment for
+  an unseen UI; it does not show that the model invented the class.
+- Two held-out apps with four bugs are a small sample; one recorded plan per app means run-to-run variation of the
+  model is not measured.
 - Experiments use human-like pacing (120 ms between actions) so that races appear only when Faultline injects them.

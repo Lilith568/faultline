@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-26T22:14:46.791945+00:00",
+  "rows": [
+    {
+      "app": "composer",
+      "mode": "buggy",
+      "plan": "eval/recorded/composer-muse-spark-1.3.json",
+      "model": "muse-spark-1.3",
+      "recorded_at": "2026-10-26T22:09:27Z",
+      "hypotheses": 4,
+      "rejected_by_validator": 0,
+      "results": {
+        "Switching to Preview and back to Write discards the typed release notes": "failed",
+        "Preview panel shows stale placeholder instead of latest typed notes": "passed",
+        "Double activation of Publish sends duplicate publish requests": "failed",
+        "Failed publish wipes the draft instead of preserving it": "passed"
+      },
+      "expected_bugs": [
+        "composer-draft",
+        "composer-double"
+      ],
+      "found": [
+        "composer-double",
+        "composer-draft"
+      ],
+      "unexpected": [],
+      "unconfirmed": [],
+      "browser_runs": 16
+    },
+    {
+      "app": "composer",
+      "mode": "fixed",
+      "plan": "eval/recorded/composer-muse-spark-1.3.json",
+      "model": "muse-spark-1.3",
+      "recorded_at": "2026-10-26T22:09:27Z",
+      "hypotheses": 4,
+      "rejected_by_validator": 0,
+      "results": {
+        "Switching to Preview and back to Write discards the typed release notes": "passed",
+        "Preview panel shows stale placeholder instead of latest typed notes": "passed",
+        "Double activation of Publish sends duplicate publish requests": "passed",
+        "Failed publish wipes the draft instead of preserving it": "passed"
+      },
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "unconfirmed": [],
+      "browser_runs": 4
+    },
+    {
+      "app": "newsletter",
+      "mode": "buggy",
+      "plan": "eval/recorded/newsletter-muse-spark-1.3.json",
+      "model": "muse-spark-1.3",
+      "recorded_at": "2026-10-26T22:12:12Z",
+      "hypotheses": 4,
+      "rejected_by_validator": 0,
+      "results": {
+        "Closing the signup dialog with Close does not return focus to the opener": "failed",
+        "Closing and reopening the signup dialog discards typed draft": "passed",
+        "Double-clicking Sign me up sends duplicate signup requests": "passed",
+        "Failed signup wipes the typed email and name instead of preserving them": "failed"
+      },
+      "expected_bugs": [
+        "newsletter-focus",
+        "newsletter-errorloss"
+      ],
+      "found": [
+        "newsletter-errorloss",
+        "newsletter-focus"
+      ],
+      "unexpected": [],
+      "unconfirmed": [],
+      "browser_runs": 16
+    },
+    {
+      "app": "newsletter",
+      "mode": "fixed",
+      "plan": "eval/recorded/newsletter-muse-spark-1.3.json",
+      "model": "muse-spark-1.3",
+      "recorded_at": "2026-10-26T22:12:12Z",
+      "hypotheses": 4,
+      "rejected_by_validator": 0,
+      "results": {
+        "Closing the signup dialog with Close does not return focus to the opener": "passed",
+        "Closing and reopening the signup dialog discards typed draft": "passed",
+        "Double-clicking Sign me up sends duplicate signup requests": "passed",
+        "Failed signup wipes the typed email and name instead of preserving them": "passed"
+      },
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "unconfirmed": [],
+      "browser_runs": 4
+    }
+  ]
+}

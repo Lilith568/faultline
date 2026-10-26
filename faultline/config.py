@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ipaddress
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
@@ -55,11 +56,18 @@ def get_settings() -> Settings:
 LOCAL_SUFFIXES = (".localhost", ".test")
 
 
+_SUSPICIOUS = re.compile(r"[\\\s\x00-\x1f\x7f]")
+
+
 def is_local_url(url: str) -> bool:
     """Faultline only hunts on the developer's own local app by default."""
+    if _SUSPICIOUS.search(url or ""):
+        return False  # backslashes, whitespace or control characters are parsed differently by browsers
     parsed = urlparse(url)
     if parsed.scheme not in ("http", "https") or not parsed.hostname:
         return False
+    if "@" in parsed.netloc:
+        return False  # no user-info tricks such as http://evil.example@localhost/
     host = parsed.hostname.lower()
     if host == "localhost" or host.endswith(LOCAL_SUFFIXES):
         return True
@@ -71,8 +79,8 @@ def is_local_url(url: str) -> bool:
 
 def check_target(url: str, settings: Settings) -> None:
     parsed = urlparse(url)
-    if parsed.scheme not in ("http", "https"):
-        raise ValueError("target must be an http(s) URL")
+    if parsed.scheme not in ("http", "https") or _SUSPICIOUS.search(url or "") or "@" in parsed.netloc:
+        raise ValueError("target must be a plain http(s) URL")
     if not settings.allow_remote and not is_local_url(url):
         raise ValueError(
             "Faultline only tests local development servers (localhost, 127.0.0.1, *.localhost, *.test). "

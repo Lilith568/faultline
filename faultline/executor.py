@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from playwright.async_api import Browser
 
-from .discover import ACTIVE_JS, locator_for, origin_of
+from .discover import ACTIVE_JS, guard_navigation, locator_for, origin_of
 from .invariants import evaluate, overall_status, signature
 from .vocab import endpoint_matches
 
@@ -93,6 +93,7 @@ async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict,
 
     if perturbations:
         await context.route("**/*", route_handler)
+    await guard_navigation(context, origin)  # registered last, so it runs first
     context.on("request", on_request)
     page = await context.new_page()
     page.on("pageerror", lambda exc: page_errors.append(str(exc)[:300]))

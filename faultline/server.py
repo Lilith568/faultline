@@ -110,7 +110,7 @@ class HuntRequest(BaseModel):
     goal: str = Field("", max_length=600)
     planner: str = Field("auto", pattern="^(auto|meta|heuristic)$")
     rounds: int = Field(2, ge=1, le=3)
-    include_source: bool = True
+    include_source: bool = False  # opt-in: send the page's inline scripts to Muse for the diagnosis
 
 
 class ReplayRequest(BaseModel):

@@ -24,7 +24,7 @@ Faultline hunts for exactly these failures in an app you are building:
    invariant depends on), re-run three times, and each injected fault is ablated to show whether the bug is
    timing-dependent, an error-path bug or deterministic.
 6. **Diagnose and export (Muse).** Muse explains the root cause from the evidence: steps, request timeline, a screenshot
-   of the failing state and, if you allow it, the page's own source. Faultline exports a ready-to-run
+   of the failing state and, only if you tick the box, the page's own inline scripts. Faultline exports a ready-to-run
    **Playwright Test spec** that fails while the bug exists and passes once it is fixed. One click re-tests the exact
    counterexample against your fixed build.
 
@@ -52,39 +52,37 @@ planner and says so in the report.
 
 ## Evidence so far
 
-All numbers below come from runs in this repository. Raw reports are in `eval/`.
+All numbers below come from runs in this repository; the raw results are committed in `eval/`.
 
-**Rules-only baseline** (`python scripts/evaluate.py --planner heuristic`): 6 demo apps, each served as a buggy and a
-fixed build. Ground truth was written together with the apps; `composer` and `newsletter` are held out.
+Six demo apps, each served as a buggy and a fixed build of the same file. Ground truth was written together with the
+apps. `composer` and `newsletter` are held out: no rule and no prompt line may refer to them. An independent review on
+26 October found two leaks (a rule matched the newsletter's button label; the prompt's list of fault classes mentioned
+"tabs"); both were removed and everything below was measured again afterwards.
 
-| Set | Bugs found | False alarms on fixed builds |
-|---|---|---|
-| Dev apps (profile, search, checkout, settings) | 6/6 | 0 |
-| Held-out apps (composer, newsletter) | 3/4 | 0 |
+| Planner | Dev apps (6 known bugs) | Held-out apps (4 known bugs) | False alarms on fixed builds |
+|---|---|---|---|
+| Rules only (`eval/results-heuristic.md`) | 6/6 | 2/4 | 0 |
+| Muse plans, `muse-spark-1.3` (`eval/results-recorded.md`) | not measured yet | **4/4** | 0 |
 
-The baseline misses the held-out "draft is lost when switching tabs" bug because no rule describes it.
+The rules miss the held-out "draft is lost when switching tabs" and "failed signup clears the form" bugs; Muse's
+plans found both on the first call, from the page inventory alone.
 
-**Muse plans for the two held-out apps** (`eval/recorded/`): real `muse-spark-1.3` responses from the Meta
-playground (one call per app, about 15 s and 1.1K input tokens each), replayed through Faultline with
-`python -m faultline hunt URL --plan eval/recorded/<app>-muse-spark-1.3.json`:
-
-| App | Build | Muse hypotheses | Known bugs verified | False alarms |
-|---|---|---|---|---|
-| composer | buggy | 4 | 2/2 (draft lost on tab switch, double publish) | 0 |
-| composer | fixed | 4 | - | 0 |
-| newsletter | buggy | 4 | 2/2 (focus lost after closing, failed signup clears the form) | 0 |
-| newsletter | fixed | 4 | - | 0 |
-
-Held-out total: Muse plans 4/4, rules-only baseline 3/4, no false alarms for either.
+How the Muse numbers were produced: the planner prompt was sent to `muse-spark-1.3` in the Meta playground, once per
+held-out app (about 20 s and 1.2K input tokens per call; latency and tokens are in each file's `provenance`). The
+answers are stored in `eval/recorded/` and replayed through the full pipeline with
+`python scripts/replay_recorded.py`, which needs no key. Plans recorded with the first, leaky prompt are kept in
+`eval/recorded/superseded/` for transparency and are not counted.
 
 Muse's composer hypothesis was "switch to Preview and back to Write"; the minimizer then proved a sharper version:
 clicking the already-active Write tab is enough to wipe the draft.
 
-A full Muse evaluation over all apps calls the API directly: `python scripts/evaluate.py --planner meta`
-(writes `eval/results-meta.md`). It has not been run in this repository yet, so no numbers are claimed for it.
+A full Muse run over all six apps through the API (`python scripts/evaluate.py --planner meta`, writes
+`eval/results-meta.md`) needs a key and has not been run in this repository yet, so no numbers are claimed for it.
 
-These are small, purpose-built apps. They show that the pipeline works end to end and that the checks are falsifiable
-(every bug has a fixed twin that must pass); they are not a benchmark of real-world accuracy.
+These are small, purpose-built apps. They show that the pipeline works end to end and that every check is falsifiable
+(each bug has a fixed twin that must pass); they are not a benchmark of real-world accuracy. A failure is only reported
+as verified if it reproduces in all three confirmation runs; anything less is listed separately as "not reproducible
+every time".
 
 ## Quick start
 
@@ -110,7 +108,7 @@ Command line:
 python -m faultline hunt "http://127.0.0.1:8000/demo/search.html?mode=buggy"
 python -m faultline hunt "http://localhost:5173/settings" --goal "Edits must survive a failed save"
 python -m faultline replay artifacts/<hunt>/cx1/repro.json --url "http://127.0.0.1:8000/demo/search.html?mode=fixed"
-pytest -q                      # 22 tests: unit, browser end-to-end, and the Meta path against a fake endpoint
+pytest -q                      # 30 tests: unit, browser end-to-end, and the Meta path against a fake endpoint
 ```
 
 Exported tests run with Playwright Test:
@@ -127,21 +125,23 @@ Start your dev server and point Faultline at a page. By default only `localhost`
 make an app testable for anyone.
 
 Settings in `.env`: `META_MODEL` (`muse-spark-1.3` or `muse-wonder-1.0`), `META_REASONING_EFFORT`
-(`minimal` … `xhigh`). The "send page source to Muse" option only sends inline scripts of the page under test, to help
-the diagnosis point at the right code.
+(`minimal` … `xhigh`). Page source is never sent by default. Tick "Let Muse read this page's own scripts" in the UI (or
+pass `--send-source` on the command line) to include the inline scripts of the page under test in the diagnosis.
 
 ## Safety and scope
 
-- Local targets only by default; page content is treated as untrusted data in every prompt.
-- The model emits plans in a closed vocabulary; generated code is never executed.
+- Local targets only by default (no user-info or backslash tricks in the URL), and the browser is kept on the target's
+  origin: redirects or links to other sites are blocked. Page content is treated as untrusted data in every prompt.
+- The model emits plans in a closed vocabulary; generated code is never executed. Model-written text is reduced to
+  single-line, control-character-free strings before it reaches an exported test.
 - Password fields are never typed into. Typed values are short synthetic strings.
 - Faultline proves that specific invariants fail under specific conditions. It does not prove that an app is correct,
   and it is not an accessibility audit.
 
 ## What was built during the hackathon
 
-Everything in this repository was written during the event (from the kickoff on 26 October 2026), visible in the
-git history: discovery, the validator and vocabulary, the Meta client, both planners, the executor with fault
+Everything in this repository was written during the event, starting after the kickoff on 26 October 2026:
+discovery, the validator and vocabulary, the Meta client, both planners, the executor with fault
 injection, invariants, the minimizer and ablation, export, the web UI, the six demo apps, tests and evaluation.
 Third-party components: Playwright, FastAPI, Uvicorn, httpx (their own licences). AI assistance: the code and docs were
 written with the help of an AI coding assistant (Anthropic Claude); Meta Muse models do all reasoning at runtime.

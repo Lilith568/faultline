@@ -85,6 +85,9 @@ button,input,textarea{font:inherit;color:inherit}
 .goal textarea{width:100%;min-height:70px;resize:vertical;background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;
   padding:9px 11px;font:15px/1.45 var(--serif)}
 .how{margin-top:22px;font:14px/1.5 var(--serif);color:var(--ink-soft)}
+.optin{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:13px;color:var(--ink-soft)}
+.optin input{margin-top:3px;accent-color:var(--pen)}
+.unconfirmed{font:italic 14px/1.5 var(--serif);color:var(--ink-soft);margin:0 0 22px;padding-left:18px}
 .how ol{padding-left:20px;margin:6px 0 0}
 
 /* Findings: report sheets with a red margin line */
@@ -181,7 +184,8 @@ details.log div{max-height:220px;overflow:auto;padding:6px 0;font:13px/1.55 var(
     <div class="rejected" id="rejected"></div>
     <div class="goal">
       <label for="goal">What must never break?</label>
-      <textarea id="goal">Users must never lose what they typed or see stale data, even on a slow or failing network.</textarea>
+      <textarea id="goal" maxlength="600">Users must never lose what they typed or see stale data, even on a slow or failing network.</textarea>
+      <label class="optin"><input type="checkbox" id="sendSource"> Let Muse read this page's own scripts, so the diagnosis can point at the faulty code. Only use this for apps you are allowed to share.</label>
     </div>
     <div class="how">How a hunt works:
       <ol>
@@ -343,15 +347,37 @@ $('run').addEventListener('click', async () => {
   $('cxs').innerHTML = '<p class="idle">Hunting. Failures appear here once Playwright has reproduced them.</p>';
   addTrace('quiet');
   const r = await fetch('/api/hunts', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ url: $('url').value.trim(), goal: $('goal').value, planner }) });
-  const data = await r.json();
-  if (!r.ok) { $('status').textContent = data.detail || `Could not start the hunt (HTTP ${r.status}).`; $('run').disabled = false; running = false; drawTrace(); return; }
-  hunt = data.id; loop();
+    body: JSON.stringify({ url: $('url').value.trim(), goal: $('goal').value, planner,
+      include_source: $('sendSource').checked }) }).catch(() => null);
+  const data = r ? await r.json().catch(() => ({})) : {};
+  if (!r || !r.ok) {
+    $('status').textContent = detailText(data.detail) || `Could not start the hunt${r ? ` (HTTP ${r.status})` : ''}.`;
+    $('run').disabled = false; running = false; drawTrace(); return;
+  }
+  hunt = data.id; pollErrors = 0; loop();
 });
 
-let cxCount = 0;
+function detailText(detail) {
+  if (!detail) return '';
+  if (Array.isArray(detail)) return detail.map(d => d.msg || JSON.stringify(d)).join('; ');
+  return String(detail);
+}
+
+let cxCount = 0, pollErrors = 0;
 async function loop() {
-  const res = await fetch(`/api/hunts/${hunt}?since=${since}`).then(r => r.json());
+  let res;
+  try {
+    const r = await fetch(`/api/hunts/${hunt}?since=${since}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    res = await r.json();
+    pollErrors = 0;
+  } catch (err) {
+    pollErrors++;
+    if (pollErrors < 8) { setTimeout(loop, 1000); return; }
+    running = false; $('run').disabled = false; drawTrace();
+    $('status').textContent = `Lost contact with the Faultline server (${err.message}). Is it still running?`;
+    return;
+  }
   for (const ev of res.events) {
     since++; log(ev.message);
     if (ev.kind === 'phase') {
@@ -392,8 +418,11 @@ function finish(rep) {
   const n = rep.counterexamples.length;
   $('status').textContent = `${n ? `${n} verified failure${n > 1 ? 's' : ''}` : 'No failures'} in ${rep.stats.duration_s} s. ${who}.` +
     (rep.planner.fallback_reason ? ` (${rep.planner.fallback_reason})` : '');
-  $('cxs').innerHTML = n ? rep.counterexamples.map((cx, i) => renderCx(cx, rep.id, i)).join('')
-    : '<p class="idle">Every experiment held up or did not apply. Try a different goal, or switch to the buggy build.</p>';
+  const flaky = (rep.unconfirmed || []).map(u =>
+    `<li>${esc(u.title)}: failed in ${u.confirmation.failures} of ${u.confirmation.runs} re-runs, so it is not reported as verified.</li>`).join('');
+  $('cxs').innerHTML = (n ? rep.counterexamples.map((cx, i) => renderCx(cx, rep.id, i)).join('')
+    : '<p class="idle">Every experiment held up or did not apply. Try a different goal, or switch to the buggy build.</p>')
+    + (flaky ? `<ul class="unconfirmed">${flaky}</ul>` : '');
 }
 </script>
 </body>

@@ -5,8 +5,9 @@ Usage:
     python scripts/evaluate.py --planner meta          # needs MODEL_API_KEY
 
 Ground truth was written together with the demo apps, before any planner was run.
-`composer` and `newsletter` are held out: they were never used while writing
-prompts or heuristics. Results are reported as counts (x/y), not accuracies.
+`composer` and `newsletter` are held out: no rule or prompt line may refer to them
+(an earlier rule matched the newsletter's button label; it was removed on 26 Oct).
+Results are reported as counts (x/y), not accuracies.
 """
 from __future__ import annotations
 
@@ -122,7 +123,7 @@ async def run_eval(base: str, planner: str, apps: list[str]) -> dict:
                 "planner_used": report["planner"]["used"], "fallback": report["planner"]["fallback_reason"],
                 "expected_bugs": [b["id"] for b in GROUND_TRUTH[app]] if mode == "buggy" else [],
                 "found": sorted(matched), "unexpected": unexpected,
-                "flaky": [cx["id"] for cx in report["counterexamples"] if not cx["confirmation"]["confirmed"]],
+                "flaky": [u["title"] for u in report.get("unconfirmed", [])],
                 "minimized_steps": {cx["id"]: len(cx["experiment"]["steps"]) for cx in confirmed},
                 "experiments": report["stats"]["experiments"], "browser_runs": report["stats"]["browser_runs"],
                 "meta_calls": report["stats"]["meta_calls"], "input_tokens": report["stats"]["input_tokens"],

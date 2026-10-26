@@ -16,6 +16,7 @@ from .discover import discover
 from .executor import run_experiment
 from .export import spec_filename, to_playwright_spec, to_repro
 from .meta import MetaClient, MetaError
+from .vocab import PlanError
 from .minimize import attribution, minimize
 from .planners import heuristic_plan, meta_diagnosis, meta_plan, template_diagnosis
 from .vocab import describe_experiment, describe_invariant, normalize_plan
@@ -37,7 +38,7 @@ def _invariant_text(exp: dict, failing: dict, inventory: dict) -> str:
 
 class Hunt:
     def __init__(self, url: str, goal: str = "", planner: str = "auto", rounds: int = 2,
-                 confirm_runs: int = 3, include_source: bool = True, settings: Settings | None = None,
+                 confirm_runs: int = 3, include_source: bool = False, settings: Settings | None = None,
                  emit: Emit = _noop, meta_transport=None, hunt_id: str | None = None,
                  recorded_plan: dict | None = None):
         self.settings = settings or get_settings()
@@ -80,7 +81,7 @@ class Hunt:
             "id": self.id, "url": self.url, "goal": self.goal,
             "started_at": datetime.now(timezone.utc).isoformat(),
             "planner": {"requested": self.planner, "used": None, "model": None, "fallback_reason": None},
-            "rounds": [], "counterexamples": [], "meta_calls": [],
+            "rounds": [], "counterexamples": [], "unconfirmed": [], "meta_calls": [],
         }
         client = None
         use_meta = self.planner in ("auto", "meta") and self.settings.meta_configured
@@ -110,8 +111,8 @@ class Hunt:
                     try:
                         hypotheses, rejected = await meta_plan(client, inventory, self.goal)
                         source = "meta"
-                    except MetaError as exc:
-                        report["planner"]["fallback_reason"] = f"Meta planner failed: {exc}"
+                    except (MetaError, PlanError, ValueError, KeyError, TypeError) as exc:
+                        report["planner"]["fallback_reason"] = f"Meta planner failed: {type(exc).__name__}: {exc}"[:300]
                         self.emit("warning", report["planner"]["fallback_reason"], None)
                     if source == "meta" and not hypotheses:
                         report["planner"]["fallback_reason"] = "Meta plan had no valid experiments"
@@ -135,8 +136,8 @@ class Hunt:
                     try:
                         follow, rejected2 = await meta_plan(client, inventory, self.goal, previous=all_hyps,
                                                             id_prefix=f"r{round_no}-")
-                    except MetaError as exc:
-                        self.emit("warning", f"Follow-up round skipped: {exc}", None)
+                    except (MetaError, PlanError, ValueError, KeyError, TypeError) as exc:
+                        self.emit("warning", f"Follow-up round skipped: {type(exc).__name__}: {exc}"[:300], None)
                         break
                     existing = {h["id"] for h in all_hyps}
                     for hyp in follow:
@@ -167,7 +168,7 @@ class Hunt:
                     runner = lambda exp: self._run(browser, exp, inventory)  # noqa: E731
                     reduced = await minimize(runner, primary, target, inventory)
                     minimal = reduced["experiment"]
-                    cx_index = len(report["counterexamples"]) + 1
+                    cx_index = len(report["counterexamples"]) + len(report["unconfirmed"]) + 1
                     shots = self.dir / f"cx{cx_index}"
                     confirmations = []
                     for attempt in range(self.confirm_runs):
@@ -176,6 +177,17 @@ class Hunt:
                             kwargs = {"screenshot": shots / "failing-state.png", "trace": shots / "trace.zip"}
                         confirmations.append(await self._run(browser, minimal, inventory, **kwargs))
                     failures = sum(1 for c in confirmations if c["status"] == "failed" and target in c["signature"])
+                    if failures < len(confirmations):
+                        # Not reproducible every time: report it, but never as a verified failure.
+                        report["unconfirmed"].append({
+                            "title": primary["claim"], "fault_class": fault_class, "signature": target,
+                            "hypothesis_ids": [h["id"] for h in members],
+                            "confirmation": {"runs": len(confirmations), "failures": failures},
+                            "steps": describe_experiment(minimal, inventory)["steps"],
+                        })
+                        self.emit("warning", f"Not reproducible every time ({failures}/{len(confirmations)}), "
+                                  f"not reported as verified: {primary['claim']}", None)
+                        continue
                     first = confirmations[0]
                     failing = next((r for r in first["invariants"] if r["status"] == "fail"), None) or \
                         next(r for r in primary["result"]["invariants"] if r["status"] == "fail")
@@ -212,8 +224,9 @@ class Hunt:
                         try:
                             png = Path(cx["screenshot"]).read_bytes() if cx.get("screenshot") else None
                             diagnosis = await meta_diagnosis(client, cx, inventory, self.include_source, png)
-                        except (MetaError, OSError) as exc:
-                            self.emit("warning", f"Diagnosis fell back to a template: {exc}", None)
+                        except (MetaError, OSError, ValueError, KeyError, TypeError) as exc:
+                            self.emit("warning", f"Diagnosis fell back to a template: {type(exc).__name__}: {exc}"[:300],
+                                      None)
                     cx["diagnosis"] = diagnosis or template_diagnosis(fault_class, {"title": cx["title"]})
                     # Exports
                     spec = to_playwright_spec(cx, self.url)

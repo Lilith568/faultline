@@ -34,7 +34,13 @@ MAX_WAIT_TOTAL_MS = 15000
 MAX_VALUE_LEN = 80
 MAX_HYPOTHESES = 6
 
-_PRINTABLE = re.compile(r"^[^\x00-\x1f\x7f]+$")
+_PRINTABLE = re.compile(r"^[^\x00-\x1f\x7f-\x9f\u2028\u2029]+$")
+_UNSAFE_TEXT = re.compile(r"[\x00-\x1f\x7f-\x9f\u2028\u2029]+")
+
+
+def clean_text(value: Any, limit: int) -> str:
+    """Single-line text for model-written fields (claims, rationales): no line breaks or control characters."""
+    return re.sub(r"\s+", " ", _UNSAFE_TEXT.sub(" ", str(value or ""))).strip()[:limit]
 
 
 class PlanError(ValueError):
@@ -149,7 +155,12 @@ def normalize_experiment(raw: dict, inventory: dict, endpoints: list[str] | None
         raise PlanError("total waiting time is too long")
 
     perturbations: list[dict] = []
-    for raw_p in raw.get("perturbations") or []:
+    raw_perts = raw.get("perturbations") or []
+    if not isinstance(raw_perts, list):
+        raise PlanError("perturbations must be a list")
+    for raw_p in raw_perts:
+        if not isinstance(raw_p, dict):
+            raise PlanError("each perturbation must be an object")
         kind = raw_p.get("kind")
         if kind not in PERTURBATIONS:
             raise PlanError(f"unsupported perturbation {kind!r}")
@@ -173,7 +184,12 @@ def normalize_experiment(raw: dict, inventory: dict, endpoints: list[str] | None
     values = cumulative_values(steps)
     clicked = clicked_refs(steps)
     invariants: list[dict] = []
-    for raw_i in raw.get("invariants") or []:
+    raw_invs = raw.get("invariants") or []
+    if not isinstance(raw_invs, list):
+        raise PlanError("invariants must be a list")
+    for raw_i in raw_invs:
+        if not isinstance(raw_i, dict):
+            raise PlanError("each invariant must be an object")
         kind = raw_i.get("kind")
         if kind not in INVARIANTS:
             raise PlanError(f"unsupported invariant {kind!r}")
@@ -241,15 +257,15 @@ def normalize_plan(raw_plan: Any, inventory: dict, *, id_prefix: str = "h",
                 raise PlanError("hypothesis must be an object")
             experiment = normalize_experiment(raw, inventory)
         except PlanError as exc:
-            rejected.append({"id": hid, "claim": str((raw or {}).get("claim", ""))[:200]
+            rejected.append({"id": hid, "claim": clean_text(raw.get("claim", ""), 200)
                              if isinstance(raw, dict) else "", "reason": str(exc)})
             continue
         fault_class = raw.get("fault_class")
         accepted.append({
             "id": hid,
-            "claim": str(raw.get("claim", "")).strip()[:240] or "Unnamed hypothesis",
+            "claim": clean_text(raw.get("claim", ""), 240) or "Unnamed hypothesis",
             "fault_class": fault_class if fault_class in FAULT_CLASSES else "other",
-            "rationale": str(raw.get("rationale", "")).strip()[:400],
+            "rationale": clean_text(raw.get("rationale", ""), 400),
             **experiment,
         })
         if len(accepted) >= max_hypotheses:

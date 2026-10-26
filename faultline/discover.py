@@ -231,8 +231,21 @@ class _RequestLog:
         return list(dict.fromkeys(self.items[index:]))
 
 
+async def guard_navigation(context, origin: str) -> None:
+    """Keep the browser on the target's origin: page loads elsewhere (redirects, links) are blocked."""
+    async def handler(route):
+        request = route.request
+        if request.is_navigation_request() and origin_of(request.url) != origin:
+            await route.abort("blockedbyclient")
+            return
+        await route.fallback()
+
+    await context.route("**/*", handler)
+
+
 async def _open(browser: Browser, url: str):
     context = await browser.new_context(viewport={"width": 1280, "height": 800})
+    await guard_navigation(context, origin_of(url))
     page = await context.new_page()
     log = _RequestLog(origin_of(url))
     context.on("request", log)
