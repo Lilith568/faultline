@@ -60,7 +60,7 @@ The planner name `meta` covers either selected Meta backend. Keep results from d
 
 ## What is and is not verified
 
-Automated mocked-endpoint tests cover request construction, model restrictions, credential separation, structured-output modes, image gating and failure accounting. No live open-weight endpoint or hosted Meta key was available during this revision. Do not describe this adapter as a completed live-model evaluation or proof of eligibility for an Open Weights prize. Record an actual run, its deployment and checkpoint provenance before making those claims.
+Status: automated tests against mocked endpoints cover request construction, model restrictions, credential separation, structured-output modes, image gating and failure accounting. A run against a live open-weight deployment has not been recorded yet; when it is, its deployment and checkpoint provenance will be saved next to the results.
 
 Each `meta_calls` entry represents an attempted HTTP request, including failures and schema retries. `success` means the endpoint returned a parseable JSON object; the experiment validator separately determines whether its plan is accepted. Only usage values actually returned by the endpoint are recorded; unknown usage remains `null`. Call records omit request contents, keys, raw error bodies and transport exception text. Redirects are not followed.
 

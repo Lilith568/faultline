@@ -19,6 +19,15 @@ class MetaError(RuntimeError):
     pass
 
 
+class _ModelMismatch(ValueError):
+    """The endpoint answered with another model. Retrying would only repeat billable calls."""
+
+
+def _is_variant(reported: str, requested: str) -> bool:
+    """True for the requested model itself or a dated/pinned snapshot of it (e.g. "muse-spark-1.3-2026-10-20")."""
+    return reported == requested or reported.startswith(requested + "-")
+
+
 class MetaClient:
     def __init__(self, settings: Settings, transport: httpx.AsyncBaseTransport | None = None):
         try:
@@ -105,17 +114,22 @@ class MetaClient:
                     value = usage.get(name)
                     audit[output] = value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
                 reported = payload.get("model", self.model)
-                if reported not in META_MODELS | META_OPEN_MODELS:
-                    raise ValueError("endpoint reported a model outside the Meta allowlist")
+                if not isinstance(reported, str) or not any(
+                        _is_variant(reported, name) for name in META_MODELS | META_OPEN_MODELS):
+                    raise _ModelMismatch("endpoint reported a model outside the Meta allowlist")
                 audit["reported_model"] = reported
-                if reported != self.model:
-                    raise ValueError("endpoint reported a different model from the requested model")
+                if not _is_variant(reported, self.model):
+                    raise _ModelMismatch("endpoint reported a different model from the requested model")
                 message = payload["choices"][0]["message"]
                 parsed = _parse_json(message.get("content") or "")
                 if not isinstance(parsed, dict):
                     raise ValueError("model output is not a JSON object")
                 audit.update(status="success", success=True)
                 return parsed
+            except _ModelMismatch as exc:
+                audit.update(status="model_mismatch", error_code="model_mismatch")
+                last_error = f"Meta endpoint answered with another model: {exc}"
+                break
             except (KeyError, IndexError, TypeError, AttributeError, ValueError) as exc:
                 audit.update(status="invalid_output", error_code=type(exc).__name__)
                 last_error = f"Unparseable Meta model output ({type(exc).__name__})"

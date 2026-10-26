@@ -53,6 +53,9 @@ def main(argv: list[str] | None = None) -> None:
     hunt.add_argument("--ci", action="store_true",
                       help="exit 1 for confirmed bugs, 2 for incomplete checks, otherwise 0")
     hunt.add_argument("--junit", metavar="PATH", help="write a JUnit XML report (also on run errors)")
+    hunt.add_argument("--send-signed-in-pages", action="store_true",
+                      help="with --storage-state: also let the Meta model see the signed-in pages (inventory, "
+                           "screenshots). Off by default; without it signed-in hunts use the rules-only planner")
     hunt.add_argument("--storage-state", metavar="PATH",
                       help="load saved Playwright cookies/localStorage for the target only")
     replay = sub.add_parser("replay", help="re-run a saved repro.json, e.g. against the fixed build")
@@ -78,7 +81,8 @@ def main(argv: list[str] | None = None) -> None:
             recorded = json.loads(Path(args.plan).read_text(encoding="utf-8")) if args.plan else None
             report = asyncio.run(Hunt(args.url, goal=args.goal, planner=args.planner, rounds=args.rounds, emit=emit,
                                       recorded_plan=recorded, include_source=args.send_source,
-                                      storage_state=args.storage_state).run())
+                                      storage_state=args.storage_state,
+                                      share_signed_in_pages=args.send_signed_in_pages).run())
             _print_report(report)
             if args.junit:
                 write_junit(report, args.junit)

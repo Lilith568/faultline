@@ -11,7 +11,7 @@ from __future__ import annotations
 import asyncio
 import re
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 from playwright.async_api import Browser, Page
 
@@ -233,37 +233,62 @@ class _RequestLog:
         return list(dict.fromkeys(self.items[index:]))
 
 
-async def guard_navigation(context, origin: str, *, strict: bool = False) -> None:
-    """Keep page navigation at the target origin without following unchecked redirects.
+MAX_REDIRECT_HOPS = 5
 
-    Playwright routes only the first request in a browser redirect chain. Fetch
-    navigation responses without following redirects, and reject any redirect
-    before its destination is contacted. Ordinary fetch/XHR traffic still falls
-    through to the existing perturbation routes; this is not an egress sandbox.
+
+async def guard_navigation(context, origin: str, *, strict: bool = False) -> None:
+    """Keep page navigation at the target origin, following only same-origin redirects.
+
+    Playwright routes only the first request of a browser redirect chain, so the
+    chain is followed here instead: each hop is fetched with redirects disabled and
+    its Location is checked before anything is contacted. Same-origin hops (301, 302,
+    303, as GET) are followed, for example "/" to "/app" or a form's post-redirect-get;
+    a cross-origin hop, a 307/308 hop or a chain longer than five hops is blocked. Signed-in (strict)
+    contexts block every navigation redirect.
+    After a validated chain the browser receives one 303 to the final same-origin URL
+    and loads it, so the address bar and relative links stay correct; that final page
+    is requested twice. Ordinary fetch/XHR traffic still falls through to the
+    perturbation routes; this is not an egress sandbox.
     """
     async def handler(route):
         request = route.request
         if (strict or request.is_navigation_request()) and origin_of(request.url) != origin:
             await route.abort("blockedbyclient")
             return
-        if request.is_navigation_request():
-            response = None
-            try:
-                response = await route.fetch(max_redirects=0)
-                if 300 <= response.status < 400 and response.headers.get("location"):
-                    await route.abort("blockedbyclient")
-                else:
-                    await route.fulfill(response=response)
-            except Exception:
-                try:
-                    await route.abort("failed")
-                except Exception:
-                    pass  # the context may close while navigation is pending
-            finally:
-                if response is not None:
-                    await response.dispose()
+        if not request.is_navigation_request():
+            await route.fallback()
             return
-        await route.fallback()
+        response = None
+        try:
+            url, followed = request.url, False
+            response = await route.fetch(max_redirects=0)
+            for _ in range(MAX_REDIRECT_HOPS + 1):
+                location = response.headers.get("location")
+                if not (300 <= response.status < 400 and location):
+                    break
+                target = urljoin(url, location)
+                if strict or origin_of(target) != origin or response.status in (307, 308):
+                    await route.abort("blockedbyclient")
+                    return
+                await response.dispose()
+                response = None
+                url, followed = target, True
+                response = await route.fetch(url=url, method="GET", max_redirects=0)
+            else:
+                await route.abort("blockedbyclient")
+                return
+            if followed:
+                await route.fulfill(status=303, headers={"location": url})
+            else:
+                await route.fulfill(response=response)
+        except Exception:
+            try:
+                await route.abort("failed")
+            except Exception:
+                pass  # the context may close while navigation is pending
+        finally:
+            if response is not None:
+                await response.dispose()
 
     await context.route("**/*", handler)
 
@@ -363,7 +388,7 @@ async def discover(browser: Browser, url: str, *, max_openers: int = 6, max_inpu
             mark = len(log.items)
             texts_before = {spec_key(s["locator"]): s["text"] for s in await scan(page) if s["container"]}
             locator = locator_for(page, field["locator"])
-            if await locator.evaluate("el => el instanceof HTMLInputElement && el.type === 'password'"):
+            if await locator.evaluate("el => el instanceof HTMLInputElement && el.type === 'password'", timeout=3000):
                 raise ValueError("Refusing to type into a password field")
             await locator.press_sequentially("ab", delay=60, timeout=3000)
             await page.wait_for_timeout(settle_ms)

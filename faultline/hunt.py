@@ -41,7 +41,8 @@ class Hunt:
     def __init__(self, url: str, goal: str = "", planner: str = "auto", rounds: int = 2,
                  confirm_runs: int = 3, include_source: bool = False, settings: Settings | None = None,
                  emit: Emit = _noop, meta_transport=None, hunt_id: str | None = None,
-                 recorded_plan: dict | None = None, storage_state: str | Path | dict | None = None):
+                 recorded_plan: dict | None = None, storage_state: str | Path | dict | None = None,
+                 share_signed_in_pages: bool = False):
         self.settings = settings or get_settings()
         check_target(url, self.settings)
         self.url = url
@@ -60,6 +61,8 @@ class Hunt:
         self.dir = Path(self.settings.artifacts) / self.id
         self.browser_runs = 0
         self.recorded_plan = recorded_plan  # replay a saved model plan without calling the API
+        # Signed-in pages can show private data. They only reach a model after a separate, explicit opt-in.
+        self.share_signed_in_pages = share_signed_in_pages
 
     # ------------------------------------------------------------------ helpers
     def _emit(self, kind: str, message: str, data: dict | None = None) -> None:
@@ -102,10 +105,19 @@ class Hunt:
         client = None
         use_meta = self.planner in ("auto", "meta") and self.settings.meta_configured
         if self.planner == "meta" and not self.settings.meta_configured:
-            report["planner"]["fallback_reason"] = "MODEL_API_KEY is not set"
+            report["planner"]["fallback_reason"] = ("MODEL_API_KEY is not set" if getattr(self.settings, "backend", "meta")
+                                                    == "meta" else "The Meta open-weights endpoint is not configured")
+        if use_meta and self.storage_state and not self.share_signed_in_pages:
+            use_meta = False
+            report["planner"]["fallback_reason"] = ("Signed-in pages are not sent to a model without "
+                                                    "--send-signed-in-pages; the rules-only planner was used")
         if use_meta:
-            client = MetaClient(self.settings, transport=self.meta_transport)
-            report["planner"]["model"] = self.settings.model
+            try:
+                client = MetaClient(self.settings, transport=self.meta_transport)
+                report["planner"]["model"] = self.settings.model
+            except MetaError as exc:  # invalid model settings fall back to rules instead of ending the hunt
+                report["planner"]["fallback_reason"] = f"Model settings rejected: {exc}"[:300]
+                self.emit("warning", report["planner"]["fallback_reason"], None)
 
         async with async_playwright() as pw:
             browser = await pw.chromium.launch()
@@ -120,9 +132,13 @@ class Hunt:
                 self._phase("hypotheses", "Preparing hypotheses")
                 hypotheses, rejected, source = [], [], "heuristic"
                 if self.recorded_plan:
+                    provenance = self.recorded_plan.get("provenance", {})
+                    self._phase("hypotheses", f"Loading the recorded {provenance.get('model') or 'Muse'} plan")
                     hypotheses, rejected = normalize_plan(self.recorded_plan["plan"], inventory)
                     source = "recorded"
-                    report["planner"]["model"] = self.recorded_plan.get("provenance", {}).get("model")
+                    report["planner"]["model"] = provenance.get("model")
+                    report["planner"]["recorded_from"] = {key: provenance.get(key)
+                                                          for key in ("file", "when", "where")}
                 elif client:
                     self._phase("hypotheses", f"Asking {self.settings.model} for hypotheses")
                     try:

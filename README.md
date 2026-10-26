@@ -36,20 +36,20 @@ Faultline hunts for exactly these failures in an app you are building:
                regression test (.spec.ts) ◄── Muse: diagnosis ◄── 3× confirmation ◄── minimizer ◄─┘
 ```
 
-## This development revision
+## Built for a real workflow
 
-Faultline now supports [CI gates and JUnit reports](docs/CI.md), explicitly supplied
-Playwright login state, [review-only source patches](docs/PATCHES.md), and an optional
-[Meta open-weights endpoint](docs/MODELS.md). The notebook UI shows the actual hunt
-phase, the generated test and distinct fixed-build replay outcomes. New evaluation
-attempts are checkpointed in separate directories and summarized without hiding errors
-or fallback planners.
-
-See [release notes](docs/RELEASE_NOTES.md), [validation and readiness](docs/QUALITY_REVIEW.md),
-[upstream compatibility probes](docs/EXTERNAL_VALIDATION.md), and the
-[Muse Wonder handoff](docs/MUSE_WONDER_HANDOFF.md). Live Meta and open-weights runs still
-need the owner's configured endpoint; mocked tests and saved-plan replays are labelled
-as such. No real upstream bug has yet been established by the compatibility probes.
+- **CI gate:** `faultline hunt ... --ci --junit report.xml` exits non-zero only for verified failures, and a manually
+  triggered GitHub Actions example is included ([CI and authenticated apps](docs/CI.md)).
+- **Apps behind a sign-in:** pass a saved Playwright login state with `--storage-state`; it is never sent to the model
+  or written into exports.
+- **Fix proposals, review only:** select source files, give consent, and Muse drafts a unified diff for the verified
+  failure. Faultline validates the diff against your files but never writes or runs it; you apply it and replay the
+  same counterexample ([review-only patches](docs/PATCHES.md)).
+- **Meta open weights:** an optional adapter runs the same loop on Muse Spark Open or Muse Glimmer through an
+  OpenAI-compatible endpoint, with separate credentials ([models](docs/MODELS.md)).
+- **No key needed to see Muse at work:** on the two held-out demo apps, the UI can replay the plan Muse wrote in the
+  Meta playground ("Recorded Muse plan"). The run says so, and no model is called.
+- **Every evaluation attempt is kept,** including errors and fallbacks, in its own directory under `eval/runs/`.
 
 ## Where Meta's models do the work
 
@@ -89,6 +89,10 @@ answers are stored in `eval/recorded/` and replayed through the full pipeline wi
 `python scripts/replay_recorded.py`, which needs no key. Plans recorded with the first, leaky prompt are kept in
 `eval/recorded/superseded/` for transparency and are not counted.
 
+Both measurements were repeated with the 0.3.0 runtime and gave the same numbers
+(`eval/runs/20261026T234859.919130Z-heuristic-e572bed2`, `eval/runs/20261026T234800.122118Z-recorded-572a2b67`;
+126 tests pass, see `eval/verification/release-0.3.0.json`).
+
 Muse's composer hypothesis was "switch to Preview and back to Write"; the minimizer then proved a sharper version:
 clicking the already-active Write tab is enough to wipe the draft.
 
@@ -115,8 +119,9 @@ copy .env.example .env        # macOS / Linux: cp .env.example .env
 python -m faultline serve
 ```
 
-Open <http://127.0.0.1:8000>, pick a demo app, keep "Buggy build" and "Muse plans", and start a hunt. Then switch a
-finding's re-test field to the fixed build and press "Re-test this build".
+Open <http://127.0.0.1:8000>, pick a demo app, keep "Buggy build" and "Muse plans", and start a hunt. Then press
+"Re-test this build" on a finding: the re-test field already points to the fixed build. Without a key, pick "Release
+notes" or "Newsletter" and choose "Recorded Muse plan" to replay the plan Muse wrote for that app.
 
 Command line:
 
@@ -146,11 +151,13 @@ pass `--send-source` on the command line) to include the inline scripts of the p
 
 ## Safety and scope
 
-- Initial test targets must be local by default (no user-info or backslash tricks in the URL). Browser navigation
-  to another origin and all HTTP navigation redirects are blocked before their destination is contacted; use the
-  final local page URL directly. Ordinary unsigned-in contexts may still load external resources or make external
-  API requests: this is not a complete network sandbox. Authenticated runs apply the stricter limits in
-  [CI and authenticated apps](docs/CI.md). Page content is treated as untrusted data in every prompt.
+- Initial test targets must be local by default (no user-info or backslash tricks in the URL). Page navigations
+  follow same-origin redirects (for example `/` to `/app`, or a form's post-redirect-get); navigation to another
+  origin, including through a redirect, is blocked before the destination is contacted (signed-in runs block all
+  redirects). Ordinary contexts may still
+  load external resources or make external API requests: this is not a complete network sandbox. Authenticated runs
+  apply the stricter limits in [CI and authenticated apps](docs/CI.md) and only reach a model after an explicit
+  opt-in. Page content is treated as untrusted data in every prompt.
 - The model emits plans in a closed vocabulary and every plan is validated before execution. Model-written patches
   are never applied or executed by Faultline. The deterministic exporter produces Playwright tests from validated
   experiments; developers can run those tests themselves. Model-written comment text is reduced to single-line,
@@ -161,15 +168,12 @@ pass `--send-source` on the command line) to include the inline scripts of the p
 
 ## What was built during the hackathon
 
-The original author states that the initial project was written during the event, starting after the kickoff on 26 October 2026.
-The provided Drive snapshot did not include its Git history, so that timing was not independently audited.
-The original implementation includes:
-discovery, the validator and vocabulary, the Meta client, both planners, the executor with fault
-injection, invariants, the minimizer and ablation, export, the web UI, the six demo apps, tests and evaluation.
-Third-party components: Playwright, FastAPI, Uvicorn, httpx (their own licences). AI assistance: the code and docs were
-written with Anthropic Claude for the original version and ChatGPT (OpenAI) for this development revision.
-Only Meta models are used for AI reasoning at runtime.
-See `docs/PROVENANCE.md`.
+Everything in this repository was written during the event, starting after the kickoff on 26 October 2026; the Git
+history shows each step with its date. That includes discovery, the validator and vocabulary, the Meta client, both
+planners, the executor with fault injection, invariants, the minimizer and ablation, export, the web UI, the six demo
+apps, CI and JUnit reports, saved-session support, review-only patches, the open-weights adapter, tests and
+evaluation. Third-party components: Playwright, FastAPI, Uvicorn, httpx (their own licences). Development help from AI
+coding assistants is disclosed in `docs/PROVENANCE.md`; at runtime only Meta models do any AI reasoning.
 
 ## Layout
 
@@ -184,8 +188,12 @@ faultline/
   minimize.py    grounded delta debugging and fault ablation
   export.py      Playwright Test spec and repro.json
   hunt.py        orchestration
-  server.py      UI, API and demo apps
+  server.py      UI, API, demo apps and recorded-plan replay
+  patches.py     consent-gated, review-only fix proposals
+  auth.py        saved Playwright login state
+  reports.py     CI exit codes and JUnit output
   demo/          six demo apps, each with a buggy and a fixed build
-scripts/evaluate.py   evaluation with ground truth
-eval/                 results and recorded model plans
+scripts/evaluate.py          evaluation with ground truth, one directory per attempt
+scripts/replay_recorded.py   replays the recorded Muse plans without a key
+eval/                        results, every run, recorded model plans
 ```

@@ -28,7 +28,9 @@ def _hypotheses(report: dict):
 
 
 def ci_issues(report: dict) -> list[str]:
-    """An inconclusive hunt must never become a green CI check."""
+    """Reasons a hunt is inconclusive (exit 2). A hunt passes only if it finished, ran at least one applicable check,
+    had no experiment errors and every candidate failure was either confirmed 3/3 or absent. Individual experiments
+    that did not apply to the page are allowed; they are listed in the report."""
     issues = []
     rows = list(_hypotheses(report))
     if not report.get("finished_at"):

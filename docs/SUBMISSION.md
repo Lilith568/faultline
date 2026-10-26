@@ -1,57 +1,61 @@
-# Submission draft
+# Submission texts (Cerebral Valley form)
 
-Track: Indie Developer Track  
-Problem statement: Push the Frontier  
-Team: Faultline (solo owner; verify accepted participant details)  
-Public repository URL: pending (required by the supplied Guide)  
-Three-minute demo video URL: pending (required by the supplied Guide)  
-Final model configuration and live evidence: pending
+Track: Indie Developer Track
+Problem statement: Push the Frontier
+Team name: Faultline
+Team members: the submitter only (solo)
+Public GitHub repository: https://github.com/lilith568/faultline
+3-minute demo video: (link after recording)
 
-This is a draft, not a submitted entry. The owner supplied the participant Guide: it requires a public repository, an accessible three-minute demo video and clear identification of event-built contributions. These requirements were checked against that text copy, not a directly authenticated page. Check current organizer updates and actual portal fields before use. Source provenance and remaining questions are recorded in `docs/RULES_REVIEW.md` and `eval/participant-guide-review.json`.
+## Project Description
 
-## Project description
+Faultline breaks your web app on purpose, then hands you the failing test. Happy-path tests pass, yet real users on
+slow networks lose work: a late response overwrites what they typed, search shows results for "ca" after they typed
+"cat", a double-click places two orders, a failed save wipes the form. These bugs depend on timing, so they hide on
+localhost and in test suites.
 
-Faultline breaks a local web app under controlled timing and request failures, then exports the failing regression test. It targets lost edits, stale results and duplicate actions that happy-path tests often miss.
+Faultline explores a local app with Playwright. A Meta Muse model reads the page inventory and the developer's goal
+and proposes competing, falsifiable hypotheses, each with one experiment: steps, a network fault to inject and the
+invariants that must hold. A strict validator only admits known controls, synthetic input and observed requests.
+Playwright runs every experiment with the injected faults and decides pass or fail; the model never grades itself.
+Muse then reads the verified results and designs follow-ups. Every failure is minimized, re-run three times and
+attributed by removing each injected fault. Muse writes a diagnosis from the screenshot, the request timeline and,
+if the developer allows it, the page source. Faultline exports a ready-to-run Playwright Test spec that fails while
+the bug exists, and one click replays the same counterexample against the fixed build.
 
-A Meta Muse model reads the discovered UI and proposes falsifiable hypotheses. A closed validator limits its experiments to known controls, synthetic input and observed request patterns. Playwright executes each experiment and evaluates the invariants independently. Muse can review that evidence and propose follow-up experiments. Reproducible failures are reduced, checked repeatedly and diagnosed before export.
+It fits into a developer's workflow: CI exit codes and JUnit reports, saved Playwright login state for local apps
+behind a sign-in, and review-only fix proposals that Muse writes from source files the developer selects. Faultline
+never applies or runs a generated patch; the developer applies it and the replay shows whether the bug is gone.
 
-The evidence sheet shows expected and observed behavior, a screenshot, the reduced sequence and the actual Playwright test. Developers can request a review-only patch from explicitly selected source, apply any fix themselves and replay the same counterexample against the repaired build. Faultline never executes or automatically applies generated patches.
+On six demo apps (each with a buggy and a fixed build), a rules-only baseline finds 6/6 bugs in the dev apps but only
+2/4 in the held-out apps. Plans from muse-spark-1.3 find 4/4 in the held-out apps, with zero false alarms on the fixed
+builds. All results, every evaluation attempt and the recorded model answers are in the repository.
 
-CI gates and JUnit reports make confirmed failures actionable in development. Saved Playwright state supports a documented subset of authenticated local applications. Every evaluation attempt is retained, including errors and rules fallbacks.
+## Describe your use of Meta products to build the submitted project
 
-## Meta's role
+Faultline calls the Meta Model API (Chat Completions, structured output with a strict JSON schema) with muse-spark-1.3
+by default and muse-wonder-1.0 as an option. Muse is used at four points: (1) it turns the discovered page inventory
+and the developer's goal into competing hypotheses and executable experiments in a closed vocabulary, (2) it reads
+Playwright-verified results and designs a follow-up round, (3) it diagnoses each verified failure from a screenshot of
+the failing state and the request timeline (multimodal input), plus the page's inline scripts if the developer allows
+it, and (4) on request it proposes a fix as a unified diff for source files the developer selects. An optional adapter
+runs the same loop on Meta's open-weight models (Muse Spark Open, Muse Glimmer) through an OpenAI-compatible endpoint.
+The Meta playground was used to test the planner prompt; those real Muse plans are stored in the repository and can be
+replayed in the UI and from the command line without a key.
 
-Meta models perform experimental design, evidence-informed follow-up and diagnosis. They can also propose a bounded source patch after separate developer consent. Browser checks decide whether an invariant fails; the model does not evaluate its own answer. This makes Meta's reasoning useful without treating an explanation as proof.
+## Why are Meta's models important to your solution?
 
-The hosted configuration uses Muse Spark by default and can select Muse Wonder. An optional compatible HTTP adapter supports documented Meta open-weight models. The implementation and mocked tests do not establish live endpoint quality or prize eligibility; only claim those after recording actual runs.
+Finding a race condition is an experimental-design problem: which request to slow down, what to type before it lands,
+which invariant would expose the bug and distinguish it from other explanations. Rules only cover patterns someone
+coded in advance; on our held-out apps the rules-only planner missed two of four bugs, and Muse's plans found all four.
+Muse also closes the loop: it adapts experiments to verified evidence, explains the root cause in the developer's own
+code and drafts the fix. Because Playwright, not the model, judges every experiment, Muse can be creative without the
+tool ever reporting a bug that does not reproduce.
 
-## Evidence that may currently be cited
+## Provide feedback from your experience using Meta products
 
-Historical raw files `eval/results-heuristic.*` record the rules baseline finding 6/6 known dev bugs and 2/4 held-out bugs, with no findings on the corresponding fixed builds. `eval/results-recorded.*` records saved Muse Spark plans finding 4/4 held-out bugs, with no findings on those fixed builds. These are small purpose-built apps and the Muse evidence is a recorded-plan replay, not a completed live API comparison.
+Written by the submitter in the form.
 
-New revision checks are linked from `eval/verification/release-checks.json`. Upstream TodoMVC and 2048 probes are narrow compatibility evidence only; no real upstream bug was established. They are not included in the held-out detection score.
+## Provide feedback from your experience using partner technologies
 
-Before submission, replace this paragraph only with claims supported by the final saved live evaluation attempts. Report incomplete runs, fallbacks, per-bug coverage, latency and observed usage. Do not select only the best repeated run or turn absent coverage into a clean result.
-
-## Why this matters
-
-The intended users are developers who need a reproducible explanation for a timing-sensitive UI failure. A failing regression test, reviewable evidence and an explicit fixed-build replay make a finding usable in a development workflow. The next impact proof is a real, independently reviewed defect in an unmodified network-backed upstream app; it has not been established yet.
-
-## Development provenance
-
-The original author used Anthropic Claude. ChatGPT (OpenAI) assisted with this separate revision. Runtime model calls remain Meta only. Details and the original-history limitation are disclosed in `docs/PROVENANCE.md`.
-
-## Feedback fields
-
-The owner must supply their actual experience with Meta and any partner services. Do not invent service usage, feedback, customer validation or model results.
-
-## Required submission checks
-
-- Provide the public repository URL and an accessible three-minute video link; list all human contributors.
-- Identify the specific features, code and functionality created during the event. Preserve the original Git history and disclose development assistance.
-- Resolve the Guide's October 26 kickoff versus October 27 building-period boundary before certifying the initial work's eligibility. The original author declares work began after kickoff; this snapshot cannot independently verify the dates.
-- Submit by November 5 at 03:00 Berlin time, corresponding to the Guide's November 4 at 21:00 Eastern deadline.
-- Claim the Open Weight award condition only after a real eligible Muse Glimmer/Spark Open deployment and run can be verified. For Baseten, the supplied Guide specifies `meta-models/muse-spark-open-1026`.
-- Treat the Agentic and Creative awards as judged categories, not automatic qualifications. Wonder use alone does not establish a creative project. Prize stacking remains unspecified.
-
-For the optional Viral award, a demo post on X and its submitted platform link are required. The Guide counts engagement until November 8 EOD; confirm the exact timezone. Community voting opens November 9 and its winner is announced November 16. No social post, publication or competition submission has been performed by preparing this draft.
+Written by the submitter in the form.

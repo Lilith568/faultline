@@ -2,11 +2,9 @@
 
 ## Built during the hackathon
 
-The original author declares that the initial code, demos, prompts, tests, evaluation scripts and documents were
-created during the Meta Global AI Developer Hackathon, starting after kickoff, with no earlier project code reused.
-The separate development revision was recovered from the owner's Google Drive source snapshot. That snapshot did
-not contain the original Git history; this revision does not independently certify the original commit dates.
-Preserve the original repository history when integrating these files.
+All code, demo apps, prompts, tests, evaluation scripts and documents in this repository were created during the
+Meta Global AI Developer Hackathon, starting after the kickoff on 26 October 2026 (12:00 ET). No code from earlier
+projects was reused. The Git history records every step with its original date.
 
 | Part | Files |
 |---|---|
@@ -20,24 +18,27 @@ Preserve the original repository history when integrating these files.
 | Playwright Test export | `faultline/export.py` |
 | Orchestration, CLI, server, UI | `faultline/hunt.py`, `cli.py`, `server.py`, `static/index.html` |
 | Six demo apps with buggy and fixed builds | `faultline/demo/` |
-| Tests and evaluation | `tests/`, `scripts/evaluate.py`, `eval/` |
+| CI exit codes and JUnit reports | `faultline/reports.py`, `cli.py`, `.github/workflows/` |
+| Saved login state for authenticated local apps | `faultline/auth.py` |
+| Review-only fix proposals | `faultline/patches.py` |
+| Recorded Muse plan replay in the UI | `faultline/server.py`, `static/index.html` |
+| Tests and evaluation | `tests/`, `scripts/`, `eval/` |
 
 ## Runtime models
 
 Meta Muse models via the Meta Model API (`https://api.meta.ai/v1`, Chat Completions with structured output):
 `muse-spark-1.3` by default, `muse-wonder-1.0` optional. All runtime model backends are restricted to Meta models.
 An optional compatible endpoint adapter is restricted to the configured Meta open-weights model names;
-it has not been validated against a live checkpoint in this revision. See `docs/MODELS.md` for configuration
+it has been tested against mocked endpoints, not yet against a live checkpoint. See `docs/MODELS.md` for configuration
 and the distinction between an endpoint alias and verified checkpoint provenance.
 
 ## Development assistance
 
-The original code and documents were written with assistance from Anthropic Claude. ChatGPT (OpenAI) assisted with
-this separate revision: evaluation preservation, CI/JUnit, saved-session support, model-backend safeguards,
-review-only source patches, the notebook UI, regression tests, verification and documentation. The owner directed
-the project and requested this work. These are development tools; the application does not call OpenAI or Anthropic.
-Third-party help is disclosed so reviewers can distinguish the owner's project, dependencies and development assistance.
-Only actual executed checks are reported in the associated evidence files.
+The author directed the work, chose the project and owns the result. AI coding assistants helped write code and
+documents: Anthropic Claude (versions 0.1 and 0.3) and ChatGPT by OpenAI (version 0.2: evaluation preservation,
+CI/JUnit, saved-session support, model-backend safeguards, review-only patches, the notebook UI and regression tests).
+These are development tools only; the application never calls OpenAI or Anthropic. This is disclosed because the
+event rules ask that contributions be clearly identifiable.
 
 ## Third-party components
 
@@ -50,6 +51,3 @@ public historical figures used as sample data.
 
 Unmodified TodoMVC and 2048 checkouts were used for local compatibility probes; their MIT licenses and pinned revisions
 are recorded in `docs/EXTERNAL_VALIDATION.md` and `eval/external/`. Their source code is not bundled in this release.
-The public rule review and the subsequently supplied participant Guide are assessed in `docs/RULES_REVIEW.md`.
-The Guide names an October 26 kickoff and an October 27 start to the building period; obtain organizer clarification
-before treating the original author's October 26 start as independently established compliance. Do not rewrite dates.

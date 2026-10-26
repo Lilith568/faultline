@@ -1,0 +1,671 @@
+{
+  "schema_version": 2,
+  "run_id": "20261026T234859.919130Z-heuristic-e572bed2",
+  "planner": "heuristic",
+  "model": null,
+  "date": "2026-10-26T23:48:59.919227+00:00",
+  "status": "completed",
+  "repeat_index": 1,
+  "requested_apps": [
+    "profile",
+    "search",
+    "checkout",
+    "settings",
+    "composer",
+    "newsletter"
+  ],
+  "planned_targets": 12,
+  "metadata": {
+    "git": {
+      "commit": "c922a23c6eca54dfde2dda3d241eb12fe95cd4a5",
+      "dirty": true,
+      "available": true
+    },
+    "python": "3.13.17",
+    "platform": "Linux-6.18.44-fc-v165-x86_64-with-glibc2.39",
+    "dependencies": {
+      "playwright": "1.63.0",
+      "fastapi": "0.162.0",
+      "httpx": "0.28.1",
+      "uvicorn": "0.54.0"
+    },
+    "source_sha256": {
+      "faultline/__init__.py": "d06dd5cda0fae6cc93f15399fe407ae50a8a0557f2e987051f9d6c78249b615d",
+      "faultline/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+      "faultline/auth.py": "a87488aac3479d26c4a812b1deece39a81c66c19ae40c21235216be0c3a83814",
+      "faultline/cli.py": "7d12ea411209f42b9b24b7fde88d2731572ddb04ffdbde5388bb627f90f3634b",
+      "faultline/config.py": "51385edd01a32ce1d699ad1266bb407357bebe7f229506cc801d333573691ac7",
+      "faultline/demo/checkout.html": "8a1c02b62218003b76624ded06332faf8734af2bad3d55884fc853e872f8fcad",
+      "faultline/demo/composer.html": "e4832358307d6b2e5a0ca9969921cfa48f7fe33e9757eefa616f8ce0598c8c48",
+      "faultline/demo/demo.css": "bf69dfe087457375e2cbe7dca115ee52f16f643c421e1c75d48b304af6dfa56b",
+      "faultline/demo/newsletter.html": "74ccc87d4c66e13eece4763aca80fdcbac6c8b183c1811302c1966d087ec0053",
+      "faultline/demo/profile.html": "b718bc89705ffe59cd2fef94001c8129e4f51722f8b99fb9e6042bda427f3507",
+      "faultline/demo/search.html": "cc602f7dd816d97ea65e0442e59e18ebd53859d8a3ab7f58f830b6bac76d9581",
+      "faultline/demo/settings.html": "25b0ef95b6c8c03324109c501d8d70aa8cd2ec484a6f86f5d1fd01796be5cdf8",
+      "faultline/discover.py": "bc0774de87b35c10e5a4ee6c9b23dff55727e3e31b5c3af0011295c95628de5d",
+      "faultline/executor.py": "46e090fdd105df964a5f7e3074ef1ee4e3e056a1dabc77da6342a3c88d52917f",
+      "faultline/export.py": "ec0dca8d4dbeb6d2ebc0fd6d7d838ba7e96a94f9a83fa9fa0b5ac0de960b86ae",
+      "faultline/hunt.py": "c05da5e7d1b839f6e6fd33f2c6a4d5cf2b3a88d7b38039fb5448cda04be8ebd3",
+      "faultline/invariants.py": "97123563574fa07e7bff25fd417ecb44e4f461a3e5cba667be7526a4b0ee05fd",
+      "faultline/meta.py": "70965222e853b3d53afcc77dc43c8a5d83a58f0da0f993c974529190426c59a5",
+      "faultline/minimize.py": "6c4330d57d0ee3a187cfba847e87289adfbebc2a9514a126c5e581133a094df3",
+      "faultline/patches.py": "94ee23e145997a32c0e98d2858301090cf8be9ca440f14267ae4483a06bf57e2",
+      "faultline/planners.py": "a775ab240482b39016a73a8ac33a337f0cd26aa8099ca8f834b2a6ebea64c9e5",
+      "faultline/reports.py": "53a79ef0949ee8f63b425012977d8de9d65e9c728a51f6fd0fb31a4edbcf2235",
+      "faultline/server.py": "91c3ecee94e43e56cc0636a1d521990e77bdb1fca31a0d7c6deb631343fe3924",
+      "faultline/static/index.html": "384d42e99af0e5ee4a86c9c6f66ec3cce9a503c6534c53ee583b65c465ca76b0",
+      "faultline/vocab.py": "c56056d1fd0d98b9848e160d84fb46124f8fdd51f1cd0400525bfc48cda34460",
+      "scripts/check_external_fixtures.py": "cffbe4e522ccb50bd67a645eb03cbb13b840588898d8195e19a015de7709eb91",
+      "scripts/evaluate.py": "4d49cd4f10d5dc3bb8547617a1102965c8ab7dc9e4cba9836aa36d0b26ce38ca",
+      "scripts/evaluate_external.py": "aa669d40e0e50962b7db10a72a40c1a919ec7522ef7cd2fc91339b4a7f32eba4",
+      "scripts/replay_recorded.py": "d334e5d82246b73110caf4f286d280f4f9a22a036b1ac48d2160ea2198cc8c4a",
+      "scripts/summarize_eval.py": "e597e1db12337b6b0725c1ba1d7911048fc28af52692ff705179ec6535312e4e",
+      "pyproject.toml": "4f9c0f3bcb75d6207ec5428e017291912a92680afb47912481db513fcf60fba2"
+    },
+    "ground_truth_sha256": "e6d89a3098ee7946424bdd8f61e37611fb0929d5575673bf3456ff76833a737b",
+    "configuration": {
+      "planner": "heuristic",
+      "apps": [
+        "profile",
+        "search",
+        "checkout",
+        "settings",
+        "composer",
+        "newsletter"
+      ],
+      "model": null,
+      "reasoning_effort": null,
+      "backend": "meta",
+      "supports_vision": true,
+      "json_mode": "json_schema",
+      "rounds": 2,
+      "confirmation_runs": 3,
+      "endpoint": null
+    },
+    "comparison_fingerprint": "709ceb608853689b37815b656c9924909b02c75c72c20df7a856edf3066a936b"
+  },
+  "rows": [
+    {
+      "app": "profile",
+      "mode": "buggy",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [
+        "profile-overwrite",
+        "profile-focus"
+      ],
+      "found": [
+        "profile-focus",
+        "profile-overwrite"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "failed": 4,
+        "passed": 2
+      },
+      "invariant_outcomes": {
+        "fail": 4,
+        "pass": 2
+      },
+      "applicable_invariants": 6,
+      "applicable_experiments": 6,
+      "execution_complete": true,
+      "experiments": 6,
+      "browser_runs": 25,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 45.3,
+      "hunt_id": "20261026-234900-2b80d1",
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 3,
+        "cx3": 4
+      },
+      "diagnosis_sources": {
+        "template": 3
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "profile",
+      "mode": "fixed",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "passed": 6
+      },
+      "invariant_outcomes": {
+        "pass": 6
+      },
+      "applicable_invariants": 6,
+      "applicable_experiments": 6,
+      "execution_complete": true,
+      "experiments": 6,
+      "browser_runs": 6,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 8.0,
+      "hunt_id": "20261026-234945-d931f6",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "search",
+      "mode": "buggy",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [
+        "search-order"
+      ],
+      "found": [
+        "search-order"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "failed": 1
+      },
+      "invariant_outcomes": {
+        "fail": 1
+      },
+      "applicable_invariants": 1,
+      "applicable_experiments": 1,
+      "execution_complete": true,
+      "experiments": 1,
+      "browser_runs": 8,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 23.1,
+      "hunt_id": "20261026-234953-5ad2cd",
+      "minimized_steps": {
+        "cx1": 2
+      },
+      "diagnosis_sources": {
+        "template": 1
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "search",
+      "mode": "fixed",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "passed": 1
+      },
+      "invariant_outcomes": {
+        "pass": 1
+      },
+      "applicable_invariants": 1,
+      "applicable_experiments": 1,
+      "execution_complete": true,
+      "experiments": 1,
+      "browser_runs": 1,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.0,
+      "hunt_id": "20261026-235016-1b25a5",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "checkout",
+      "mode": "buggy",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [
+        "checkout-double"
+      ],
+      "found": [
+        "checkout-double"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "failed": 1,
+        "passed": 1
+      },
+      "invariant_outcomes": {
+        "fail": 1,
+        "pass": 1
+      },
+      "applicable_invariants": 2,
+      "applicable_experiments": 2,
+      "execution_complete": true,
+      "experiments": 2,
+      "browser_runs": 11,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 17.3,
+      "hunt_id": "20261026-235022-d9299a",
+      "minimized_steps": {
+        "cx1": 3
+      },
+      "diagnosis_sources": {
+        "template": 1
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "checkout",
+      "mode": "fixed",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "passed": 2
+      },
+      "invariant_outcomes": {
+        "pass": 2
+      },
+      "applicable_invariants": 2,
+      "applicable_experiments": 2,
+      "execution_complete": true,
+      "experiments": 2,
+      "browser_runs": 2,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.3,
+      "hunt_id": "20261026-235040-109f28",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "settings",
+      "mode": "buggy",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [
+        "settings-errorloss",
+        "settings-stale-load"
+      ],
+      "found": [
+        "settings-errorloss",
+        "settings-stale-load"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "failed": 3,
+        "passed": 1
+      },
+      "invariant_outcomes": {
+        "fail": 3,
+        "pass": 1
+      },
+      "applicable_invariants": 4,
+      "applicable_experiments": 4,
+      "execution_complete": true,
+      "experiments": 4,
+      "browser_runs": 27,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 45.4,
+      "hunt_id": "20261026-235046-b30135",
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 2,
+        "cx3": 2
+      },
+      "diagnosis_sources": {
+        "template": 3
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "settings",
+      "mode": "fixed",
+      "held_out": false,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "passed": 4
+      },
+      "invariant_outcomes": {
+        "pass": 4
+      },
+      "applicable_invariants": 4,
+      "applicable_experiments": 4,
+      "execution_complete": true,
+      "experiments": 4,
+      "browser_runs": 4,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 8.9,
+      "hunt_id": "20261026-235131-0d82df",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "composer",
+      "mode": "buggy",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [
+        "composer-draft",
+        "composer-double"
+      ],
+      "found": [
+        "composer-double"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "failed": 1,
+        "passed": 1
+      },
+      "invariant_outcomes": {
+        "fail": 1,
+        "pass": 1
+      },
+      "applicable_invariants": 2,
+      "applicable_experiments": 2,
+      "execution_complete": true,
+      "experiments": 2,
+      "browser_runs": 10,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 16.0,
+      "hunt_id": "20261026-235140-828063",
+      "minimized_steps": {
+        "cx1": 2
+      },
+      "diagnosis_sources": {
+        "template": 1
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "composer",
+      "mode": "fixed",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "passed": 2
+      },
+      "invariant_outcomes": {
+        "pass": 2
+      },
+      "applicable_invariants": 2,
+      "applicable_experiments": 2,
+      "execution_complete": true,
+      "experiments": 2,
+      "browser_runs": 2,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 7.3,
+      "hunt_id": "20261026-235156-b01b68",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "newsletter",
+      "mode": "buggy",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [
+        "newsletter-focus",
+        "newsletter-errorloss"
+      ],
+      "found": [
+        "newsletter-focus"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "failed": 2,
+        "passed": 1
+      },
+      "invariant_outcomes": {
+        "fail": 2,
+        "pass": 1
+      },
+      "applicable_invariants": 3,
+      "applicable_experiments": 3,
+      "execution_complete": true,
+      "experiments": 3,
+      "browser_runs": 7,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 8.6,
+      "hunt_id": "20261026-235204-1cada4",
+      "minimized_steps": {
+        "cx1": 2
+      },
+      "diagnosis_sources": {
+        "template": 1
+      },
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    },
+    {
+      "app": "newsletter",
+      "mode": "fixed",
+      "held_out": true,
+      "status": "completed",
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "warnings": [],
+      "error": null,
+      "planner_used": "heuristic",
+      "fallback": null,
+      "meta_complete": false,
+      "experiment_outcomes": {
+        "passed": 3
+      },
+      "invariant_outcomes": {
+        "pass": 3
+      },
+      "applicable_invariants": 3,
+      "applicable_experiments": 3,
+      "execution_complete": true,
+      "experiments": 3,
+      "browser_runs": 3,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 4.1,
+      "hunt_id": "20261026-235212-2f8f47",
+      "minimized_steps": {},
+      "diagnosis_sources": {},
+      "rounds_completed": 1,
+      "meta_attempt_statuses": {},
+      "reported_models": []
+    }
+  ],
+  "errors": [],
+  "coverage": {
+    "planned": 12,
+    "completed": 12,
+    "errors": 0,
+    "not_completed": 0,
+    "meta_complete_targets": 0,
+    "targets_with_applicable_checks": 12,
+    "execution_complete_targets": 12
+  },
+  "browser_runs": 106,
+  "meta_calls": 0,
+  "tokens": {
+    "input": 0,
+    "output": 0
+  },
+  "seconds": 196.3,
+  "dev_apps": {
+    "apps": [
+      "profile",
+      "search",
+      "checkout",
+      "settings"
+    ],
+    "found": 6,
+    "expected": 6,
+    "planned_expected": 6,
+    "false_positives_on_fixed_builds": 0,
+    "fixed_builds_completed": 4,
+    "fixed_builds_with_coverage": 4,
+    "fixed_builds_planned": 4,
+    "unexpected_on_buggy_builds": 0
+  },
+  "held_out_apps": {
+    "apps": [
+      "composer",
+      "newsletter"
+    ],
+    "found": 2,
+    "expected": 4,
+    "planned_expected": 4,
+    "false_positives_on_fixed_builds": 0,
+    "fixed_builds_completed": 2,
+    "fixed_builds_with_coverage": 2,
+    "fixed_builds_planned": 2,
+    "unexpected_on_buggy_builds": 0
+  },
+  "source_sha256_after": {
+    "faultline/__init__.py": "d06dd5cda0fae6cc93f15399fe407ae50a8a0557f2e987051f9d6c78249b615d",
+    "faultline/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+    "faultline/auth.py": "a87488aac3479d26c4a812b1deece39a81c66c19ae40c21235216be0c3a83814",
+    "faultline/cli.py": "7d12ea411209f42b9b24b7fde88d2731572ddb04ffdbde5388bb627f90f3634b",
+    "faultline/config.py": "51385edd01a32ce1d699ad1266bb407357bebe7f229506cc801d333573691ac7",
+    "faultline/demo/checkout.html": "8a1c02b62218003b76624ded06332faf8734af2bad3d55884fc853e872f8fcad",
+    "faultline/demo/composer.html": "e4832358307d6b2e5a0ca9969921cfa48f7fe33e9757eefa616f8ce0598c8c48",
+    "faultline/demo/demo.css": "bf69dfe087457375e2cbe7dca115ee52f16f643c421e1c75d48b304af6dfa56b",
+    "faultline/demo/newsletter.html": "74ccc87d4c66e13eece4763aca80fdcbac6c8b183c1811302c1966d087ec0053",
+    "faultline/demo/profile.html": "b718bc89705ffe59cd2fef94001c8129e4f51722f8b99fb9e6042bda427f3507",
+    "faultline/demo/search.html": "cc602f7dd816d97ea65e0442e59e18ebd53859d8a3ab7f58f830b6bac76d9581",
+    "faultline/demo/settings.html": "25b0ef95b6c8c03324109c501d8d70aa8cd2ec484a6f86f5d1fd01796be5cdf8",
+    "faultline/discover.py": "bc0774de87b35c10e5a4ee6c9b23dff55727e3e31b5c3af0011295c95628de5d",
+    "faultline/executor.py": "46e090fdd105df964a5f7e3074ef1ee4e3e056a1dabc77da6342a3c88d52917f",
+    "faultline/export.py": "ec0dca8d4dbeb6d2ebc0fd6d7d838ba7e96a94f9a83fa9fa0b5ac0de960b86ae",
+    "faultline/hunt.py": "c05da5e7d1b839f6e6fd33f2c6a4d5cf2b3a88d7b38039fb5448cda04be8ebd3",
+    "faultline/invariants.py": "97123563574fa07e7bff25fd417ecb44e4f461a3e5cba667be7526a4b0ee05fd",
+    "faultline/meta.py": "70965222e853b3d53afcc77dc43c8a5d83a58f0da0f993c974529190426c59a5",
+    "faultline/minimize.py": "6c4330d57d0ee3a187cfba847e87289adfbebc2a9514a126c5e581133a094df3",
+    "faultline/patches.py": "94ee23e145997a32c0e98d2858301090cf8be9ca440f14267ae4483a06bf57e2",
+    "faultline/planners.py": "a775ab240482b39016a73a8ac33a337f0cd26aa8099ca8f834b2a6ebea64c9e5",
+    "faultline/reports.py": "53a79ef0949ee8f63b425012977d8de9d65e9c728a51f6fd0fb31a4edbcf2235",
+    "faultline/server.py": "91c3ecee94e43e56cc0636a1d521990e77bdb1fca31a0d7c6deb631343fe3924",
+    "faultline/vocab.py": "c56056d1fd0d98b9848e160d84fb46124f8fdd51f1cd0400525bfc48cda34460",
+    "scripts/check_external_fixtures.py": "cffbe4e522ccb50bd67a645eb03cbb13b840588898d8195e19a015de7709eb91",
+    "scripts/evaluate.py": "4d49cd4f10d5dc3bb8547617a1102965c8ab7dc9e4cba9836aa36d0b26ce38ca",
+    "scripts/evaluate_external.py": "aa669d40e0e50962b7db10a72a40c1a919ec7522ef7cd2fc91339b4a7f32eba4",
+    "scripts/replay_recorded.py": "d334e5d82246b73110caf4f286d280f4f9a22a036b1ac48d2160ea2198cc8c4a",
+    "scripts/summarize_eval.py": "e597e1db12337b6b0725c1ba1d7911048fc28af52692ff705179ec6535312e4e",
+    "pyproject.toml": "4f9c0f3bcb75d6207ec5428e017291912a92680afb47912481db513fcf60fba2"
+  },
+  "source_changes_during_run": [],
+  "source_unchanged_during_run": true,
+  "finished_at": "2026-10-26T23:52:17.007327+00:00"
+}

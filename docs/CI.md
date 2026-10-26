@@ -54,6 +54,11 @@ localStorage for the exact target origin are retained. The state is loaded
 from a bounded local JSON file; it is not included in model messages, reports,
 exported tests or console output. IndexedDB and sessionStorage are not imported.
 
+Signed-in pages can show private data, so by default they are never sent to a model:
+an authenticated hunt uses the rules-only planner and says so in the report. Add
+`--send-signed-in-pages` to let the Meta model see the signed-in page inventory and
+screenshots as well. The saved login state itself is never sent in either case.
+
 Authenticated contexts block service workers, WebSockets, HTTP redirects and
 cross-origin resource requests. Use the final page URL directly. The authenticated
 transport supports ordinary HTTP request/response apps, not streaming responses.

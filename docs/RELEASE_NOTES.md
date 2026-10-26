@@ -1,35 +1,49 @@
-# Faultline 0.2.0
+# Release notes
 
-This is a separate development revision of the owner's Drive snapshot. The prior Drive version is unchanged. It is not a competition submission or a claim of production readiness.
+## 0.3.0
 
-## Changes
+- **Recorded Muse plan in the UI.** On the held-out demo apps the UI can replay the plan Muse wrote in the Meta
+  playground, so anyone can see the Muse-planned path without an API key. The run is labelled as a replay, names the
+  recording file and date, and calls no model.
+- **Spark or Wonder per hunt.** With a Meta key, the UI offers a switch between `muse-spark-1.3` and
+  `muse-wonder-1.0`; the API only accepts those two hosted Muse models.
+- **Same-origin redirects work again.** Page navigations follow same-origin redirect chains (for example `/` to
+  `/app`, or a form's post-redirect-get) and still block any hop to another origin before it is contacted. Signed-in
+  runs keep blocking all redirects.
+- **Signed-in pages stay private by default.** With saved login state, the Meta model only sees the signed-in pages
+  after the separate `--send-signed-in-pages` opt-in; otherwise the rules-only planner is used and the report says so.
+- **Model identity.** A dated snapshot of the requested model (for example `muse-spark-1.3-2026-10-20`) is accepted;
+  an answer from another model fails after one call instead of three billable retries.
+- **Robust fallback.** Invalid model settings fall back to the rules-only planner with a clear reason instead of
+  ending the hunt.
+- **Bounded password check.** The pre-typing password check now uses the action timeout instead of Playwright's
+  30-second default, which slowed down minimization.
+- Git history restored (0.2.0 had been prepared from a copy without it), documentation rewritten for reviewers,
+  `FAULTLINE_UI_HOSTS` documented, 15 new regression tests.
 
-- Preserve each evaluation and replay in a unique directory; checkpoint each completed target and distinguish requested model, actual planner, errors and fallbacks. Summaries keep incompatible configurations separate.
-- Add conservative CI exit codes, JUnit output and a manually triggered GitHub Actions example.
-- Support explicitly supplied saved login state through the CLI, with scoped state and fresh browser contexts. Authenticated requests have documented restrictions; state is not part of the deliverable.
-- Offer source-based patch proposals only after explicit selection and consent. Validate unified diffs against the selected text without writing or executing them.
-- Add an optional Meta open-weights HTTP backend, credential separation and attempted-request accounting.
-- Rework the single-file notebook interface: truthful phase states, clearer expected/observed evidence, larger screenshots, actual exported test previews, distinct re-test outcomes and an explicit no-coverage state.
-- Add protection against foreign-origin API requests, unrecognized API hosts and password fields that change after discovery. Generated specs also reject password typing and block service workers.
-- Document actual upstream compatibility probes, rule verification gaps, development provenance and the Muse Wonder handoff.
+## 0.2.0
 
-## What stays comparable
+- Every evaluation and replay attempt is preserved in its own directory with checkpoints, separating the requested
+  model, the actual planner, errors and fallbacks. Summaries keep incompatible configurations apart.
+- CI exit codes, JUnit output and a manually triggered GitHub Actions example.
+- Saved Playwright login state for authenticated local apps, scoped to the target and kept out of every output.
+- Review-only fix proposals from explicitly selected source files after consent. Diffs are validated against the
+  selected text and never written or executed.
+- Optional Meta open-weights endpoint adapter with separate credentials and call accounting.
+- Notebook UI: hunt phases, expected and observed evidence, larger screenshots, the exact exported test, distinct
+  re-test outcomes and an explicit no-coverage state.
+- Protection against cross-origin navigation, unrecognised API hosts and password fields that change after
+  discovery. Exported specs refuse password typing and block service workers.
+- Compatibility probes on unmodified TodoMVC and 2048 (see `docs/EXTERNAL_VALIDATION.md`).
 
-Bundled demo bytes, existing ground truth, planner prompts/rules and recorded plans remain unchanged. The runtime did change, so historical results retain their historical identity and new evaluation attempts record source fingerprints. Do not relabel old measurements as results of this revision.
+Bundled demo files, ground truth, planner prompts and rules, and the recorded plans are unchanged since 0.1, so the
+results in `eval/` stay comparable. Each new evaluation attempt records source fingerprints.
 
-## Validation and remaining work
+## 0.1.0
 
-See `eval/verification/release-checks.json` for executed checks and `docs/QUALITY_REVIEW.md` for the independent readiness assessment. Hosted Meta and open-weights live behavior still require the owner's configured endpoint. No real upstream defect or complete end-to-end live model benchmark is claimed.
-
-## Apply to the original Git repository
-
-The Drive snapshot did not contain the original Git history. Copy the supplied source files into the original repository or apply the included source patch and copy the new `eval/` evidence alongside it. Inspect `git diff` and retain the original `.git` directory. Never replace the original history with a newly invented history. Keep existing evaluation results and private `.env`/`.auth` files local.
-
-Suggested commit message:
-
-```text
-feat: preserve evaluation evidence and add CI, saved sessions and review-only fixes
-```
+The hypothesis-driven hunt: discovery, the closed experiment vocabulary and validator, Muse planning with a
+follow-up round, fault-injecting Playwright executor, invariants, minimizer and fault ablation, three-run
+confirmation, Muse diagnosis, Playwright Test export, the web UI and six demo apps with buggy and fixed builds.
 
 ## Local check
 
@@ -37,9 +51,7 @@ feat: preserve evaluation evidence and add CI, saved sessions and review-only fi
 pip install -e ".[dev]"
 python -m playwright install chromium
 pytest -q
+python scripts/replay_recorded.py
+python scripts/evaluate.py --planner heuristic
 python -m faultline serve
 ```
-
-Open `http://127.0.0.1:8000`, choose a demo and click **Start hunt**. If there is no Meta key, select **Rules only**; this does not establish Meta quality. At a finding, use the corresponding `?mode=fixed` URL and **Re-test this build**. Confirm that the exact test preview matches the downloaded `.spec.ts`.
-
-Then run the separately preserved evaluations described in `docs/EVALUATION.md`. For a real Meta evaluation, put the key into your local environment or `.env`, never into a report or chat.

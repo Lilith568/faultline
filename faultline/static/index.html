@@ -46,7 +46,8 @@ a{color:inherit;text-underline-offset:3px}button,input,textarea{font:inherit;col
   <div class="switch-row">
     <div class="switches">
       <div class="toggle" role="group" aria-label="Demo build"><button type="button" data-mode="buggy" aria-pressed="true">Buggy build</button><button type="button" data-mode="fixed" aria-pressed="false">Fixed build</button></div>
-      <div class="toggle" role="group" aria-label="Planner"><button type="button" data-planner="meta" aria-pressed="true">Muse plans</button><button type="button" data-planner="heuristic" aria-pressed="false">Rules only</button></div>
+      <div class="toggle" role="group" aria-label="Planner"><button type="button" data-planner="meta" aria-pressed="true">Muse plans</button><button type="button" data-planner="heuristic" aria-pressed="false">Rules only</button><button type="button" data-planner="recorded" aria-pressed="false" hidden title="Replays a plan that Muse wrote in the Meta playground. No API key needed.">Recorded Muse plan</button></div>
+      <div class="toggle" role="group" aria-label="Muse model" id="modelPick" hidden><button type="button" data-model="muse-spark-1.3" aria-pressed="true">Spark</button><button type="button" data-model="muse-wonder-1.0" aria-pressed="false">Wonder</button></div>
     </div>
     <div class="model" id="model" role="status">Checking the model connection…</div>
   </div>
@@ -91,7 +92,7 @@ const PHASES = [['explore','Explore'],['hypotheses','Hypotheses'],['verify','Ver
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const route = (huntId, cxId, part) => `/api/hunts/${encodeURIComponent(huntId)}/${encodeURIComponent(cxId)}/${part}`;
-let demo='profile', mode='buggy', planner='meta', hunt=null, since=0, t0=0, running=false, generation=0, timer=null, currentPhase=null, runTarget='', pollErrors=0, cxCount=0, modelReady=false;
+let recordedDemos=[], museModel=null, demo='profile', mode='buggy', planner='meta', hunt=null, since=0, t0=0, running=false, generation=0, timer=null, currentPhase=null, runTarget='', pollErrors=0, cxCount=0, modelReady=false;
 const hyp = Object.create(null), phaseStates = Object.create(null), patchSources = new Map();
 let trace=[], seed=7;
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -101,17 +102,20 @@ function press(attr,value){document.querySelectorAll(`[data-${attr}]`).forEach(b
 $('demos').insertAdjacentHTML('beforeend',DEMOS.map(([key,label,note])=>`<button type="button" data-demo="${key}" aria-pressed="${key===demo}">${label}${note?`<em>${note}</em>`:''}</button>`).join(''));
 document.addEventListener('click',event=>{
   if(running)return;
-  const d=event.target.closest('[data-demo]');if(d){demo=d.dataset.demo;press('demo',demo);setUrl();}
+  const d=event.target.closest('[data-demo]');if(d){demo=d.dataset.demo;press('demo',demo);setUrl();updateRecorded();}
   const m=event.target.closest('[data-mode]');if(m){mode=m.dataset.mode;press('mode',mode);setUrl();}
-  const p=event.target.closest('[data-planner]');if(p){planner=p.dataset.planner;press('planner',planner);updatePlannerCopy();}
+  const p=event.target.closest('[data-planner]');if(p){planner=p.dataset.planner;press('planner',planner);updatePlannerCopy();updateModelPick();}
+  const k=event.target.closest('[data-model]');if(k){museModel=k.dataset.model;press('model',museModel);}
 });
-$('url').addEventListener('input',()=>{demo=null;press('demo','');});setUrl();
-function updatePlannerCopy(){$('hypIdle').textContent=planner==='heuristic'||!modelReady?'Rules propose experiments. Playwright checks what actually happens.':'Muse proposes an experiment. Playwright checks what actually happens.';}
+$('url').addEventListener('input',()=>{demo=null;press('demo','');updateRecorded();});setUrl();
+function updateModelPick(){$('modelPick').hidden=!(modelReady&&museModel&&planner!=='heuristic'&&planner!=='recorded');}
+function updateRecorded(){const button=document.querySelector('[data-planner=recorded]');const available=Boolean(demo)&&recordedDemos.includes(demo);button.hidden=!available;if(!available&&planner==='recorded'){planner='meta';press('planner',planner);updatePlannerCopy();updateModelPick();}}
+function updatePlannerCopy(){$('hypIdle').textContent=planner==='recorded'?'A plan that Muse wrote in the Meta playground is replayed. Playwright checks what actually happens.':planner==='heuristic'||!modelReady?'Rules propose experiments. Playwright checks what actually happens.':'Muse proposes an experiment. Playwright checks what actually happens.';}
 function status(message,tone=''){$('status').textContent=message;$('status').dataset.tone=tone;}
 async function jsonResponse(response){const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(detailText(data.detail)||`Request failed (HTTP ${response.status}).`);return data;}
 function detailText(detail){if(!detail)return '';if(Array.isArray(detail))return detail.map(x=>x.msg||'Invalid request').join('; ');return typeof detail==='string'?detail:JSON.stringify(detail);}
-fetch('/api/config').then(jsonResponse).then(config=>{modelReady=Boolean(config.meta_configured);$('model').textContent=modelReady?`${config.model} · ${config.reasoning_effort||'default'} reasoning`:'No Meta key configured. Hunts will use rules only.';updatePlannerCopy();}).catch(()=>{$('model').textContent='Could not read model settings. Check the local server.';});
-function lockSetup(locked){document.querySelectorAll('#url,#goal,#sendSource,#run,[data-demo],[data-mode],[data-planner]').forEach(el=>{el.disabled=locked;});$('run').textContent=locked?'Hunt in progress…':'Start hunt';}
+fetch('/api/config').then(jsonResponse).then(config=>{modelReady=Boolean(config.meta_configured);recordedDemos=Array.isArray(config.recorded_demos)?config.recorded_demos:[];const models=Array.isArray(config.models)?config.models:[];document.querySelectorAll('[data-model]').forEach(b=>{b.hidden=!models.includes(b.dataset.model);});museModel=models.length>1&&models.includes(config.model)?config.model:null;if(museModel)press('model',museModel);updateRecorded();updateModelPick();$('model').textContent=modelReady?`${config.model} · ${config.reasoning_effort||'default'} reasoning`:recordedDemos.length?'No Meta key configured. Muse plans fall back to rules. The held-out demos can replay a recorded Muse plan.':'No Meta key configured. Hunts will use rules only.';updatePlannerCopy();}).catch(()=>{$('model').textContent='Could not read model settings. Check the local server.';});
+function lockSetup(locked){document.querySelectorAll('#url,#goal,#sendSource,#run,[data-demo],[data-mode],[data-planner],[data-model]').forEach(el=>{el.disabled=locked;});$('run').textContent=locked?'Hunt in progress…':'Start hunt';}
 
 /* Phase states are driven by server events, never by a simulated percentage. */
 function renderPhases(){const labels={pending:'Waiting',active:'In progress',done:'Complete',skipped:'Skipped',unused:'Not needed',stopped:'Stopped'};$('phases').innerHTML=PHASES.map(([key,label],index)=>`<li data-phase="${key}" data-state="${phaseStates[key]||'pending'}"${phaseStates[key]==='active'?' aria-current="step"':''}><span class="phase-number">${String(index+1).padStart(2,'0')}</span><span class="phase-label">${label}</span><span class="phase-note">${labels[phaseStates[key]||'pending']}</span></li>`).join('');}
@@ -219,7 +223,7 @@ $('run').addEventListener('click',async()=>{
   const token=++generation;runTarget=target;hunt=null;since=0;pollErrors=0;cxCount=0;trace=[];seed=7;running=true;t0=performance.now();patchSources.clear();for(const key of Object.keys(hyp))delete hyp[key];
   lockSetup(true);resetPhases();$('phaseCurrent').textContent='Starting the hunt';$('phaseDetail').textContent='Preparing a clean browser.';$('log').replaceChildren();$('rejected').replaceChildren();renderHyps();$('findingCount').textContent='Hunt in progress';$('sRuns').textContent='…';$('sCalls').textContent='…';$('sTime').textContent='0.0s';$('cxs').innerHTML='<div class="empty-sheet"><h3>Collecting evidence.</h3><p class="idle">An initial failure is only a lead. Findings appear after minimization and repeated browser checks.</p><p class="empty-note">Follow the current phase and hypotheses as the hunt runs.</p></div>';status('Starting a hunt against '+target);drawTrace();
   timer=setInterval(()=>{$('sTime').textContent=((performance.now()-t0)/1000).toFixed(1)+'s';},500);
-  const request={url:target,goal:$('goal').value,planner,include_source:$('sendSource').checked};
+  const request={url:target,goal:$('goal').value,planner,include_source:$('sendSource').checked};if(museModel&&planner!=='heuristic'&&planner!=='recorded')request.model=museModel;
   try{const data=await fetch('/api/hunts',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(request)}).then(jsonResponse);if(token!==generation)return;if(!data.id)throw new Error('The server returned no hunt ID.');hunt=data.id;await loop(token);}
   catch(error){if(token===generation){stopRun();settlePhases(true);status('Could not start the hunt: '+error.message,'error');$('findingCount').textContent='Hunt did not start';}}
 });
@@ -244,7 +248,7 @@ async function loop(token){
 }
 function finish(report){
   runTarget=report.url||runTarget;for(const round of report.rounds||[])for(const h of round.hypotheses||[])hyp[h.id]={h:{...h,round:round.round},status:h.result?.status||'error'};for(const cx of report.counterexamples||[])for(const id of cx.hypothesis_ids||[])if(hyp[id])hyp[id].status='confirmed';for(const item of report.unconfirmed||[])for(const id of item.hypothesis_ids||[])if(hyp[id])hyp[id].status='unconfirmed';renderHyps();$('sRuns').textContent=String(report.stats.browser_runs);$('sCalls').textContent=String(report.stats.meta_calls);$('sTime').textContent=report.stats.duration_s+'s';
-  const who=report.planner.used==='meta'?`${report.planner.model} planned the experiments.`:report.planner.used==='recorded'?`Replayed recorded ${report.planner.model||'Muse'} plans.`:'The rules-only planner designed the experiments.';const count=report.counterexamples.length,proposed=Object.keys(hyp).length,checked=Object.values(hyp).filter(item=>['passed','failed','confirmed','unconfirmed'].includes(item.status)).length;
+  const who=report.planner.used==='meta'?`${report.planner.model} planned the experiments.`:report.planner.used==='recorded'?`Replayed a ${report.planner.model||'Muse'} plan recorded in the Meta playground${report.planner.recorded_from&&report.planner.recorded_from.when?` (${String(report.planner.recorded_from.when).slice(0,10)})`:''}. No model was called in this run.`:'The rules-only planner designed the experiments.';const count=report.counterexamples.length,proposed=Object.keys(hyp).length,checked=Object.values(hyp).filter(item=>['passed','failed','confirmed','unconfirmed'].includes(item.status)).length;
   status(`${checked?`${count} verified failure${count===1?'':'s'}`:'No applicable checks completed'} in ${report.stats.duration_s}s. ${who}${report.planner.fallback_reason?' Fallback: '+report.planner.fallback_reason:''}`,report.planner.fallback_reason?'warning':'');$('findingCount').textContent=checked?`${count} finding${count===1?'':'s'}`:'No coverage';
   const unconfirmed=(report.unconfirmed||[]).map(item=>`<li>${esc(item.title)}: reproduced ${esc(item.confirmation.failures)} / ${esc(item.confirmation.runs)} times. Not counted as verified.</li>`).join('');
   $('cxs').innerHTML=(count?report.counterexamples.map((cx,index)=>renderCx(cx,report.id,index)).join(''):`<div class="empty-sheet"><h3>${!proposed?'No experiments were available.':!checked?'No applicable checks completed.':'No confirmed failures in this hunt.'}</h3><p class="idle">${!checked?'Faultline did not establish test coverage on this page. A lack of findings is not a passing result.':'Review the hypotheses for coverage and any inconclusive checks. This does not prove the app is free of bugs.'}</p><p class="empty-note">Try another goal or a different page.</p></div>`)+(unconfirmed?`<ul class="unconfirmed">${unconfirmed}</ul>`:'');

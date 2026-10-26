@@ -128,7 +128,8 @@ async def run_experiment(browser: Browser, url: str, exp: dict, inventory: dict,
                     elif action in ("fill", "type"):
                         # Discovery is a snapshot; the page can change a field to
                         # a password input before this step runs.
-                        if await loc.evaluate("el => el instanceof HTMLInputElement && el.type === 'password'"):
+                        if await loc.evaluate("el => el instanceof HTMLInputElement && el.type === 'password'",
+                                             timeout=action_timeout):
                             raise ValueError("Refusing to type into a password field")
                         if action == "fill":
                             await loc.fill(step["value"], timeout=action_timeout)

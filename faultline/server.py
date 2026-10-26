@@ -13,7 +13,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
-from .config import get_settings
+from dataclasses import replace
+
+from .config import META_MODELS, get_settings
 from .export import spec_filename
 from .hunt import Hunt, replay
 from .patches import propose_patch
@@ -24,9 +26,31 @@ STATIC_DIR = HERE / "static"
 DEMO_APPS = ("profile", "search", "checkout", "settings", "composer", "newsletter")
 ID_RE = re.compile(r"^[0-9]{8}-[0-9]{6}-[0-9a-f]{6}$")
 CX_RE = re.compile(r"^cx[0-9]{1,3}$")
+# Muse plans recorded in the Meta playground (see eval/recorded/). They let anyone see the Muse-planned path on the
+# bundled demo apps without an API key. Only present in a source checkout; the feature is hidden otherwise.
+RECORDED_DIR = HERE.parent / "eval" / "recorded"
+DEMO_PATH_RE = re.compile(r"^/demo/([a-z]+)\.html$")
 
-app = FastAPI(title="Faultline", version="0.2.0")
+app = FastAPI(title="Faultline", version="0.3.0")
 HUNTS: dict[str, dict] = {}
+
+
+def recorded_demos() -> list[str]:
+    """Bundled demo apps that have exactly one current recorded Muse plan."""
+    if not RECORDED_DIR.is_dir():
+        return []
+    return [name for name in DEMO_APPS if len(list(RECORDED_DIR.glob(f"{name}-*.json"))) == 1]
+
+
+def recorded_plan_for(url: str) -> dict | None:
+    """The recorded Muse plan for a bundled demo page, or None. Never calls a model."""
+    match = DEMO_PATH_RE.match(urlsplit(url).path)
+    if not match or match.group(1) not in recorded_demos():
+        return None
+    path = next(RECORDED_DIR.glob(f"{match.group(1)}-*.json"))
+    plan = json.loads(path.read_text(encoding="utf-8"))
+    plan.setdefault("provenance", {})["file"] = f"eval/recorded/{path.name}"
+    return plan
 
 
 @app.middleware("http")
@@ -141,7 +165,8 @@ async def demo_newsletter():
 class HuntRequest(BaseModel):
     url: str
     goal: str = Field("", max_length=600)
-    planner: str = Field("auto", pattern="^(auto|meta|heuristic)$")
+    planner: str = Field("auto", pattern="^(auto|meta|heuristic|recorded)$")
+    model: str | None = Field(None, max_length=64)  # one of the hosted Muse models; None keeps the configured one
     rounds: int = Field(2, ge=1, le=3)
     include_source: bool = False  # opt-in: send the page's inline scripts to Muse for the diagnosis
 
@@ -172,7 +197,8 @@ def config() -> dict:
     s = get_settings()
     return {"meta_configured": s.meta_configured, "model": s.model, "reasoning_effort": s.reasoning_effort,
             "backend": getattr(s, "backend", "meta"),
-            "demo_apps": DEMO_APPS}
+            "demo_apps": DEMO_APPS, "recorded_demos": recorded_demos(),
+            "models": sorted(META_MODELS) if getattr(s, "backend", "meta") == "meta" else [s.model]}
 
 
 @app.post("/api/hunts")
@@ -182,9 +208,21 @@ async def start_hunt(body: HuntRequest) -> dict:
     def emit(kind: str, message: str, data: dict | None = None) -> None:
         record["events"].append({"kind": kind, "message": message, "data": data})
 
+    planner, recorded = body.planner, None
+    if planner == "recorded":
+        recorded = recorded_plan_for(body.url)
+        if recorded is None:
+            names = ", ".join(recorded_demos()) or "none in this installation"
+            raise HTTPException(400, f"No recorded Muse plan for this page. Recorded plans exist for: {names}.")
+        planner = "heuristic"  # the recorded plan replaces round 1; no model is called at all
+    settings = get_settings()
+    if body.model and body.model != settings.model:
+        if getattr(settings, "backend", "meta") != "meta" or body.model not in META_MODELS:
+            raise HTTPException(400, "Choose one of the hosted Muse models: " + ", ".join(sorted(META_MODELS)))
+        settings = replace(settings, model=body.model)
     try:
-        hunt = Hunt(body.url, goal=body.goal, planner=body.planner, rounds=body.rounds,
-                    include_source=body.include_source, emit=emit)
+        hunt = Hunt(body.url, goal=body.goal, planner=planner, rounds=body.rounds, settings=settings,
+                    include_source=body.include_source, emit=emit, recorded_plan=recorded)
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     HUNTS[hunt.id] = record

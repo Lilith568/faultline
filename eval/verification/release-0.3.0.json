@@ -1,0 +1,258 @@
+{
+  "created_at": "2026-10-26T23:52:30.185182+00:00",
+  "release": "0.3.0",
+  "git_parent": "c922a23c6eca54dfde2dda3d241eb12fe95cd4a5",
+  "tests": {
+    "tests": 126,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 170.6
+  },
+  "recorded_muse_plan_replay": {
+    "run": "eval/runs/20261026T234800.122118Z-recorded-572a2b67",
+    "status": "completed",
+    "targets": [
+      {
+        "app": "composer",
+        "mode": "buggy",
+        "found": [
+          "composer-double",
+          "composer-draft"
+        ],
+        "expected_bugs": [
+          "composer-draft",
+          "composer-double"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "composer",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "newsletter",
+        "mode": "buggy",
+        "found": [
+          "newsletter-errorloss",
+          "newsletter-focus"
+        ],
+        "expected_bugs": [
+          "newsletter-focus",
+          "newsletter-errorloss"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "newsletter",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      }
+    ],
+    "dev_apps": {
+      "apps": [],
+      "found": 0,
+      "expected": 0,
+      "planned_expected": 0,
+      "false_positives_on_fixed_builds": 0,
+      "fixed_builds_completed": 0,
+      "fixed_builds_with_coverage": 0,
+      "fixed_builds_planned": 0,
+      "unexpected_on_buggy_builds": 0
+    },
+    "held_out_apps": {
+      "apps": [
+        "composer",
+        "newsletter"
+      ],
+      "found": 4,
+      "expected": 4,
+      "planned_expected": 4,
+      "false_positives_on_fixed_builds": 0,
+      "fixed_builds_completed": 2,
+      "fixed_builds_with_coverage": 2,
+      "fixed_builds_planned": 2,
+      "unexpected_on_buggy_builds": 0
+    }
+  },
+  "rules_only_evaluation": {
+    "run": "eval/runs/20261026T234859.919130Z-heuristic-e572bed2",
+    "status": "completed",
+    "targets": [
+      {
+        "app": "profile",
+        "mode": "buggy",
+        "found": [
+          "profile-focus",
+          "profile-overwrite"
+        ],
+        "expected_bugs": [
+          "profile-overwrite",
+          "profile-focus"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "profile",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "search",
+        "mode": "buggy",
+        "found": [
+          "search-order"
+        ],
+        "expected_bugs": [
+          "search-order"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "search",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "checkout",
+        "mode": "buggy",
+        "found": [
+          "checkout-double"
+        ],
+        "expected_bugs": [
+          "checkout-double"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "checkout",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "settings",
+        "mode": "buggy",
+        "found": [
+          "settings-errorloss",
+          "settings-stale-load"
+        ],
+        "expected_bugs": [
+          "settings-errorloss",
+          "settings-stale-load"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "settings",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "composer",
+        "mode": "buggy",
+        "found": [
+          "composer-double"
+        ],
+        "expected_bugs": [
+          "composer-draft",
+          "composer-double"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "composer",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "newsletter",
+        "mode": "buggy",
+        "found": [
+          "newsletter-focus"
+        ],
+        "expected_bugs": [
+          "newsletter-focus",
+          "newsletter-errorloss"
+        ],
+        "unexpected": [],
+        "status": "completed"
+      },
+      {
+        "app": "newsletter",
+        "mode": "fixed",
+        "found": [],
+        "expected_bugs": [],
+        "unexpected": [],
+        "status": "completed"
+      }
+    ],
+    "dev_apps": {
+      "apps": [
+        "profile",
+        "search",
+        "checkout",
+        "settings"
+      ],
+      "found": 6,
+      "expected": 6,
+      "planned_expected": 6,
+      "false_positives_on_fixed_builds": 0,
+      "fixed_builds_completed": 4,
+      "fixed_builds_with_coverage": 4,
+      "fixed_builds_planned": 4,
+      "unexpected_on_buggy_builds": 0
+    },
+    "held_out_apps": {
+      "apps": [
+        "composer",
+        "newsletter"
+      ],
+      "found": 2,
+      "expected": 4,
+      "planned_expected": 4,
+      "false_positives_on_fixed_builds": 0,
+      "fixed_builds_completed": 2,
+      "fixed_builds_with_coverage": 2,
+      "fixed_builds_planned": 2,
+      "unexpected_on_buggy_builds": 0
+    }
+  },
+  "ui_checks": [
+    "Recorded Muse plan button only appears for demo apps with a recording (composer, newsletter).",
+    "With a configured key the Spark/Wonder switch appears and the hunt request carries the chosen model; it hides for rules-only and recorded runs.",
+    "A full rules-only hunt and a fixed-build re-test complete in the browser without page errors."
+  ],
+  "notes": [
+    "Internal planning notes (rules review, readiness self-assessment, demo script, handoff) were moved out of the public repository into the owner's handoff bundle; eval/verification/release-checks.json still lists them as part of the 0.2.0 record.",
+    "No live Meta API call was possible from the build environment; live-model claims still need the owner's run."
+  ]
+}
