@@ -1,0 +1,30 @@
+:root{--bg:#f5f4f0;--card:#fff;--ink:#1c1b19;--muted:#6b6862;--line:#e3e0d8;--accent:#2f5d50;--accent-ink:#fff;--danger:#b42318}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+.app-bar{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--line);background:#fbfaf7}
+.logo{font-weight:700;letter-spacing:.02em}
+.logo b{color:var(--accent)}
+main.card{max-width:640px;margin:40px auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px 32px}
+h1{font-size:22px;margin:0 0 6px}
+h2{font-size:18px;margin:0 0 12px}
+p.lead{color:var(--muted);margin:0 0 20px}
+label{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
+input,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #cfcbc1;border-radius:9px;background:#fff}
+input:focus,textarea:focus,button:focus-visible{outline:3px solid #9cc3b6;outline-offset:1px}
+button{font:inherit;font-weight:600;padding:9px 16px;border-radius:9px;border:1px solid #cfcbc1;background:#fff;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button:disabled{opacity:.55;cursor:progress}
+.row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.summary{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;margin:18px 0}
+.summary dt{color:var(--muted)}.summary dd{margin:0}
+.backdrop{position:fixed;inset:0;background:#1c1b1966}
+.dialog{position:fixed;left:50%;top:14%;transform:translateX(-50%);width:min(520px,92vw);background:#fff;border-radius:14px;padding:24px 28px;box-shadow:0 30px 80px #0003}
+.status{min-height:24px;color:var(--muted);margin-top:14px}
+.alert{color:var(--danger);font-weight:600;margin-top:12px}
+ul.results{list-style:none;padding:0;margin:10px 0 0;border-top:1px solid var(--line)}
+ul.results li{padding:8px 2px;border-bottom:1px solid var(--line)}
+.line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line)}
+[role=tablist]{display:flex;gap:6px;margin:16px 0 10px}
+[role=tab][aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.preview{min-height:120px;border:1px solid var(--line);border-radius:9px;padding:12px;white-space:pre-wrap;color:#33312d}
+.close-x{position:absolute;right:16px;top:12px;border:0;font-size:20px;padding:4px 10px}

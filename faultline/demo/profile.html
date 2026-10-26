@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Larkspur · Profile</title>
+<link rel="stylesheet" href="/demo/demo.css">
+</head>
+<body>
+<header class="app-bar"><span class="logo"><b>◆</b> Larkspur Workspace</span></header>
+<main class="card">
+  <h1>Your profile</h1>
+  <p class="lead">This is how teammates see you.</p>
+  <dl class="summary">
+    <dt>Display name</dt><dd data-testid="shown-name" id="shown-name">Grace Hopper</dd>
+    <dt>Bio</dt><dd data-testid="shown-bio" id="shown-bio">Wrote the first compiler.</dd>
+  </dl>
+  <button id="edit" data-testid="edit-profile" aria-haspopup="dialog">Edit profile</button>
+  <p id="status" class="status" role="status" data-testid="profile-status"></p>
+</main>
+<div class="backdrop" id="backdrop" hidden></div>
+<section id="dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title"
+         data-testid="profile-dialog" hidden>
+  <h2 id="dlg-title">Edit profile</h2>
+  <label for="name">Display name</label>
+  <input id="name" data-testid="display-name" autocomplete="off">
+  <label for="bio">Short bio</label>
+  <textarea id="bio" data-testid="bio" rows="3"></textarea>
+  <div class="row">
+    <button id="save" class="primary" data-testid="save-profile">Save</button>
+    <button id="cancel" data-testid="cancel-edit">Cancel</button>
+  </div>
+</section>
+<script>
+const trigger = document.getElementById('edit');
+const dialog = document.getElementById('dialog');
+const backdrop = document.getElementById('backdrop');
+const nameInput = document.getElementById('name');
+const bioInput = document.getElementById('bio');
+const statusEl = document.getElementById('status');
+let draft = null;   // Escape keeps a draft, Cancel discards it
+let dirty = false;
+let saving = false;
+
+function openEditor() {
+  dialog.hidden = false;
+  backdrop.hidden = false;
+  dirty = false;
+  if (draft) { nameInput.value = draft.name; bioInput.value = draft.bio; }
+  else { nameInput.value = ''; bioInput.value = ''; }
+  nameInput.focus();
+  fetch('/demo-api/profile')
+    .then(r => r.json())
+    .then(profile => {
+//<buggy>
+      nameInput.value = profile.name;
+      bioInput.value = profile.bio;
+//</buggy>
+//<fixed>
+      if (!dirty && !draft) { nameInput.value = profile.name; bioInput.value = profile.bio; }
+//</fixed>
+    });
+}
+
+function closeEditor(keepDraft) {
+  draft = keepDraft ? { name: nameInput.value, bio: bioInput.value } : null;
+  dialog.hidden = true;
+  backdrop.hidden = true;
+//<fixed>
+  trigger.focus();
+//</fixed>
+}
+
+trigger.addEventListener('click', openEditor);
+nameInput.addEventListener('input', () => { dirty = true; });
+bioInput.addEventListener('input', () => { dirty = true; });
+document.getElementById('cancel').addEventListener('click', () => closeEditor(false));
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dialog.hidden) closeEditor(true); });
+document.getElementById('save').addEventListener('click', async () => {
+  if (saving) return;
+  saving = true;
+  const body = { name: nameInput.value, bio: bioInput.value };
+  const res = await fetch('/demo-api/profile', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  saving = false;
+  if (res.ok) {
+    document.getElementById('shown-name').textContent = body.name;
+    document.getElementById('shown-bio').textContent = body.bio;
+    statusEl.textContent = 'Profile saved.';
+    closeEditor(false);
+  }
+});
+</script>
+</body>
+</html>

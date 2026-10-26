@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Larkspur · People</title>
+<link rel="stylesheet" href="/demo/demo.css">
+</head>
+<body>
+<header class="app-bar"><span class="logo"><b>◆</b> Larkspur Workspace</span></header>
+<main class="card">
+  <h1>Find a teammate</h1>
+  <p class="lead">Results update while you type.</p>
+  <label for="q">Search people</label>
+  <input id="q" type="search" data-testid="people-search" autocomplete="off">
+  <p id="summary" class="status" role="status" aria-live="polite" data-testid="search-summary">Type to search 32 teammates.</p>
+  <ul id="results" class="results" aria-label="Search results" data-testid="search-results"></ul>
+</main>
+<script>
+const input = document.getElementById('q');
+const summary = document.getElementById('summary');
+const list = document.getElementById('results');
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let latest = 0;
+let controller = null;
+
+function render(data) {
+  summary.textContent = `${data.results.length} result(s) for “${data.q}”`;
+  list.innerHTML = data.results.map(n => `<li>${esc(n)}</li>`).join('');
+}
+
+input.addEventListener('input', () => {
+  const term = input.value.trim();
+  if (!term) { summary.textContent = 'Type to search 32 teammates.'; list.innerHTML = ''; return; }
+  const id = ++latest;
+  const options = {};
+//<fixed>
+  if (controller) controller.abort();
+  controller = new AbortController();
+  options.signal = controller.signal;
+//</fixed>
+  fetch('/demo-api/people?q=' + encodeURIComponent(term), options)
+    .then(r => r.json())
+    .then(data => {
+//<fixed>
+      if (id !== latest) return;
+//</fixed>
+      render(data);
+    })
+    .catch(() => {});
+});
+</script>
+</body>
+</html>

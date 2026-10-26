@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Larkspur · Notifications</title>
+<link rel="stylesheet" href="/demo/demo.css">
+</head>
+<body>
+<header class="app-bar"><span class="logo"><b>◆</b> Larkspur Workspace</span></header>
+<main class="card">
+  <h1>Notification settings</h1>
+  <p class="lead">Where should incident alerts go?</p>
+  <form id="settings" data-testid="settings-form" aria-label="Notification settings" novalidate>
+    <label for="alert-email">Alert email</label>
+    <input id="alert-email" type="email" data-testid="alert-email" autocomplete="off">
+    <label for="digest">Daily digest time</label>
+    <input id="digest" data-testid="digest-time" autocomplete="off">
+    <div class="row"><button class="primary" type="submit" data-testid="save-settings">Save settings</button></div>
+  </form>
+  <p id="flash" class="alert" role="alert" data-testid="settings-alert"></p>
+  <p id="saved" class="status" role="status" data-testid="settings-status"></p>
+</main>
+<script>
+const form = document.getElementById('settings');
+const emailInput = document.getElementById('alert-email');
+const digestInput = document.getElementById('digest');
+const flash = document.getElementById('flash');
+const savedEl = document.getElementById('saved');
+let lastSaved = { email: '', digest: '' };
+let dirty = false;
+let saving = false;
+
+function apply(values) { emailInput.value = values.email; digestInput.value = values.digest; }
+emailInput.addEventListener('input', () => { dirty = true; });
+digestInput.addEventListener('input', () => { dirty = true; });
+
+fetch('/demo-api/settings').then(r => r.json()).then(values => {
+  lastSaved = values;
+//<buggy>
+  apply(values);
+//</buggy>
+//<fixed>
+  if (!dirty) apply(values);
+//</fixed>
+});
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (saving) return;
+  saving = true;
+  flash.textContent = '';
+  const body = { email: emailInput.value.trim(), digest: digestInput.value.trim() };
+  const res = await fetch('/demo-api/settings', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body)
+  });
+  saving = false;
+  if (!res.ok) {
+//<buggy>
+    apply(lastSaved);
+//</buggy>
+//<fixed>
+    flash.textContent = 'Could not save. Your changes are still here, please try again.';
+//</fixed>
+    return;
+  }
+  lastSaved = body;
+  dirty = false;
+  savedEl.textContent = 'Saved.';
+});
+</script>
+</body>
+</html>

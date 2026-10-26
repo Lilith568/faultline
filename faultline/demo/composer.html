@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Larkspur · Release notes</title>
+<link rel="stylesheet" href="/demo/demo.css">
+</head>
+<body>
+<header class="app-bar"><span class="logo"><b>◆</b> Larkspur Releases</span></header>
+<main class="card">
+  <h1>Release notes v1.4.2</h1>
+  <p class="lead">Draft the notes, preview them, then publish to all customers.</p>
+  <div role="tablist" aria-label="Editor mode">
+    <button role="tab" id="tab-write" aria-selected="true" aria-controls="panel" data-testid="tab-write">Write</button>
+    <button role="tab" id="tab-preview" aria-selected="false" aria-controls="panel" data-testid="tab-preview">Preview</button>
+  </div>
+  <div id="panel" role="tabpanel" aria-label="Editor" data-testid="editor-panel"></div>
+  <div class="row"><button id="publish" class="primary" data-testid="publish-notes">Publish</button></div>
+  <p id="pub-status" class="status" role="status" data-testid="publish-status"></p>
+</main>
+<script>
+const panel = document.getElementById('panel');
+const tabWrite = document.getElementById('tab-write');
+const tabPreview = document.getElementById('tab-preview');
+const statusEl = document.getElementById('pub-status');
+let notes = '';
+let publishing = false;
+
+function currentText() {
+  const area = panel.querySelector('textarea');
+  return area ? area.value : notes;
+}
+
+function showWrite() {
+  tabWrite.setAttribute('aria-selected', 'true');
+  tabPreview.setAttribute('aria-selected', 'false');
+  panel.innerHTML = '<label for="notes">Release notes</label><textarea id="notes" data-testid="notes-input" rows="6"></textarea>';
+  const area = panel.querySelector('textarea');
+//<fixed>
+  area.value = notes;
+//</fixed>
+  area.addEventListener('input', () => { notes = area.value; });
+}
+
+function showPreview() {
+  const text = currentText();
+  tabWrite.setAttribute('aria-selected', 'false');
+  tabPreview.setAttribute('aria-selected', 'true');
+  panel.innerHTML = '<div class="preview" data-testid="notes-preview"></div>';
+  panel.firstChild.textContent = text || 'Nothing to preview yet.';
+}
+
+tabWrite.addEventListener('click', showWrite);
+tabPreview.addEventListener('click', showPreview);
+showWrite();
+
+document.getElementById('publish').addEventListener('click', async () => {
+  const text = currentText().trim();
+  if (!text) { statusEl.textContent = 'Write something first.'; return; }
+//<fixed>
+  if (publishing) return;
+  publishing = true;
+//</fixed>
+  statusEl.textContent = 'Publishing…';
+  const res = await fetch('/demo-api/notes', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text })
+  });
+  const data = await res.json();
+  statusEl.textContent = res.ok ? `Published as announcement #${data.id}.` : 'Publishing failed.';
+//<fixed>
+  publishing = false;
+//</fixed>
+});
+</script>
+</body>
+</html>

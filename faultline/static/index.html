@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Faultline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* Seismograph lab notebook: drafting-film paper, fountain-pen ink, a red recording pen. */
+:root{
+  --paper:#e8eef0; --grid:#d2dde2; --grid-strong:#bccbd2; --sheet:#f8fafa;
+  --ink:#1c2a45; --ink-soft:#4f5d78; --pen:#c4203e; --pen-soft:#f6d9df;
+  --ok:#0f7f68; --marker:#f3d55b; --amber:#b56b00;
+  --sans:"Archivo",system-ui,sans-serif; --serif:"Source Serif 4",Georgia,serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;color:var(--ink);font:15px/1.5 var(--sans);font-variation-settings:"wdth" 100;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+    linear-gradient(var(--grid-strong) 1px,transparent 1px),linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px);
+  background-size:12px 12px,12px 12px,60px 60px,60px 60px;}
+a{color:var(--ink)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--marker);outline-offset:2px}
+
+/* Instrument bar */
+.bar{display:grid;grid-template-columns:auto 1fr auto;gap:18px 26px;align-items:end;padding:22px 32px 18px;
+  background:var(--sheet);border-bottom:2px solid var(--ink)}
+.mark{display:flex;align-items:center;gap:12px}
+.mark svg{flex:none}
+.mark h1{margin:0;font-size:34px;line-height:1;font-weight:780;font-variation-settings:"wdth" 70;letter-spacing:-.01em}
+.mark p{margin:2px 0 0;font:italic 14px/1.3 var(--serif);color:var(--ink-soft);max-width:300px}
+.fields{display:grid;grid-template-columns:1fr;gap:8px;min-width:0}
+.field{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--ink);padding:2px 0}
+.field span{flex:none;font-size:13px;color:var(--ink-soft);width:112px}
+.field input{flex:1;min-width:0;border:0;background:transparent;padding:5px 0;font-size:15px;outline:none}
+.field:focus-within{border-color:var(--pen)}
+.switches{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.toggle{display:inline-flex;border:1.5px solid var(--ink);border-radius:20px;overflow:hidden}
+.toggle button{border:0;background:transparent;padding:6px 13px;cursor:pointer;font-size:13.5px;font-variation-settings:"wdth" 88}
+.toggle button[aria-pressed=true]{background:var(--ink);color:var(--sheet)}
+.start{border:0;background:var(--pen);color:#fff;border-radius:20px;padding:9px 20px;font-weight:700;font-size:15px;
+  font-variation-settings:"wdth" 92;cursor:pointer;box-shadow:0 2px 0 #7d1427}
+.start:disabled{background:var(--ink-soft);box-shadow:none;cursor:progress}
+.specimens{grid-column:1/-1;display:flex;gap:6px 18px;flex-wrap:wrap;align-items:baseline;font-size:14px}
+.specimens b{font-weight:600;color:var(--ink-soft);font-size:13px}
+.specimens button{border:0;background:none;padding:2px 0;cursor:pointer;border-bottom:2px solid transparent}
+.specimens button[aria-pressed=true]{border-bottom-color:var(--pen);font-weight:650}
+.specimens em{font:italic 12px var(--serif);color:var(--ink-soft);margin-left:3px}
+.model{font-size:12.5px;color:var(--ink-soft);text-align:right}
+
+/* Seismogram: the one loud element */
+.drum{margin:22px 32px 0;background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;position:relative;
+  display:grid;grid-template-columns:1fr 170px}
+.drum svg{display:block;width:100%;height:170px}
+.readouts{border-left:1.5px dashed var(--grid-strong);padding:12px 16px;display:grid;align-content:center;gap:6px}
+.readouts div{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--ink-soft)}
+.readouts b{color:var(--ink);font-size:20px;font-weight:700;font-variation-settings:"wdth" 75;font-variant-numeric:tabular-nums}
+.statusline{margin:10px 32px 0;font:italic 16px/1.4 var(--serif);min-height:24px}
+.statusline .pen{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pen);margin-right:9px;
+  vertical-align:1px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+
+/* Notebook */
+.notebook{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:26px;padding:20px 32px 70px;align-items:start}
+.notebook h2{font-size:19px;margin:0 0 10px;font-weight:720;font-variation-settings:"wdth" 80}
+.idle{font:italic 17px/1.5 var(--serif);color:var(--ink-soft);max-width:62ch;margin-top:6px}
+.hyps{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.hyps li{border-bottom:1px solid var(--grid-strong);padding:9px 0 9px 26px;position:relative;font-size:14px;line-height:1.4}
+.hyps li::before{content:"";position:absolute;left:3px;top:13px;width:11px;height:11px;border-radius:50%;border:1.5px solid var(--ink-soft)}
+.hyps li.running::before{border-color:var(--pen);animation:blink .8s steps(2) infinite}
+.hyps li.failed::before{background:var(--pen);border-color:var(--pen)}
+.hyps li.passed::before{background:var(--ok);border-color:var(--ok)}
+.hyps li.inapplicable::before{border-style:dashed}
+.hyps li.error::before{border-color:var(--amber);background:repeating-linear-gradient(45deg,var(--amber) 0 2px,transparent 2px 4px)}
+.hyps .verdict{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+.hyps li.failed .verdict{color:var(--pen);font-weight:600}
+.hyps .round{font:italic 12px var(--serif);color:var(--ink-soft)}
+.rejected{font:italic 13px/1.45 var(--serif);color:var(--ink-soft);margin-top:10px}
+.goal{margin-top:20px}
+.goal label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
+.goal textarea{width:100%;min-height:70px;resize:vertical;background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;
+  padding:9px 11px;font:15px/1.45 var(--serif)}
+.how{margin-top:22px;font:14px/1.5 var(--serif);color:var(--ink-soft)}
+.how ol{padding-left:20px;margin:6px 0 0}
+
+/* Findings: report sheets with a red margin line */
+.sheet{background:var(--sheet);border:1.5px solid var(--ink);border-radius:4px;margin-bottom:22px;position:relative;
+  padding:20px 24px 18px 54px;box-shadow:5px 5px 0 var(--grid-strong)}
+.sheet::before{content:"";position:absolute;left:36px;top:0;bottom:0;border-left:2px solid var(--pen)}
+.sheet .num{position:absolute;left:8px;top:18px;width:22px;text-align:center;font-weight:800;font-size:15px;color:var(--pen);
+  font-variation-settings:"wdth" 70}
+.sheet h3{margin:0 0 4px;font-size:21px;line-height:1.25;font-weight:720;font-variation-settings:"wdth" 82;max-width:46ch}
+.facts{font-size:13.5px;color:var(--ink-soft);display:flex;gap:4px 16px;flex-wrap:wrap}
+.facts strong{color:var(--pen)}
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:22px;margin-top:16px}
+.steps{margin:0;padding-left:22px;font-size:15px;line-height:1.6}
+.inject{display:inline-block;margin-top:8px;padding:1px 6px;background:linear-gradient(transparent 12%,var(--marker) 12%,var(--marker) 88%,transparent 88%);font-size:14px}
+.inject.none{background:none;padding:0;font:italic 14px var(--serif);color:var(--ink-soft)}
+.compare{margin-top:14px;display:grid;grid-template-columns:auto 1fr;gap:3px 14px;align-items:baseline}
+.compare dt{font-size:13px;color:var(--ink-soft)}
+.compare dd{margin:0;font:17px/1.35 var(--serif)}
+.compare .exp{color:var(--ok)}
+.compare .act{color:var(--pen);text-decoration:underline wavy var(--pen);text-underline-offset:4px;text-decoration-thickness:1.2px}
+.why{margin-top:10px;font:italic 14px/1.45 var(--serif);color:var(--ink-soft)}
+figure{margin:0}
+figure img{width:100%;display:block;border:1.5px solid var(--ink);border-radius:3px;background:#fff}
+figcaption{font:italic 13px var(--serif);color:var(--ink-soft);margin-top:5px}
+.diag{margin-top:16px;border-top:1px dashed var(--grid-strong);padding-top:12px;font:16px/1.55 var(--serif);max-width:75ch}
+.diag h4{font:700 14px var(--sans);margin:0 0 6px;font-variation-settings:"wdth" 85}
+.diag h4 span{font:italic 400 13px var(--serif);color:var(--ink-soft);margin-left:6px}
+.diag p{margin:4px 0}
+.diag i{font-style:normal;font-family:var(--sans);font-size:13px;color:var(--ink-soft);margin-right:6px}
+.diag code{background:var(--pen-soft);padding:0 4px;border-radius:2px;font-size:14px}
+.tools{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;margin-top:16px;padding-top:12px;border-top:1px dashed var(--grid-strong)}
+.tool{border:1.5px solid var(--ink);background:var(--sheet);border-radius:20px;padding:5px 13px;font-size:13.5px;text-decoration:none;cursor:pointer}
+.tool.main{background:var(--ink);color:var(--sheet)}
+.retest{display:flex;flex:1;min-width:300px;align-items:center;gap:8px}
+.retest input{flex:1;min-width:0;border:0;border-bottom:1.5px solid var(--ink);background:transparent;padding:4px 0;font-size:13.5px}
+.result{font-weight:650;font-size:14px}
+.result.ok{color:var(--ok)}.result.bad{color:var(--pen)}
+details.log{margin-top:22px;font-size:13px;color:var(--ink-soft)}
+details.log div{max-height:220px;overflow:auto;padding:6px 0;font:13px/1.55 var(--serif)}
+@media (max-width:1000px){
+  .bar{grid-template-columns:1fr}.switches{justify-content:flex-start}.model{text-align:left}
+  .drum{grid-template-columns:1fr}.readouts{border-left:0;border-top:1.5px dashed var(--grid-strong);grid-template-columns:repeat(2,1fr)}
+  .notebook{grid-template-columns:1fr}.split{grid-template-columns:1fr}
+  .bar,.notebook{padding-left:16px;padding-right:16px}.drum,.statusline{margin-left:16px;margin-right:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="mark">
+    <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+      <circle cx="23" cy="23" r="21.5" fill="#f8fafa" stroke="#1c2a45" stroke-width="1.5"/>
+      <polyline points="5,25 12,25 15,20 18,29 21,8 25,38 28,18 31,27 34,23 41,23" fill="none" stroke="#c4203e" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+    <div><h1>Faultline</h1><p>Breaks your web app on purpose, then hands you the failing test.</p></div>
+  </div>
+  <div class="fields">
+    <label class="field"><span>Your local app</span><input id="url" spellcheck="false" autocomplete="off"></label>
+  </div>
+  <div>
+    <div class="switches">
+      <div class="toggle" role="group" aria-label="Build">
+        <button type="button" data-mode="buggy" aria-pressed="true">Buggy build</button>
+        <button type="button" data-mode="fixed" aria-pressed="false">Fixed build</button>
+      </div>
+      <div class="toggle" role="group" aria-label="Planner">
+        <button type="button" data-planner="meta" aria-pressed="true">Muse plans</button>
+        <button type="button" data-planner="heuristic" aria-pressed="false">Rules only</button>
+      </div>
+      <button class="start" id="run">Start hunt</button>
+    </div>
+    <div class="model" id="model">&nbsp;</div>
+  </div>
+  <nav class="specimens" id="demos" aria-label="Demo apps"><b>Demo apps</b></nav>
+</header>
+
+<section class="drum" aria-label="Seismogram of the hunt">
+  <svg id="seis" viewBox="0 0 1000 170" preserveAspectRatio="none" role="img" aria-label="Each experiment draws a tick; verified failures spike in red"></svg>
+  <div class="readouts">
+    <div>Hypotheses <b id="sExp">0</b></div>
+    <div>Browser runs <b id="sRuns">0</b></div>
+    <div>Muse calls <b id="sCalls">0</b></div>
+    <div>Elapsed <b id="sTime">0.0s</b></div>
+  </div>
+</section>
+<p class="statusline" id="status">Pick a demo app, or paste the URL of your own app running on localhost, then start a hunt.</p>
+
+<div class="notebook">
+  <aside>
+    <h2>Hypotheses</h2>
+    <p class="idle" id="hypIdle">Muse reads the page and proposes ways it could lose the user's work. Each one becomes an experiment.</p>
+    <ul class="hyps" id="hyps"></ul>
+    <div class="rejected" id="rejected"></div>
+    <div class="goal">
+      <label for="goal">What must never break?</label>
+      <textarea id="goal">Users must never lose what they typed or see stale data, even on a slow or failing network.</textarea>
+    </div>
+    <div class="how">How a hunt works:
+      <ol>
+        <li>Faultline explores the page, its hidden dialogs and API calls.</li>
+        <li>Muse proposes competing hypotheses and designs one experiment for each.</li>
+        <li>Playwright runs them with slowed or failing requests and checks the invariants. The model never grades itself.</li>
+        <li>Muse reads the verified results and designs follow-ups.</li>
+        <li>Every failure is minimized, re-run three times, diagnosed and exported as a Playwright test.</li>
+      </ol>
+    </div>
+    <details class="log"><summary>Event log</summary><div id="log"></div></details>
+  </aside>
+  <section>
+    <h2>Verified failures</h2>
+    <div id="cxs"><p class="idle">Nothing recorded yet. Failures appear here only after Playwright has reproduced them.</p></div>
+  </section>
+</div>
+
+<script>
+const DEMOS = [['profile','Profile editor'],['search','Live search'],['checkout','Checkout'],['settings','Settings'],
+  ['composer','Release notes','held out'],['newsletter','Newsletter','held out']];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let demo = 'profile', mode = 'buggy', planner = 'meta', hunt = null, since = 0, t0 = 0, running = false;
+const hyp = {};      // id -> {h, status}
+let trace = [];      // seismogram segments
+
+const demoUrl = (name, m) => `${location.origin}/demo/${name}.html?mode=${m}`;
+const setUrl = () => { if (demo) $('url').value = demoUrl(demo, mode); };
+$('demos').insertAdjacentHTML('beforeend', DEMOS.map(([k, label, note]) =>
+  `<button type="button" data-demo="${k}" aria-pressed="${k === demo}">${label}${note ? `<em>${note}</em>` : ''}</button>`).join(''));
+function press(attr, value) { document.querySelectorAll(`[data-${attr}]`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[attr] === value))); }
+document.addEventListener('click', e => {
+  const d = e.target.closest('[data-demo]'); if (d) { demo = d.dataset.demo; press('demo', demo); setUrl(); }
+  const m = e.target.closest('[data-mode]'); if (m) { mode = m.dataset.mode; press('mode', mode); setUrl(); }
+  const p = e.target.closest('[data-planner]'); if (p) { planner = p.dataset.planner; press('planner', planner); }
+});
+$('url').addEventListener('input', () => { demo = null; press('demo', ''); });
+setUrl();
+
+fetch('/api/config').then(r => r.json()).then(c => {
+  $('model').textContent = c.meta_configured ? `Meta Model API: ${c.model}, reasoning ${c.reasoning_effort || 'default'}`
+    : 'No MODEL_API_KEY set, so hunts use the rules-only planner.';
+});
+
+/* ---------- seismogram ---------- */
+let seed = 7;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+function addTrace(kind, label) { trace.push({ kind, label, n: Array.from({ length: 9 }, rnd) }); drawTrace(); }
+function drawTrace() {
+  const W = 1000, H = 170, mid = 98;
+  const unit = Math.min(26, (W - 30) / Math.max(trace.length, 1));
+  let x = 10, d = `M0 ${mid} L${x} ${mid}`, marks = '', flags = '';
+  for (const seg of trace) {
+    const amp = { quiet: 3, tick: 7, passed: 12, inapplicable: 1, error: 18, failed: 66 }[seg.kind] ?? 4;
+    const steps = seg.n.length, dx = unit / steps;
+    let fail = `M${x} ${mid}`;
+    seg.n.forEach((v, i) => {
+      const sign = i % 2 ? 1 : -1;
+      const a = seg.kind === 'failed' ? amp * (i === 4 ? 1 : i === 3 || i === 5 ? .55 : .12 + v * .2) : amp * (.35 + v * .65);
+      x += dx;
+      const y = (mid + sign * a).toFixed(1);
+      d += ` L${x.toFixed(1)} ${y}`;
+      if (seg.kind === 'failed') fail += ` L${x.toFixed(1)} ${y}`;
+    });
+    if (seg.kind === 'failed') marks += `<path d="${fail}" fill="none" stroke="#c4203e" stroke-width="2.4" stroke-linejoin="round"/>`;
+    if (seg.label) flags += `<g transform="translate(${(x - unit / 2).toFixed(1)},14)"><line x1="0" y1="10" x2="0" y2="${mid - 80}" stroke="#c4203e" stroke-dasharray="2 3"/>
+      <text x="0" y="6" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="13" fill="#c4203e">${esc(seg.label)}</text></g>`;
+  }
+  const grid = Array.from({ length: 9 }, (_, i) => `<line x1="0" x2="${W}" y1="${10 + i * 19}" y2="${10 + i * 19}" stroke="#d2dde2" stroke-width="1"/>`).join('');
+  const pen = running ? `<circle cx="${x}" cy="${mid}" r="5" fill="#c4203e"><animate attributeName="opacity" values="1;.2;1" dur="1s" repeatCount="indefinite"/></circle>` : '';
+  $('seis').innerHTML = `${grid}<path d="${d}" fill="none" stroke="#1c2a45" stroke-width="1.6" stroke-linejoin="round"/>${marks}${flags}${pen}`;
+}
+drawTrace();
+
+/* ---------- hypotheses ---------- */
+function describe(h, names) {
+  const n = ref => `“${names[ref] || ref}”`;
+  return h.steps.map(s => ({ click: () => `Click ${n(s.ref)}`, dblclick: () => `Double-click ${n(s.ref)}`,
+    fill: () => `Enter “${s.value}” into ${n(s.ref)}`, type: () => `Type “${s.value}” into ${n(s.ref)}`,
+    press: () => `Press ${s.key}`, wait: () => `Wait ${s.ms} ms`, reload: () => 'Reload the page' }[s.action] || (() => s.action))());
+}
+const VERDICT = { queued: 'waiting', running: 'running in the browser…', passed: 'held up', failed: 'broke',
+  inapplicable: 'did not apply to this page', error: 'could not run' };
+function renderHyps() {
+  const items = Object.values(hyp);
+  $('hypIdle').hidden = items.length > 0;
+  $('hyps').innerHTML = items.map(({ h, status }) =>
+    `<li class="${status}">${esc(h.claim)}<span class="verdict">${VERDICT[status] || status}${h.round > 1 ? ` <span class="round">follow-up round ${h.round}</span>` : ''}</span></li>`).join('');
+  $('sExp').textContent = items.length;
+}
+
+/* ---------- findings ---------- */
+function renderCx(cx, huntId, i) {
+  const d = cx.diagnosis || {};
+  const fixedUrl = $('url').value.includes('mode=buggy') ? $('url').value.replace('mode=buggy', 'mode=fixed') : $('url').value;
+  const inject = cx.text.perturbations.length
+    ? cx.text.perturbations.map(p => `<span class="inject">${esc(p)}</span>`).join('<br>')
+    : '<span class="inject none">No network fault needed: it breaks every time.</span>';
+  return `<article class="sheet"><span class="num">${i + 1}</span>
+    <h3>${esc(cx.title)}</h3>
+    <div class="facts"><span><strong>Reproduced ${cx.confirmation.failures} of ${cx.confirmation.runs} runs</strong></span>
+      <span>Minimized from ${cx.original_steps} to ${cx.experiment.steps.length} steps</span>
+      <span>${esc(cx.fault_class.replaceAll('_', ' '))}</span></div>
+    <div class="split">
+      <div>
+        <ol class="steps">${cx.text.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>
+        ${inject}
+        <dl class="compare"><dt>Check</dt><dd>${esc(cx.failure.invariant)}</dd>
+          <dt>Expected</dt><dd class="exp">${esc(cx.failure.expected)}</dd>
+          <dt>Actual</dt><dd class="act">${esc(cx.failure.actual)}</dd></dl>
+        <p class="why">${esc(cx.attribution)}</p>
+      </div>
+      ${cx.screenshot ? `<figure><a href="/api/hunts/${huntId}/${cx.id}/screenshot" target="_blank"><img alt="The failing state" src="/api/hunts/${huntId}/${cx.id}/screenshot"></a>
+        <figcaption>Captured by Playwright at the moment the check failed.</figcaption></figure>` : '<div></div>'}
+    </div>
+    <div class="diag"><h4>${d.source === 'meta' ? 'Muse diagnosis' : 'Rule-based explanation'}<span>${d.source === 'meta' ? `confidence ${esc(d.confidence)}` : 'no model involved'}</span></h4>
+      <p><i>Cause</i>${esc(d.root_cause)}</p>
+      ${d.code_reference ? `<p><i>Where</i><code>${esc(d.code_reference)}</code></p>` : ''}
+      <p><i>Impact</i>${esc(d.user_impact)}</p>
+      <p><i>Fix</i>${esc(d.fix)}</p></div>
+    <div class="tools">
+      <a class="tool main" href="/api/hunts/${huntId}/${cx.id}/spec">Download Playwright test</a>
+      <a class="tool" href="/api/hunts/${huntId}/${cx.id}/repro">repro.json</a>
+      ${cx.trace ? `<a class="tool" href="/api/hunts/${huntId}/${cx.id}/trace">Trace</a>` : ''}
+      <span class="retest"><input id="rt-${cx.id}" value="${esc(fixedUrl)}" aria-label="Build to re-test" spellcheck="false">
+        <button class="tool" data-retest="${cx.id}">Re-test this build</button></span>
+      <span class="result" id="v-${cx.id}"></span>
+    </div></article>`;
+}
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-retest]'); if (!b || !hunt) return;
+  const id = b.dataset.retest, out = $('v-' + id);
+  out.className = 'result'; out.textContent = 'Replaying…'; b.disabled = true;
+  try {
+    const r = await fetch('/api/replay', { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ hunt_id: hunt, cx_id: id, url: $('rt-' + id).value }) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || 'Replay failed');
+    if (data.status === 'passed') { out.className = 'result ok'; out.textContent = 'Passes. The bug is gone in this build.'; }
+    else if (data.status === 'failed') { out.className = 'result bad'; out.textContent = `Still fails: ${data.failing[0]?.actual ?? ''}`; }
+    else { out.textContent = `${data.status}${data.error ? ': ' + data.error : ''}`; }
+  } catch (err) { out.className = 'result bad'; out.textContent = String(err.message || err); }
+  b.disabled = false;
+});
+
+/* ---------- run loop ---------- */
+function log(msg) {
+  const line = document.createElement('div');
+  line.textContent = `${((performance.now() - t0) / 1000).toFixed(1)} s  ${msg}`;
+  $('log').appendChild(line);
+}
+$('run').addEventListener('click', async () => {
+  for (const k in hyp) delete hyp[k];
+  trace = []; seed = 7; running = true; since = 0; t0 = performance.now();
+  $('run').disabled = true; $('log').innerHTML = ''; $('rejected').innerHTML = ''; renderHyps();
+  ['sRuns', 'sCalls'].forEach(id => $(id).textContent = '0');
+  $('cxs').innerHTML = '<p class="idle">Hunting. Failures appear here once Playwright has reproduced them.</p>';
+  addTrace('quiet');
+  const r = await fetch('/api/hunts', { method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ url: $('url').value.trim(), goal: $('goal').value, planner }) });
+  const data = await r.json();
+  if (!r.ok) { $('status').textContent = data.detail || `Could not start the hunt (HTTP ${r.status}).`; $('run').disabled = false; running = false; drawTrace(); return; }
+  hunt = data.id; loop();
+});
+
+let cxCount = 0;
+async function loop() {
+  const res = await fetch(`/api/hunts/${hunt}?since=${since}`).then(r => r.json());
+  for (const ev of res.events) {
+    since++; log(ev.message);
+    if (ev.kind === 'phase') {
+      $('status').innerHTML = `<span class="pen"></span>${esc(ev.message)}`;
+      addTrace('quiet');
+      if (ev.message.startsWith('Asking') || ev.message.startsWith('Round')) $('sCalls').textContent = +$('sCalls').textContent + 1;
+    }
+    if (ev.kind === 'plan') {
+      ev.data.hypotheses.forEach(h => { hyp[h.id] = { h: { ...h, round: ev.data.round || 1 }, status: 'queued' }; });
+      if (ev.data.rejected?.length) $('rejected').innerHTML += ev.data.rejected.map(x => `Rejected by the validator: ${esc(x.claim || x.id)} (${esc(x.reason)}).`).join('<br>') + '<br>';
+      renderHyps();
+    }
+    if (ev.kind === 'experiment' && hyp[ev.data.id]) { hyp[ev.data.id].status = 'running'; renderHyps(); addTrace('tick'); }
+    if (ev.kind === 'result' && hyp[ev.data.id]) {
+      hyp[ev.data.id].status = ev.data.status; renderHyps(); addTrace(ev.data.status);
+      $('sRuns').textContent = +$('sRuns').textContent + 1;
+    }
+    if (ev.kind === 'counterexample') { cxCount++; addTrace('failed', `#${cxCount}`); }
+    if (ev.kind === 'warning') $('status').textContent = ev.message;
+  }
+  $('sTime').textContent = ((performance.now() - t0) / 1000).toFixed(1) + 's';
+  if (res.status === 'running') { setTimeout(loop, 450); return; }
+  running = false; $('run').disabled = false; cxCount = 0; drawTrace();
+  if (res.status === 'error') { $('status').textContent = `The hunt stopped: ${res.error}`; return; }
+  finish(res.report);
+}
+
+function finish(rep) {
+  const names = Object.fromEntries((rep.inventory?.elements || []).map(e => [e.ref, e.name || e.testid || e.ref]));
+  for (const round of rep.rounds) for (const h of round.hypotheses) {
+    hyp[h.id] = { h: { ...h, round: round.round, text: describe(h, names) }, status: h.result.status };
+  }
+  renderHyps();
+  $('sRuns').textContent = rep.stats.browser_runs; $('sCalls').textContent = rep.stats.meta_calls;
+  $('sTime').textContent = rep.stats.duration_s + 's';
+  const who = rep.planner.used === 'meta' ? `Muse (${rep.planner.model}) planned the experiments`
+    : rep.planner.used === 'recorded' ? `A recorded ${rep.planner.model || 'Muse'} plan was replayed` : 'The rules-only planner planned the experiments';
+  const n = rep.counterexamples.length;
+  $('status').textContent = `${n ? `${n} verified failure${n > 1 ? 's' : ''}` : 'No failures'} in ${rep.stats.duration_s} s. ${who}.` +
+    (rep.planner.fallback_reason ? ` (${rep.planner.fallback_reason})` : '');
+  $('cxs').innerHTML = n ? rep.counterexamples.map((cx, i) => renderCx(cx, rep.id, i)).join('')
+    : '<p class="idle">Every experiment held up or did not apply. Try a different goal, or switch to the buggy build.</p>';
+}
+</script>
+</body>
+</html>

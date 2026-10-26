@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Weekly Build</title>
+<link rel="stylesheet" href="/demo/demo.css">
+</head>
+<body>
+<header class="app-bar"><span class="logo"><b>◆</b> The Weekly Build</span></header>
+<main class="card">
+  <h1>Ship notes for indie developers</h1>
+  <p class="lead">One email every Friday. Tools, launches and postmortems.</p>
+  <button id="open" class="primary" data-testid="open-signup" aria-haspopup="dialog">Get the newsletter</button>
+  <p id="done" class="status" role="status" data-testid="signup-status"></p>
+</main>
+<div class="backdrop" id="backdrop" hidden></div>
+<div id="signup" class="dialog" role="dialog" aria-modal="true" aria-labelledby="signup-title"
+     data-testid="signup-dialog" hidden>
+  <button class="close-x" data-testid="signup-close" aria-label="Close">×</button>
+  <h2 id="signup-title">Get the newsletter</h2>
+  <label for="nl-email">Work email</label>
+  <input id="nl-email" type="email" data-testid="signup-email" autocomplete="off">
+  <label for="nl-name">First name</label>
+  <input id="nl-name" data-testid="signup-name" autocomplete="off">
+  <div class="row"><button id="join" class="primary" data-testid="signup-submit">Sign me up</button></div>
+  <p id="err" class="alert" role="alert" data-testid="signup-error"></p>
+</div>
+<script>
+const opener = document.getElementById('open');
+const dialog = document.getElementById('signup');
+const backdrop = document.getElementById('backdrop');
+const emailInput = document.getElementById('nl-email');
+const nameInput = document.getElementById('nl-name');
+const errEl = document.getElementById('err');
+let sending = false;
+
+function openDialog() {
+  dialog.hidden = false;
+  backdrop.hidden = false;
+  emailInput.focus();
+}
+function closeDialog() {
+  dialog.hidden = true;
+  backdrop.hidden = true;
+//<fixed>
+  opener.focus();
+//</fixed>
+}
+opener.addEventListener('click', openDialog);
+dialog.querySelector('.close-x').addEventListener('click', closeDialog);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dialog.hidden) closeDialog(); });
+
+document.getElementById('join').addEventListener('click', async () => {
+  if (sending) return;
+  errEl.textContent = '';
+  const email = emailInput.value.trim();
+  if (!email.includes('@')) { errEl.textContent = 'Please enter a valid email.'; return; }
+  sending = true;
+  const res = await fetch('/demo-api/newsletter', {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ email, name: nameInput.value.trim() })
+  });
+  sending = false;
+  if (!res.ok) {
+//<buggy>
+    emailInput.value = '';
+    nameInput.value = '';
+//</buggy>
+    errEl.textContent = 'Something went wrong. Please try again.';
+    return;
+  }
+  document.getElementById('done').textContent = 'You are in. See you on Friday.';
+  closeDialog();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Larkspur · Checkout</title>
+<link rel="stylesheet" href="/demo/demo.css">
+</head>
+<body>
+<header class="app-bar"><span class="logo"><b>◆</b> Larkspur Store</span></header>
+<main class="card">
+  <h1>Checkout</h1>
+  <div class="line"><span>Field notebook, dot grid</span><span>€18.00</span></div>
+  <div class="line"><span>Shipping</span><span>€4.00</span></div>
+  <div class="line"><strong>Total</strong><strong>€22.00</strong></div>
+  <form id="checkout" data-testid="checkout-form" aria-label="Checkout" novalidate>
+    <label for="fullname">Full name</label>
+    <input id="fullname" data-testid="full-name" autocomplete="off">
+    <label for="email">Email</label>
+    <input id="email" type="email" data-testid="email" autocomplete="off">
+    <div class="row"><button id="place" type="submit" class="primary" data-testid="place-order">Place order</button></div>
+  </form>
+  <p id="result" class="status" role="status" data-testid="order-status"></p>
+</main>
+<script>
+const form = document.getElementById('checkout');
+const placeBtn = document.getElementById('place');
+const statusEl = document.getElementById('result');
+let pending = false;
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const name = document.getElementById('fullname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  if (!name || !email.includes('@')) { statusEl.textContent = 'Please enter your name and email.'; return; }
+//<fixed>
+  if (pending) return;
+  pending = true;
+  placeBtn.disabled = true;
+//</fixed>
+  statusEl.textContent = 'Placing order…';
+  const res = await fetch('/demo-api/orders', {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ name, email, total: 22 })
+  });
+  const data = await res.json();
+  statusEl.textContent = res.ok ? `Order #${data.order_id} confirmed. A receipt is on its way.` : 'Payment failed.';
+//<fixed>
+  pending = false;
+  placeBtn.disabled = false;
+//</fixed>
+});
+</script>
+</body>
+</html>

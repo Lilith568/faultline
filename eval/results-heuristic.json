@@ -1,0 +1,302 @@
+{
+  "planner": "heuristic",
+  "model": null,
+  "date": "2026-10-26T21:15:05.898550+00:00",
+  "dev_apps": {
+    "found": 6,
+    "expected": 6,
+    "false_positives_on_fixed_builds": 0,
+    "unexpected_on_buggy_builds": 0
+  },
+  "held_out_apps": {
+    "found": 3,
+    "expected": 4,
+    "false_positives_on_fixed_builds": 0,
+    "unexpected_on_buggy_builds": 0
+  },
+  "browser_runs": 120,
+  "meta_calls": 0,
+  "tokens": {
+    "input": 0,
+    "output": 0
+  },
+  "seconds": 212.9,
+  "rows": [
+    {
+      "app": "profile",
+      "mode": "buggy",
+      "held_out": false,
+      "hunt_id": "20261026-211133-f7ecb0",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [
+        "profile-overwrite",
+        "profile-focus"
+      ],
+      "found": [
+        "profile-focus",
+        "profile-overwrite"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 3,
+        "cx3": 4
+      },
+      "experiments": 6,
+      "browser_runs": 25,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 44.7
+    },
+    {
+      "app": "profile",
+      "mode": "fixed",
+      "held_out": false,
+      "hunt_id": "20261026-211217-f3c036",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {},
+      "experiments": 6,
+      "browser_runs": 6,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 7.8
+    },
+    {
+      "app": "search",
+      "mode": "buggy",
+      "held_out": false,
+      "hunt_id": "20261026-211225-a9ace7",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [
+        "search-order"
+      ],
+      "found": [
+        "search-order"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {
+        "cx1": 2
+      },
+      "experiments": 1,
+      "browser_runs": 8,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 22.8
+    },
+    {
+      "app": "search",
+      "mode": "fixed",
+      "held_out": false,
+      "hunt_id": "20261026-211248-8847dc",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {},
+      "experiments": 1,
+      "browser_runs": 1,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.0
+    },
+    {
+      "app": "checkout",
+      "mode": "buggy",
+      "held_out": false,
+      "hunt_id": "20261026-211254-c7f97c",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [
+        "checkout-double"
+      ],
+      "found": [
+        "checkout-double"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {
+        "cx1": 3
+      },
+      "experiments": 2,
+      "browser_runs": 11,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 17.0
+    },
+    {
+      "app": "checkout",
+      "mode": "fixed",
+      "held_out": false,
+      "hunt_id": "20261026-211311-c1a6f9",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {},
+      "experiments": 2,
+      "browser_runs": 2,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.3
+    },
+    {
+      "app": "settings",
+      "mode": "buggy",
+      "held_out": false,
+      "hunt_id": "20261026-211317-896d01",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [
+        "settings-errorloss",
+        "settings-stale-load"
+      ],
+      "found": [
+        "settings-errorloss",
+        "settings-stale-load"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 2,
+        "cx3": 2
+      },
+      "experiments": 4,
+      "browser_runs": 27,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 44.6
+    },
+    {
+      "app": "settings",
+      "mode": "fixed",
+      "held_out": false,
+      "hunt_id": "20261026-211402-4399f7",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {},
+      "experiments": 4,
+      "browser_runs": 4,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 8.8
+    },
+    {
+      "app": "composer",
+      "mode": "buggy",
+      "held_out": true,
+      "hunt_id": "20261026-211411-cfbba2",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [
+        "composer-draft",
+        "composer-double"
+      ],
+      "found": [
+        "composer-double"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {
+        "cx1": 2
+      },
+      "experiments": 2,
+      "browser_runs": 10,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 15.9
+    },
+    {
+      "app": "composer",
+      "mode": "fixed",
+      "held_out": true,
+      "hunt_id": "20261026-211426-fc27df",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {},
+      "experiments": 2,
+      "browser_runs": 2,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 7.2
+    },
+    {
+      "app": "newsletter",
+      "mode": "buggy",
+      "held_out": true,
+      "hunt_id": "20261026-211434-bb3bcf",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [
+        "newsletter-focus",
+        "newsletter-errorloss"
+      ],
+      "found": [
+        "newsletter-errorloss",
+        "newsletter-focus"
+      ],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {
+        "cx1": 2,
+        "cx2": 3
+      },
+      "experiments": 5,
+      "browser_runs": 19,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 25.7
+    },
+    {
+      "app": "newsletter",
+      "mode": "fixed",
+      "held_out": true,
+      "hunt_id": "20261026-211459-3c3c8e",
+      "planner_used": "heuristic",
+      "fallback": null,
+      "expected_bugs": [],
+      "found": [],
+      "unexpected": [],
+      "flaky": [],
+      "minimized_steps": {},
+      "experiments": 5,
+      "browser_runs": 5,
+      "meta_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.1
+    }
+  ]
+}
