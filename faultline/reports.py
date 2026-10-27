@@ -33,6 +33,11 @@ def ci_issues(report: dict) -> list[str]:
     that did not apply to the page are allowed; they are listed in the report."""
     issues = []
     rows = list(_hypotheses(report))
+    if report.get("status") == "error":
+        issues.append("The hunt stopped with an error")
+    live = report.get("live_api", {})
+    if live.get("required") and live.get("status") != "complete":
+        issues.append("The required live Meta API evidence is incomplete")
     if not report.get("finished_at"):
         issues.append("The hunt did not finish")
     if not any(h.get("result", {}).get("status") in ("passed", "failed")
@@ -115,3 +120,4 @@ def write_error_junit(path: str | Path, message: str) -> None:
     case = ET.SubElement(suite, "testcase", classname="faultline.infrastructure", name="Run hunt")
     ET.SubElement(case, "error", type="InfrastructureError", message=_text(message))
     _write(suite, path)
+

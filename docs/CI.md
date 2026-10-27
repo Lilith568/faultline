@@ -13,7 +13,9 @@ python -m faultline hunt http://127.0.0.1:8000/demo/checkout.html?mode=fixed --p
 ```
 
 For an actual Meta run, configure `MODEL_API_KEY` locally (or as a GitHub Actions
-secret) and use `--planner meta`. Never commit the key.
+secret) and use `--planner meta --require-live`. Never commit the key. The strict option stops rather
+than using rules or a template if a requested model step fails. See [live demo setup](LIVE_DEMO.md)
+for API-call evidence and recording instructions.
 
 | Exit code | Meaning |
 |---|---|
@@ -75,3 +77,4 @@ The standalone exported Playwright spec does not embed authentication. Configure
 `use.storageState` in your own Playwright configuration when running it against a
 signed-in page. Use a fresh state file if the app has logged out or the session
 has expired. An inapplicable run must not be treated as a fixed bug.
+

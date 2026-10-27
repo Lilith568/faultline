@@ -1,5 +1,18 @@
 # Release notes
 
+## 0.4.0
+
+- **Strict live Meta mode.** The UI's Live Muse API option and CLI `--require-live` stop on model errors,
+  rejected initial plans and failed diagnoses rather than substituting rules or explanation templates.
+- **API-call evidence.** Network and injected test transports are distinguished, with UTC call timestamps,
+  endpoint host, response model when actually provided, timings, HTTP status and token counts.
+  The UI exposes the record and a report download; failed strict runs retain partial evidence.
+- **Windows recording setup.** `scripts/Start-LiveDemo.ps1` uses an existing local key or hidden input,
+  selects the hosted Meta endpoint and restores its process environment after the server stops.
+  `docs/LIVE_DEMO.md` explains how to record a fresh three-minute live run.
+- The original YouTube demo and recorded-plan results remain labelled as replay. This release adds
+  and tests the live-mode controls; it does not claim a successful real Meta API run from the build environment.
+
 ## 0.3.0
 
 - **Recorded Muse plan in the UI.** On the held-out demo apps the UI can replay the plan Muse wrote in the Meta
@@ -55,3 +68,4 @@ python scripts/replay_recorded.py
 python scripts/evaluate.py --planner heuristic
 python -m faultline serve
 ```
+

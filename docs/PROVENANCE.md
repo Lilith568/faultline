@@ -37,6 +37,7 @@ and the distinction between an endpoint alias and verified checkpoint provenance
 The author directed the work, chose the project and owns the result. AI coding assistants helped write code and
 documents: Anthropic Claude (versions 0.1 and 0.3) and ChatGPT by OpenAI (version 0.2: evaluation preservation,
 CI/JUnit, saved-session support, model-backend safeguards, review-only patches, the notebook UI and regression tests).
+ChatGPT also helped with version 0.4's strict live mode, API-call evidence, Windows recording setup and regression tests.
 These are development tools only; the application never calls OpenAI or Anthropic. This is disclosed because the
 event rules ask that contributions be clearly identifiable.
 
@@ -51,3 +52,4 @@ public historical figures used as sample data.
 
 Unmodified TodoMVC and 2048 checkouts were used for local compatibility probes; their MIT licenses and pinned revisions
 are recorded in `docs/EXTERNAL_VALIDATION.md` and `eval/external/`. Their source code is not bundled in this release.
+

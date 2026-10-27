@@ -129,9 +129,11 @@ async def test_zero_experiments_are_not_presented_as_a_pass(server_url):
         await page.keyboard.press("Tab")
         assert await page.locator(".skip").evaluate("element => element === document.activeElement")
         assert await page.locator(".skip").evaluate("element => getComputedStyle(element).outlineWidth") == "3px"
+        await page.locator('[data-planner="heuristic"]').click()
         await page.locator("#run").click()
         await expect(page.locator("#findingCount")).to_have_text("No coverage")
         await expect(page.locator("#cxs h3")).to_have_text("No experiments were available.")
         await expect(page.locator("#status")).to_contain_text("No applicable checks completed")
         assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth")
         await browser.close()
+

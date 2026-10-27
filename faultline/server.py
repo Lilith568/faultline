@@ -31,7 +31,7 @@ CX_RE = re.compile(r"^cx[0-9]{1,3}$")
 RECORDED_DIR = HERE.parent / "eval" / "recorded"
 DEMO_PATH_RE = re.compile(r"^/demo/([a-z]+)\.html$")
 
-app = FastAPI(title="Faultline", version="0.3.0")
+app = FastAPI(title="Faultline", version="0.4.0")
 HUNTS: dict[str, dict] = {}
 
 
@@ -169,6 +169,7 @@ class HuntRequest(BaseModel):
     model: str | None = Field(None, max_length=64)  # one of the hosted Muse models; None keeps the configured one
     rounds: int = Field(2, ge=1, le=3)
     include_source: bool = False  # opt-in: send the page's inline scripts to Muse for the diagnosis
+    require_live: bool = False  # refuse recorded plans, injected transports and rules fallbacks
 
 
 class ReplayRequest(BaseModel):
@@ -203,6 +204,8 @@ def config() -> dict:
 
 @app.post("/api/hunts")
 async def start_hunt(body: HuntRequest) -> dict:
+    if body.require_live and body.planner in ("heuristic", "recorded"):
+        raise HTTPException(400, "Live Muse API requires the meta or auto planner; rules and recorded plans are not live API runs.")
     record: dict = {"status": "running", "events": [], "report": None, "error": None}
 
     def emit(kind: str, message: str, data: dict | None = None) -> None:
@@ -216,13 +219,17 @@ async def start_hunt(body: HuntRequest) -> dict:
             raise HTTPException(400, f"No recorded Muse plan for this page. Recorded plans exist for: {names}.")
         planner = "heuristic"  # the recorded plan replaces round 1; no model is called at all
     settings = get_settings()
+    if body.require_live and not settings.meta_configured:
+        raise HTTPException(400, "Live Muse API is not configured. Set MODEL_API_KEY in the local .env file and restart Faultline. "
+                            "Keep the key on the server; do not paste it into this page. Choose Rules only or Recorded Muse plan to run without a key.")
     if body.model and body.model != settings.model:
         if getattr(settings, "backend", "meta") != "meta" or body.model not in META_MODELS:
             raise HTTPException(400, "Choose one of the hosted Muse models: " + ", ".join(sorted(META_MODELS)))
         settings = replace(settings, model=body.model)
     try:
         hunt = Hunt(body.url, goal=body.goal, planner=planner, rounds=body.rounds, settings=settings,
-                    include_source=body.include_source, emit=emit, recorded_plan=recorded)
+                    include_source=body.include_source, emit=emit, recorded_plan=recorded,
+                    require_live=body.require_live)
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     HUNTS[hunt.id] = record
@@ -232,6 +239,12 @@ async def start_hunt(body: HuntRequest) -> dict:
             record["report"] = await hunt.run()
             record["status"] = "done"
         except Exception as exc:  # surface errors to the UI instead of failing silently
+            record["report"] = getattr(hunt, "report", None)
+            if not record["report"]:
+                try:
+                    record["report"] = _load_report(hunt.id)
+                except (HTTPException, OSError, ValueError):
+                    pass
             record["status"] = "error"
             record["error"] = f"{type(exc).__name__}: {exc}"
             emit("error", record["error"])
@@ -245,7 +258,9 @@ def get_hunt(hunt_id: str, since: int = 0) -> JSONResponse:
     record = HUNTS.get(hunt_id)
     if record is None:
         report = _load_report(hunt_id)
-        return JSONResponse({"status": "done", "events": [], "report": report, "error": None})
+        failed = report.get("status") == "error"
+        return JSONResponse({"status": "error" if failed else "done", "events": [], "report": report,
+                             "error": report.get("error") if failed else None})
     return JSONResponse({"status": record["status"], "events": record["events"][since:],
                          "event_count": len(record["events"]),
                          "report": record["report"], "error": record["error"]})
@@ -258,6 +273,17 @@ def _load_report(hunt_id: str) -> dict:
     if not path.exists():
         raise HTTPException(404)
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+@app.get("/api/hunts/{hunt_id}/report")
+def download_report(hunt_id: str) -> JSONResponse:
+    if not ID_RE.match(hunt_id):
+        raise HTTPException(404)
+    record = HUNTS.get(hunt_id)
+    report = record.get("report") if record else None
+    if not report:
+        report = _load_report(hunt_id)
+    return JSONResponse(report, headers={"Content-Disposition": f'attachment; filename="faultline-{hunt_id}-report.json"'})
 
 
 def _cx(hunt_id: str, cx_id: str) -> dict:
@@ -318,3 +344,4 @@ async def suggest_patch(hunt_id: str, cx_id: str, body: PatchRequest) -> dict:
     """Return a review-only proposal. Source and diffs are never written or executed."""
     cx = _cx(hunt_id, cx_id)
     return await propose_patch(get_settings(), cx, [f.model_dump() for f in body.files], body.consent)
+

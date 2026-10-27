@@ -11,7 +11,7 @@ from typing import Any, Callable
 
 from playwright.async_api import Browser, async_playwright
 
-from .config import Settings, check_target, get_settings
+from .config import Settings, check_target, get_settings, validate_model_settings
 from .auth import load_storage_state, scope_storage_state
 from .discover import discover
 from .executor import run_experiment
@@ -37,13 +37,46 @@ def _invariant_text(exp: dict, failing: dict, inventory: dict) -> str:
     return failing["kind"]
 
 
+_LIVE_CALL_FIELDS = (
+    "purpose", "schema_name", "model", "backend", "attempt", "seconds", "success", "input_tokens", "output_tokens",
+    "image_sent", "status", "http_status", "error_code", "reported_model", "started_at", "transport", "endpoint_host",
+)
+
+
+def live_api_evidence(report: dict, *, required: bool) -> dict:
+    """Local runtime evidence, not independent attestation of the provider or its checkpoint."""
+    calls = [{field: call.get(field) for field in _LIVE_CALL_FIELDS} for call in report.get("meta_calls", [])]
+    network_successes = sum(
+        1 for call in calls
+        if call["transport"] == "network" and call["success"] is True
+        and isinstance(call["reported_model"], str) and isinstance(call["model"], str)
+        and (call["reported_model"] == call["model"] or call["reported_model"].startswith(call["model"] + "-"))
+    )
+    planner = report.get("planner", {})
+    no_experiment_errors = not any(
+        hyp.get("result", {}).get("status") == "error"
+        for rnd in report.get("rounds", []) for hyp in rnd.get("hypotheses", [])
+    )
+    complete = (required and report.get("status") == "complete" and planner.get("used") == "meta"
+                and not planner.get("fallback_reason") and not planner.get("recorded_from")
+                and all(r.get("source") == "meta" for r in report.get("rounds", []))
+                and all(cx.get("diagnosis", {}).get("source") == "meta" for cx in report.get("counterexamples", []))
+                and no_experiment_errors and network_successes > 0
+                and all(call["transport"] == "network" for call in calls)
+                and network_successes == sum(call["success"] is True for call in calls))
+    return {"required": required, "status": "complete" if complete else "incomplete" if required else "not_requested",
+            "network_successes": network_successes, "calls": calls}
+
+
 class Hunt:
     def __init__(self, url: str, goal: str = "", planner: str = "auto", rounds: int = 2,
                  confirm_runs: int = 3, include_source: bool = False, settings: Settings | None = None,
                  emit: Emit = _noop, meta_transport=None, hunt_id: str | None = None,
                  recorded_plan: dict | None = None, storage_state: str | Path | dict | None = None,
-                 share_signed_in_pages: bool = False):
+                 share_signed_in_pages: bool = False, require_live: bool = False):
         self.settings = settings or get_settings()
+        self.require_live = require_live
+        self.report: dict[str, Any] | None = None
         check_target(url, self.settings)
         self.url = url
         self.goal = goal.strip()[:600]
@@ -63,6 +96,14 @@ class Hunt:
         self.recorded_plan = recorded_plan  # replay a saved model plan without calling the API
         # Signed-in pages can show private data. They only reach a model after a separate, explicit opt-in.
         self.share_signed_in_pages = share_signed_in_pages
+        if require_live:
+            if planner not in ("auto", "meta") or recorded_plan is not None:
+                raise ValueError("Live API mode requires the Meta planner and cannot replay a recorded plan")
+            if not self.settings.meta_configured:
+                raise ValueError("Live API mode requires MODEL_API_KEY (or a configured Meta open-weights endpoint)")
+            validate_model_settings(self.settings, test_transport=meta_transport is not None)
+            if self.storage_state and not share_signed_in_pages:
+                raise ValueError("Live API mode with a signed-in page requires --send-signed-in-pages")
 
     # ------------------------------------------------------------------ helpers
     def _emit(self, kind: str, message: str, data: dict | None = None) -> None:
@@ -90,6 +131,20 @@ class Hunt:
 
         await asyncio.gather(*(one(h) for h in hypotheses))
 
+    def _save_report(self, report: dict, started: float) -> None:
+        """Keep successes and strict failures inspectable without request bodies or secrets."""
+        report["finished_at"] = datetime.now(timezone.utc).isoformat()
+        report["stats"] = {
+            "experiments": sum(len(r["hypotheses"]) for r in report["rounds"]),
+            "browser_runs": self.browser_runs,
+            "duration_s": round(time.monotonic() - started, 1),
+            "meta_calls": len(report["meta_calls"]),
+            "input_tokens": sum(c.get("input_tokens") or 0 for c in report["meta_calls"]),
+            "output_tokens": sum(c.get("output_tokens") or 0 for c in report["meta_calls"]),
+        }
+        report["live_api"] = live_api_evidence(report, required=self.require_live)
+        (self.dir / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
     # ------------------------------------------------------------------ main
     async def run(self) -> dict[str, Any]:
         started = time.monotonic()
@@ -100,200 +155,226 @@ class Hunt:
             "planner": {"requested": self.planner, "used": None, "model": None, "fallback_reason": None,
                         "backend": getattr(self.settings, "backend", "meta")},
             "rounds": [], "counterexamples": [], "unconfirmed": [], "meta_calls": [],
-            "warnings": self.warnings, "authenticated": bool(self.storage_state),
+            "warnings": self.warnings, "authenticated": bool(self.storage_state), "status": "running",
         }
+        self.report = report
         client = None
-        use_meta = self.planner in ("auto", "meta") and self.settings.meta_configured
-        if self.planner == "meta" and not self.settings.meta_configured:
-            report["planner"]["fallback_reason"] = ("MODEL_API_KEY is not set" if getattr(self.settings, "backend", "meta")
-                                                    == "meta" else "The Meta open-weights endpoint is not configured")
-        if use_meta and self.storage_state and not self.share_signed_in_pages:
-            use_meta = False
-            report["planner"]["fallback_reason"] = ("Signed-in pages are not sent to a model without "
-                                                    "--send-signed-in-pages; the rules-only planner was used")
-        if use_meta:
-            try:
-                client = MetaClient(self.settings, transport=self.meta_transport)
-                report["planner"]["model"] = self.settings.model
-            except MetaError as exc:  # invalid model settings fall back to rules instead of ending the hunt
-                report["planner"]["fallback_reason"] = f"Model settings rejected: {exc}"[:300]
-                self.emit("warning", report["planner"]["fallback_reason"], None)
+        try:
+            use_meta = self.planner in ("auto", "meta") and self.settings.meta_configured
+            if self.planner == "meta" and not self.settings.meta_configured:
+                report["planner"]["fallback_reason"] = ("MODEL_API_KEY is not set" if getattr(self.settings, "backend", "meta")
+                                                        == "meta" else "The Meta open-weights endpoint is not configured")
+            if use_meta and self.storage_state and not self.share_signed_in_pages:
+                use_meta = False
+                report["planner"]["fallback_reason"] = ("Signed-in pages are not sent to a model without "
+                                                        "--send-signed-in-pages; the rules-only planner was used")
+            if use_meta:
+                try:
+                    client = MetaClient(self.settings, transport=self.meta_transport)
+                    report["planner"]["model"] = self.settings.model
+                except MetaError as exc:  # invalid model settings fall back to rules instead of ending the hunt
+                    report["planner"]["fallback_reason"] = f"Model settings rejected: {exc}"[:300]
+                    self.emit("warning", report["planner"]["fallback_reason"], None)
+                    if self.require_live:
+                        raise
 
-        async with async_playwright() as pw:
-            browser = await pw.chromium.launch()
-            try:
-                self._phase("explore", "Exploring the page")
-                inventory = await discover(browser, self.url, storage_state=self.storage_state)
-                report["inventory"] = {k: inventory[k] for k in ("title", "elements", "endpoints", "notes")}
-                self.emit("inventory", f"Found {len(inventory['elements'])} controls and "
-                          f"{len(inventory['endpoints'])} API endpoints", {"endpoints": inventory["endpoints"]})
+            async with async_playwright() as pw:
+                browser = await pw.chromium.launch()
+                try:
+                    self._phase("explore", "Exploring the page")
+                    inventory = await discover(browser, self.url, storage_state=self.storage_state)
+                    report["inventory"] = {k: inventory[k] for k in ("title", "elements", "endpoints", "notes")}
+                    self.emit("inventory", f"Found {len(inventory['elements'])} controls and "
+                              f"{len(inventory['endpoints'])} API endpoints", {"endpoints": inventory["endpoints"]})
 
-                # Round 1
-                self._phase("hypotheses", "Preparing hypotheses")
-                hypotheses, rejected, source = [], [], "heuristic"
-                if self.recorded_plan:
-                    provenance = self.recorded_plan.get("provenance", {})
-                    self._phase("hypotheses", f"Loading the recorded {provenance.get('model') or 'Muse'} plan")
-                    hypotheses, rejected = normalize_plan(self.recorded_plan["plan"], inventory)
-                    source = "recorded"
-                    report["planner"]["model"] = provenance.get("model")
-                    report["planner"]["recorded_from"] = {key: provenance.get(key)
-                                                          for key in ("file", "when", "where")}
-                elif client:
-                    self._phase("hypotheses", f"Asking {self.settings.model} for hypotheses")
-                    try:
-                        hypotheses, rejected = await meta_plan(client, inventory, self.goal)
-                        source = "meta"
-                    except (MetaError, PlanError, ValueError, KeyError, TypeError) as exc:
-                        report["planner"]["fallback_reason"] = f"Meta planner failed: {type(exc).__name__}: {exc}"[:300]
-                        self.emit("warning", report["planner"]["fallback_reason"], None)
-                    if source == "meta" and not hypotheses:
-                        report["planner"]["fallback_reason"] = "Meta plan had no valid experiments"
-                        source = "heuristic"
-                if source == "heuristic":
-                    hypotheses = heuristic_plan(inventory)
-                report["planner"]["used"] = source
-                self.emit("plan", f"{len(hypotheses)} hypotheses ({source})",
-                          {"hypotheses": [{"id": h["id"], "claim": h["claim"], "fault_class": h["fault_class"]}
-                                          for h in hypotheses], "rejected": rejected})
-                self._phase("verify", "Testing the hypotheses", round=1)
-                await self._run_round(browser, hypotheses, inventory, 1)
-                report["rounds"].append({"round": 1, "source": source, "hypotheses": hypotheses,
-                                         "rejected": rejected})
-
-                # Follow-up rounds (Meta only): the model sees verified results and adapts.
-                all_hyps = list(hypotheses)
-                for round_no in range(2, self.rounds + 1):
-                    if source != "meta":
-                        break
-                    self._phase("followup", f"Round {round_no}: Muse reviews the verified results", round=round_no)
-                    try:
-                        follow, rejected2 = await meta_plan(client, inventory, self.goal, previous=all_hyps,
-                                                            id_prefix=f"r{round_no}-")
-                    except (MetaError, PlanError, ValueError, KeyError, TypeError) as exc:
-                        self.emit("warning", f"Follow-up round skipped: {type(exc).__name__}: {exc}"[:300], None)
-                        break
-                    existing = {h["id"] for h in all_hyps}
-                    for hyp in follow:
-                        if hyp["id"] in existing:
-                            hyp["id"] = f"r{round_no}-{hyp['id']}"
-                    if not follow:
-                        if rejected2:
-                            report["rounds"].append({"round": round_no, "source": "meta", "hypotheses": [],
-                                                     "rejected": rejected2})
-                            self.emit("warning", "Follow-up round skipped: no valid experiments", None)
-                        break
-                    self.emit("plan", f"{len(follow)} follow-up experiments",
-                              {"hypotheses": [{"id": h["id"], "claim": h["claim"], "fault_class": h["fault_class"]}
-                                              for h in follow], "rejected": rejected2, "round": round_no})
-                    self._phase("verify", "Testing the follow-up hypotheses", round=round_no)
-                    await self._run_round(browser, follow, inventory, round_no)
-                    report["rounds"].append({"round": round_no, "source": "meta", "hypotheses": follow,
-                                             "rejected": rejected2})
-                    all_hyps.extend(follow)
-
-                # Counterexamples: group failing experiments by (first failing invariant, fault class)
-                groups: dict[tuple[str, str], list[dict]] = {}
-                for hyp in all_hyps:
-                    result = hyp.get("result") or {}
-                    if result.get("status") == "failed":
-                        key = (result["signature"][0], hyp["fault_class"])
-                        groups.setdefault(key, []).append(hyp)
-
-                for (target, fault_class), members in groups.items():
-                    members.sort(key=lambda h: (len(h["steps"]), len(h["perturbations"])))
-                    primary = members[0]
-                    self._phase("minimize", f"Minimizing: {primary['claim']}", id=primary["id"])
-                    runner = lambda exp: self._run(browser, exp, inventory)  # noqa: E731
-                    reduced = await minimize(runner, primary, target, inventory)
-                    minimal = reduced["experiment"]
-                    cx_index = len(report["counterexamples"]) + len(report["unconfirmed"]) + 1
-                    shots = self.dir / f"cx{cx_index}"
-                    confirmations = []
-                    for attempt in range(self.confirm_runs):
-                        kwargs = {}
-                        if attempt == 0:
-                            kwargs = {"screenshot": shots / "failing-state.png", "trace": shots / "trace.zip"}
-                        confirmations.append(await self._run(browser, minimal, inventory, **kwargs))
-                    failures = sum(1 for c in confirmations if c["status"] == "failed" and target in c["signature"])
-                    if failures < len(confirmations):
-                        # Not reproducible every time: report it, but never as a verified failure.
-                        report["unconfirmed"].append({
-                            "title": primary["claim"], "fault_class": fault_class, "signature": target,
-                            "hypothesis_ids": [h["id"] for h in members],
-                            "confirmation": {"runs": len(confirmations), "failures": failures},
-                            "steps": describe_experiment(minimal, inventory)["steps"],
-                        })
-                        self.emit("warning", f"Not reproducible every time ({failures}/{len(confirmations)}), "
-                                  f"not reported as verified: {primary['claim']}", None)
-                        continue
-                    first = confirmations[0]
-                    failing = next((r for r in first["invariants"] if r["status"] == "fail"), None) or \
-                        next(r for r in primary["result"]["invariants"] if r["status"] == "fail")
-                    refs = {s["ref"] for s in minimal["steps"] if s.get("ref")} | \
-                           {i["ref"] for i in minimal["invariants"] if i.get("ref") and i["ref"] != "page"}
-                    elements = {e["ref"]: e for e in inventory["elements"] if e["ref"] in refs}
-                    text = describe_experiment(minimal, inventory)
-                    cx = {
-                        "id": f"cx{cx_index}",
-                        "title": primary["claim"],
-                        "claim": primary["claim"],
-                        "fault_class": fault_class,
-                        "hypothesis_ids": [h["id"] for h in members],
-                        "signature": target,
-                        "original_steps": len(primary["steps"]),
-                        "experiment": minimal,
-                        "elements": elements,
-                        "text": text,
-                        "failure": {"invariant": _invariant_text(minimal, failing, inventory),
-                                    "expected": failing["expected"], "actual": failing["actual"]},
-                        "attribution": attribution(minimal["perturbations"], reduced.get("controls")),
-                        "controls": reduced.get("controls", []),
-                        "minimization_attempts": reduced["attempts"],
-                        "confirmation": {"runs": len(confirmations), "failures": failures,
-                                         "confirmed": failures == len(confirmations)},
-                        "network": first["network"],
-                        "screenshot": first.get("screenshot"),
-                        "trace": first.get("trace"),
-                    }
-                    # Diagnosis
-                    self._phase("diagnose", f"Explaining {cx['id']}", id=cx["id"])
-                    diagnosis = None
-                    if client:
-                        self._phase("diagnose", f"Asking {self.settings.model} to diagnose {cx['id']}", id=cx["id"])
+                    # Round 1
+                    self._phase("hypotheses", "Preparing hypotheses")
+                    hypotheses, rejected, source = [], [], "heuristic"
+                    if self.recorded_plan:
+                        provenance = self.recorded_plan.get("provenance", {})
+                        self._phase("hypotheses", f"Loading the recorded {provenance.get('model') or 'Muse'} plan")
+                        hypotheses, rejected = normalize_plan(self.recorded_plan["plan"], inventory)
+                        source = "recorded"
+                        report["planner"]["model"] = provenance.get("model")
+                        report["planner"]["recorded_from"] = {key: provenance.get(key)
+                                                              for key in ("file", "when", "where")}
+                    elif client:
+                        self._phase("hypotheses", f"Asking {self.settings.model} for hypotheses")
                         try:
-                            png = Path(cx["screenshot"]).read_bytes() if cx.get("screenshot") else None
-                            diagnosis = await meta_diagnosis(client, cx, inventory, self.include_source, png)
-                        except (MetaError, OSError, ValueError, KeyError, TypeError) as exc:
-                            self.emit("warning", f"Diagnosis fell back to a template: {type(exc).__name__}: {exc}"[:300],
-                                      None)
-                    cx["diagnosis"] = diagnosis or template_diagnosis(fault_class, {"title": cx["title"]})
-                    # Exports
-                    self._phase("export", f"Exporting the test for {cx['id']}", id=cx["id"])
-                    spec = to_playwright_spec(cx, self.url)
-                    (shots / spec_filename(cx)).write_text(spec, encoding="utf-8")
-                    (shots / "repro.json").write_text(json.dumps(to_repro(cx, self.url), indent=2), encoding="utf-8")
-                    cx["spec_file"] = str(shots / spec_filename(cx))
-                    cx["repro_file"] = str(shots / "repro.json")
-                    report["counterexamples"].append(cx)
-                    self.emit("counterexample", f"{cx['id']} confirmed {failures}/{len(confirmations)}: {cx['title']}",
-                              {"id": cx["id"]})
-            finally:
-                await browser.close()
-                if client:
-                    report["meta_calls"] = client.calls
-                    await client.close()
+                            hypotheses, rejected = await meta_plan(client, inventory, self.goal)
+                            source = "meta"
+                        except (MetaError, PlanError, ValueError, KeyError, TypeError) as exc:
+                            report["planner"]["fallback_reason"] = f"Meta planner failed: {type(exc).__name__}: {exc}"[:300]
+                            self.emit("warning", report["planner"]["fallback_reason"], None)
+                            if self.require_live:
+                                raise
+                        if source == "meta" and not hypotheses:
+                            report["planner"]["fallback_reason"] = "Meta plan had no valid experiments"
+                            if self.require_live:
+                                raise MetaError("Live API mode: Meta plan had no valid experiments")
+                            source = "heuristic"
+                    if source == "heuristic":
+                        hypotheses = heuristic_plan(inventory)
+                    report["planner"]["used"] = source
+                    self.emit("plan", f"{len(hypotheses)} hypotheses ({source})",
+                              {"hypotheses": [{"id": h["id"], "claim": h["claim"], "fault_class": h["fault_class"]}
+                                              for h in hypotheses], "rejected": rejected})
+                    self._phase("verify", "Testing the hypotheses", round=1)
+                    await self._run_round(browser, hypotheses, inventory, 1)
+                    report["rounds"].append({"round": 1, "source": source, "hypotheses": hypotheses,
+                                             "rejected": rejected})
 
-        report["finished_at"] = datetime.now(timezone.utc).isoformat()
-        report["stats"] = {
-            "experiments": sum(len(r["hypotheses"]) for r in report["rounds"]),
-            "browser_runs": self.browser_runs,
-            "duration_s": round(time.monotonic() - started, 1),
-            "meta_calls": len(report["meta_calls"]),
-            "input_tokens": sum(c.get("input_tokens") or 0 for c in report["meta_calls"]),
-            "output_tokens": sum(c.get("output_tokens") or 0 for c in report["meta_calls"]),
-        }
-        (self.dir / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+                    # Follow-up rounds (Meta only): the model sees verified results and adapts.
+                    all_hyps = list(hypotheses)
+                    for round_no in range(2, self.rounds + 1):
+                        if source != "meta":
+                            break
+                        self._phase("followup", f"Round {round_no}: Muse reviews the verified results", round=round_no)
+                        try:
+                            follow, rejected2 = await meta_plan(client, inventory, self.goal, previous=all_hyps,
+                                                                id_prefix=f"r{round_no}-")
+                        except (MetaError, PlanError, ValueError, KeyError, TypeError) as exc:
+                            prefix = "Live API mode stopped during follow-up" if self.require_live else "Follow-up round skipped"
+                            self.emit("warning", f"{prefix}: {type(exc).__name__}: {exc}"[:300], None)
+                            if self.require_live:
+                                raise
+                            break
+                        existing = {h["id"] for h in all_hyps}
+                        for hyp in follow:
+                            if hyp["id"] in existing:
+                                hyp["id"] = f"r{round_no}-{hyp['id']}"
+                        if not follow:
+                            if rejected2:
+                                report["rounds"].append({"round": round_no, "source": "meta", "hypotheses": [],
+                                                         "rejected": rejected2})
+                                message = ("Live API mode stopped during follow-up: no valid experiments" if self.require_live
+                                           else "Follow-up round skipped: no valid experiments")
+                                self.emit("warning", message, None)
+                                if self.require_live:
+                                    raise MetaError("Live API mode: follow-up plan had no valid experiments")
+                            break
+                        self.emit("plan", f"{len(follow)} follow-up experiments",
+                                  {"hypotheses": [{"id": h["id"], "claim": h["claim"], "fault_class": h["fault_class"]}
+                                                  for h in follow], "rejected": rejected2, "round": round_no})
+                        self._phase("verify", "Testing the follow-up hypotheses", round=round_no)
+                        await self._run_round(browser, follow, inventory, round_no)
+                        report["rounds"].append({"round": round_no, "source": "meta", "hypotheses": follow,
+                                                 "rejected": rejected2})
+                        all_hyps.extend(follow)
+
+                    # Counterexamples: group failing experiments by (first failing invariant, fault class)
+                    groups: dict[tuple[str, str], list[dict]] = {}
+                    for hyp in all_hyps:
+                        result = hyp.get("result") or {}
+                        if result.get("status") == "failed":
+                            key = (result["signature"][0], hyp["fault_class"])
+                            groups.setdefault(key, []).append(hyp)
+
+                    for (target, fault_class), members in groups.items():
+                        members.sort(key=lambda h: (len(h["steps"]), len(h["perturbations"])))
+                        primary = members[0]
+                        self._phase("minimize", f"Minimizing: {primary['claim']}", id=primary["id"])
+                        runner = lambda exp: self._run(browser, exp, inventory)  # noqa: E731
+                        reduced = await minimize(runner, primary, target, inventory)
+                        minimal = reduced["experiment"]
+                        cx_index = len(report["counterexamples"]) + len(report["unconfirmed"]) + 1
+                        shots = self.dir / f"cx{cx_index}"
+                        confirmations = []
+                        for attempt in range(self.confirm_runs):
+                            kwargs = {}
+                            if attempt == 0:
+                                kwargs = {"screenshot": shots / "failing-state.png", "trace": shots / "trace.zip"}
+                            confirmations.append(await self._run(browser, minimal, inventory, **kwargs))
+                        failures = sum(1 for c in confirmations if c["status"] == "failed" and target in c["signature"])
+                        if failures < len(confirmations):
+                            # Not reproducible every time: report it, but never as a verified failure.
+                            report["unconfirmed"].append({
+                                "title": primary["claim"], "fault_class": fault_class, "signature": target,
+                                "hypothesis_ids": [h["id"] for h in members],
+                                "confirmation": {"runs": len(confirmations), "failures": failures},
+                                "steps": describe_experiment(minimal, inventory)["steps"],
+                            })
+                            self.emit("warning", f"Not reproducible every time ({failures}/{len(confirmations)}), "
+                                      f"not reported as verified: {primary['claim']}", None)
+                            continue
+                        first = confirmations[0]
+                        failing = next((r for r in first["invariants"] if r["status"] == "fail"), None) or \
+                            next(r for r in primary["result"]["invariants"] if r["status"] == "fail")
+                        refs = {s["ref"] for s in minimal["steps"] if s.get("ref")} | \
+                               {i["ref"] for i in minimal["invariants"] if i.get("ref") and i["ref"] != "page"}
+                        elements = {e["ref"]: e for e in inventory["elements"] if e["ref"] in refs}
+                        text = describe_experiment(minimal, inventory)
+                        cx = {
+                            "id": f"cx{cx_index}",
+                            "title": primary["claim"],
+                            "claim": primary["claim"],
+                            "fault_class": fault_class,
+                            "hypothesis_ids": [h["id"] for h in members],
+                            "signature": target,
+                            "original_steps": len(primary["steps"]),
+                            "experiment": minimal,
+                            "elements": elements,
+                            "text": text,
+                            "failure": {"invariant": _invariant_text(minimal, failing, inventory),
+                                        "expected": failing["expected"], "actual": failing["actual"]},
+                            "attribution": attribution(minimal["perturbations"], reduced.get("controls")),
+                            "controls": reduced.get("controls", []),
+                            "minimization_attempts": reduced["attempts"],
+                            "confirmation": {"runs": len(confirmations), "failures": failures,
+                                             "confirmed": failures == len(confirmations)},
+                            "network": first["network"],
+                            "screenshot": first.get("screenshot"),
+                            "trace": first.get("trace"),
+                        }
+                        # Diagnosis
+                        self._phase("diagnose", f"Explaining {cx['id']}", id=cx["id"])
+                        diagnosis = None
+                        if client:
+                            self._phase("diagnose", f"Asking {self.settings.model} to diagnose {cx['id']}", id=cx["id"])
+                            try:
+                                png = Path(cx["screenshot"]).read_bytes() if cx.get("screenshot") else None
+                                diagnosis = await meta_diagnosis(client, cx, inventory, self.include_source, png)
+                            except (MetaError, OSError, ValueError, KeyError, TypeError) as exc:
+                                prefix = ("Live API mode stopped during diagnosis" if self.require_live
+                                          else "Diagnosis fell back to a template")
+                                self.emit("warning", f"{prefix}: {type(exc).__name__}: {exc}"[:300], None)
+                                if self.require_live:
+                                    raise
+                        if self.require_live and (
+                            not isinstance(diagnosis, dict) or diagnosis.get("source") != "meta"
+                            or not all(isinstance(diagnosis.get(field), str) and diagnosis[field].strip()
+                                       for field in ("title", "root_cause", "user_impact", "fix"))
+                        ):
+                            raise MetaError("Live API mode stopped during diagnosis: no substantive diagnosis")
+                        cx["diagnosis"] = diagnosis or template_diagnosis(fault_class, {"title": cx["title"]})
+                        # Exports
+                        self._phase("export", f"Exporting the test for {cx['id']}", id=cx["id"])
+                        spec = to_playwright_spec(cx, self.url)
+                        (shots / spec_filename(cx)).write_text(spec, encoding="utf-8")
+                        (shots / "repro.json").write_text(json.dumps(to_repro(cx, self.url), indent=2), encoding="utf-8")
+                        cx["spec_file"] = str(shots / spec_filename(cx))
+                        cx["repro_file"] = str(shots / "repro.json")
+                        report["counterexamples"].append(cx)
+                        self.emit("counterexample", f"{cx['id']} confirmed {failures}/{len(confirmations)}: {cx['title']}",
+                                  {"id": cx["id"]})
+                finally:
+                    await browser.close()
+
+            report["status"] = "complete"
+        except (Exception, asyncio.CancelledError) as exc:
+            report["status"] = "error"
+            report["error"] = f"{type(exc).__name__}: {exc}"[:500]
+            raise
+        finally:
+            if client:
+                report["meta_calls"] = client.calls
+                try:
+                    await client.close()
+                finally:
+                    self._save_report(report, started)
+            else:
+                self._save_report(report, started)
+
         self.emit("done", f"Done: {len(report['counterexamples'])} verified counterexample(s)", None)
         return report
 
@@ -314,3 +395,4 @@ async def replay(repro: dict, url: str | None = None, settings: Settings | None 
         finally:
             await browser.close()
     return result
+

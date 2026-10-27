@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import json
 import time
+from datetime import datetime, timezone
+from urllib.parse import urlsplit
 from typing import Any
 
 import httpx
@@ -40,6 +42,8 @@ class MetaClient:
         self.settings = settings
         self.model = settings.model
         self.calls: list[dict] = []
+        self.transport_kind = "network" if transport is None else "injected"
+        self.endpoint_host = urlsplit(settings.base_url).hostname
         headers = {"Authorization": f"Bearer {settings.api_key}"} if settings.api_key else {}
         self._client = httpx.AsyncClient(
             base_url=settings.base_url.rstrip("/") + "/", headers=headers,
@@ -80,7 +84,10 @@ class MetaClient:
         for attempt in range(1, 4):
             started = time.monotonic()
             audit: dict[str, Any] = {
-                "purpose": purpose, "model": self.model, "backend": self.settings.backend,
+                "purpose": purpose, "schema_name": schema_name, "model": self.model, "backend": self.settings.backend,
+                "started_at": datetime.now(timezone.utc).isoformat(),
+                "transport": self.transport_kind, "endpoint_host": self.endpoint_host,
+                "reported_model": None,
                 "attempt": attempt, "seconds": 0.0, "success": False,
                 "input_tokens": None, "output_tokens": None,
                 "image_sent": bool(image_png and self.settings.supports_vision),
@@ -113,12 +120,20 @@ class MetaClient:
                 for output, name in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
                     value = usage.get(name)
                     audit[output] = value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
-                reported = payload.get("model", self.model)
-                if not isinstance(reported, str) or not any(
-                        _is_variant(reported, name) for name in META_MODELS | META_OPEN_MODELS):
+                reported = payload.get("model")
+                # Providers can echo request data, including credentials, in response metadata.
+                # Validate before storing any reported identifier in an audit record.
+                if reported is not None and (
+                    not isinstance(reported, str) or len(reported) > 200
+                    or any(ord(char) < 32 or ord(char) == 127 for char in reported)
+                    or (self.settings.api_key and self.settings.api_key in reported)
+                ):
+                    raise _ModelMismatch("endpoint reported an unsafe model identifier")
+                if reported is not None and (not isinstance(reported, str) or not any(
+                        _is_variant(reported, name) for name in META_MODELS | META_OPEN_MODELS)):
                     raise _ModelMismatch("endpoint reported a model outside the Meta allowlist")
                 audit["reported_model"] = reported
-                if not _is_variant(reported, self.model):
+                if reported is not None and not _is_variant(reported, self.model):
                     raise _ModelMismatch("endpoint reported a different model from the requested model")
                 message = payload["choices"][0]["message"]
                 parsed = _parse_json(message.get("content") or "")
@@ -147,3 +162,4 @@ def _parse_json(text: str) -> dict:
     if start == -1 or end < start:
         raise ValueError("no JSON object in model output")
     return json.loads(text[start:end + 1])
+

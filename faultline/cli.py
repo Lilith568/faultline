@@ -12,6 +12,9 @@ def _print_report(report: dict) -> None:
     planner = report["planner"]
     print(f"\nPlanner: {planner['used']}" + (f" ({planner['model']})" if planner["used"] == "meta" else "")
           + (f"  [{planner['fallback_reason']}]" if planner["fallback_reason"] else ""))
+    live = report.get("live_api", {})
+    if live.get("required"):
+        print(f"Live API evidence: {live.get('status')} ({live.get('network_successes', 0)} successful network calls)")
     for rnd in report["rounds"]:
         for hyp in rnd["hypotheses"]:
             print(f"  round {rnd['round']}  {hyp['result']['status']:12}  {hyp['claim']}")
@@ -47,6 +50,8 @@ def main(argv: list[str] | None = None) -> None:
     hunt.add_argument("--goal", default="")
     hunt.add_argument("--planner", choices=["auto", "meta", "heuristic"], default="auto")
     hunt.add_argument("--rounds", type=int, default=2)
+    hunt.add_argument("--require-live", action="store_true",
+                      help="require live Meta API calls; stop on errors instead of using rules or recorded plans")
     hunt.add_argument("--plan", help="replay a recorded model plan (JSON) instead of calling the API")
     hunt.add_argument("--send-source", action="store_true",
                       help="let Muse read the page's inline scripts for a code-level diagnosis")
@@ -82,7 +87,8 @@ def main(argv: list[str] | None = None) -> None:
             report = asyncio.run(Hunt(args.url, goal=args.goal, planner=args.planner, rounds=args.rounds, emit=emit,
                                       recorded_plan=recorded, include_source=args.send_source,
                                       storage_state=args.storage_state,
-                                      share_signed_in_pages=args.send_signed_in_pages).run())
+                                      share_signed_in_pages=args.send_signed_in_pages,
+                                      require_live=args.require_live).run())
             _print_report(report)
             if args.junit:
                 write_junit(report, args.junit)
@@ -109,3 +115,4 @@ def main(argv: list[str] | None = None) -> None:
 
 if __name__ == "__main__":
     main()
+
