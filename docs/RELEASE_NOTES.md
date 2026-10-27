@@ -1,5 +1,12 @@
 # Release notes
 
+## 0.4.2
+
+- **Live Meta API runs recorded.** On 2026-10-27 the strict Live Muse API mode ran against the hosted Meta Model API
+  (`muse-spark-1.3`) on both held-out apps: 4/4 known bugs verified (each 3/3 confirmations), 0 false alarms on the
+  fixed builds, 12/12 model calls successful. Reports with per-call evidence are in `eval/live/2026-10-27`.
+- A stopped strict live run now says that it stopped and that no rules were substituted, instead of calling it a fallback.
+
 ## 0.4.1
 
 - Local demo launcher with hidden key input, a loopback-only server and automatic browser opening.

@@ -29,7 +29,9 @@ never applies or runs a generated patch; the developer applies it and the replay
 
 On six demo apps (each with a buggy and a fixed build), a rules-only baseline finds 6/6 bugs in the dev apps but only
 2/4 in the held-out apps. Plans from muse-spark-1.3 find 4/4 in the held-out apps, with zero false alarms on the fixed
-builds. All results, every evaluation attempt and the recorded model answers are in the repository.
+builds. The same 4/4 with zero false alarms was reproduced in live runs against the hosted Meta Model API
+(12/12 calls successful, `eval/live/2026-10-27`). All results, every evaluation attempt and the recorded model
+answers are in the repository.
 
 ## Describe your use of Meta products to build the submitted project
 
@@ -41,7 +43,9 @@ the failing state and the request timeline (multimodal input), plus the page's i
 it, and (4) on request it proposes a fix as a unified diff for source files the developer selects. An optional adapter
 runs the same loop on Meta's open-weight models (Muse Spark Open, Muse Glimmer) through an OpenAI-compatible endpoint.
 The Meta playground was used to test the planner prompt; those real Muse plans are stored in the repository and can be
-replayed in the UI and from the command line without a key.
+replayed in the UI and from the command line without a key. Live runs on 2026-10-27 called the hosted API for every
+plan, follow-up and diagnosis; their per-call evidence (timestamps, latency, tokens, HTTP status, returned model) is in
+`eval/live/2026-10-27`.
 
 ## Why are Meta's models important to your solution?
 

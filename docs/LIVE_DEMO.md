@@ -1,9 +1,8 @@
 # Record a live Meta API demo
 
-The existing [YouTube demo](https://www.youtube.com/watch?v=V_Kpp8x-xhM) replays
-plans generated in the Meta playground. Keep that description: a new live run
-needs new footage. Version 0.4.0 adds a strict live mode and an API-call record;
-it does not turn the old recording into a live API demonstration.
+Live runs on both held-out apps were recorded on 2026-10-27 (4/4 known bugs, 0 false
+alarms, 12/12 successful model calls); see [`eval/live/2026-10-27`](../eval/live/2026-10-27/README.md).
+The steps below reproduce such a run on your own key.
 
 ## Start on Windows
 

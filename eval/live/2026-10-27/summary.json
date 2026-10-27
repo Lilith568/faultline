@@ -1,0 +1,94 @@
+[
+  {
+    "id": "20261027-145146-2c85b8",
+    "app": "composer",
+    "build": "buggy",
+    "status": "complete",
+    "planner": "meta",
+    "model": "muse-spark-1.3",
+    "live": "complete",
+    "calls": 4,
+    "findings": [
+      "Switching from Write to Preview and back clears the Release notes draft.",
+      "Double-activating Publish sends two publish requests."
+    ],
+    "conf": [
+      "3/3",
+      "3/3"
+    ],
+    "exps": 6,
+    "runs": 18,
+    "dur": 66.5,
+    "tin": 6977,
+    "tout": 10298,
+    "sha": "9f3a98f827bceb98c9b38faeffa25c29261c96029ddb4e43527c73cb98a64727",
+    "dir": "20261027-145146-2c85b8-composer-buggy",
+    "started": "2026-10-27T14:51:46.749473+00:00"
+  },
+  {
+    "id": "20261027-145650-23ec44",
+    "app": "newsletter",
+    "build": "buggy",
+    "status": "complete",
+    "planner": "meta",
+    "model": "muse-spark-1.3",
+    "live": "complete",
+    "calls": 4,
+    "findings": [
+      "When the signup request fails the dialog clears the typed email and name instead of preserving them.",
+      "Closing the signup dialog with Close does not return focus to Get the newsletter button."
+    ],
+    "conf": [
+      "3/3",
+      "3/3"
+    ],
+    "exps": 8,
+    "runs": 20,
+    "dur": 73.5,
+    "tin": 7433,
+    "tout": 10886,
+    "sha": "1ad7b67d651129da73eeb3b333773d844cab6fbe007391841f96b8da6914ded4",
+    "dir": "20261027-145650-23ec44-newsletter-buggy",
+    "started": "2026-10-27T14:56:50.504561+00:00"
+  },
+  {
+    "id": "20261027-150032-571a68",
+    "app": "composer",
+    "build": "fixed",
+    "status": "complete",
+    "planner": "meta",
+    "model": "muse-spark-1.3",
+    "live": "complete",
+    "calls": 2,
+    "findings": [],
+    "conf": [],
+    "exps": 6,
+    "runs": 6,
+    "dur": 40.2,
+    "tin": 3551,
+    "tout": 8370,
+    "sha": "cce5721595c9b53c6c71b588bce8f4560e0daed453d28b35cf66bcce170ec68f",
+    "dir": "20261027-150032-571a68-composer-fixed",
+    "started": "2026-10-27T15:00:32.281600+00:00"
+  },
+  {
+    "id": "20261027-150244-08c648",
+    "app": "newsletter",
+    "build": "fixed",
+    "status": "complete",
+    "planner": "meta",
+    "model": "muse-spark-1.3",
+    "live": "complete",
+    "calls": 2,
+    "findings": [],
+    "conf": [],
+    "exps": 6,
+    "runs": 6,
+    "dur": 41.1,
+    "tin": 3890,
+    "tout": 8585,
+    "sha": "6553d7343eed98dac38bc92a454169f3d67e68a44b093dc04a3c986dec732e61",
+    "dir": "20261027-150244-08c648-newsletter-fixed",
+    "started": "2026-10-27T15:02:44.937964+00:00"
+  }
+]

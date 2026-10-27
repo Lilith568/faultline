@@ -28,6 +28,7 @@ projects was reused. The Git history records every step with its original date.
 
 Meta Muse models via the Meta Model API (`https://api.meta.ai/v1`, Chat Completions with structured output):
 `muse-spark-1.3` by default, `muse-wonder-1.0` optional. All runtime model backends are restricted to Meta models.
+Live runs of `muse-spark-1.3` through the hosted API are recorded in `eval/live/2026-10-27`.
 An optional compatible endpoint adapter is restricted to the configured Meta open-weights model names;
 it has been tested against mocked endpoints, not yet against a live checkpoint. See `docs/MODELS.md` for configuration
 and the distinction between an endpoint alias and verified checkpoint provenance.
