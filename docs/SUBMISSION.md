@@ -5,7 +5,8 @@ Problem statement: Push the Frontier
 Team name: Faultline
 Team members: Kevin Moritz (@Lilith568) — sole developer and submitter (solo)
 Public GitHub repository: https://github.com/lilith568/faultline
-Demo video: https://www.youtube.com/watch?v=V_Kpp8x-xhM (3:18; recorded Muse-plan replay)
+Demo video: https://www.youtube.com/watch?v=Ks4pQ3-GUso (3:11; live Meta Model API run)
+X post: https://x.com/lilith_builds/status/2115104307687096628
 
 ## Project Description
 

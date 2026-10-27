@@ -41,6 +41,12 @@ cce5721595c9b53c6c71b588bce8f4560e0daed453d28b35cf66bcce170ec68f  20261027-15003
 6553d7343eed98dac38bc92a454169f3d67e68a44b093dc04a3c986dec732e61  20261027-150244-08c648-newsletter-fixed/report.json
 ```
 
+## Demo video and screenshots
+
+The [demo video](https://www.youtube.com/watch?v=Ks4pQ3-GUso) and the screenshots in `docs/img/live-*.png` come from
+a fifth live run on the buggy release-notes app (started 15:10 UTC, same settings): 2 verified failures, 4 successful
+model calls, shown in its Model API evidence panel. Its report was not exported, so it is not counted above.
+
 ## Limits
 
 One live run per app and build. Model output varies between runs, so this shows that
