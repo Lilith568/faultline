@@ -18,15 +18,15 @@ py -3 -m venv .venv
 Then run:
 
 ```powershell
-& .\scripts\Start-LiveDemo.ps1
+.\.venv\Scripts\python.exe .\scripts\start_local_demo.py
 ```
 
 The launcher uses your existing `MODEL_API_KEY` or local `.env`. If neither
 contains a key, it prompts without displaying what you type. The key is used
 by the local server, never sent to the browser or committed to GitHub. The
-launcher selects the hosted Meta API and restores the process environment
-when the server exits. If your PowerShell policy blocks scripts, use the
-manual setup below; changing that policy is not required.
+launcher selects the hosted Meta API, opens the demo page in your browser
+and restores the process environment when the server exits. Press **Start hunt**
+to make the model calls. No request starts just from opening the browser.
 
 Manual setup: copy `.env.example` to `.env` only if you do not already have
 one, put your Meta key in `MODEL_API_KEY`, keep

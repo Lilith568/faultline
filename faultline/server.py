@@ -31,7 +31,7 @@ CX_RE = re.compile(r"^cx[0-9]{1,3}$")
 RECORDED_DIR = HERE.parent / "eval" / "recorded"
 DEMO_PATH_RE = re.compile(r"^/demo/([a-z]+)\.html$")
 
-app = FastAPI(title="Faultline", version="0.4.0")
+app = FastAPI(title="Faultline", version="0.4.1")
 HUNTS: dict[str, dict] = {}
 
 

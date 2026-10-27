@@ -49,6 +49,10 @@ responses and stops on model errors instead of falling back to rules. Expand the
 and download the run report. [Windows setup and three-minute recording guide](docs/LIVE_DEMO.md).
 The linked video remains the original replay until a new recording is uploaded.
 
+Already installed on Windows? Run `.\.venv\Scripts\python.exe .\scripts\start_local_demo.py`.
+It asks for a missing Meta key without displaying or saving it and opens the local demo in your browser.
+Press **Start hunt** when ready; opening the page alone makes no model call.
+
 ## Built for a real workflow
 
 - **CI gate:** `faultline hunt ... --ci --junit report.xml` exits non-zero only for verified failures, and a manually

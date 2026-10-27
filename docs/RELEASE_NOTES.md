@@ -1,5 +1,14 @@
 # Release notes
 
+## 0.4.1
+
+- Local demo launcher with hidden key input, a loopback-only server and automatic browser opening.
+  No model call starts until the user presses Start hunt. The key is not written to disk.
+- Windows setup prepares a separate per-release installation and a desktop shortcut without altering
+  an existing project or its `.env` file. It uses an existing Python installation.
+- The browser can open the release-notes demo with a prefilled goal using `?demo=composer`;
+  this selects a bundled demo only and never starts a hunt automatically.
+
 ## 0.4.0
 
 - **Strict live Meta mode.** The UI's Live Muse API option and CLI `--require-live` stop on model errors,
