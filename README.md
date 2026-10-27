@@ -52,6 +52,8 @@ The linked video remains the original replay until a new recording is uploaded.
 Already installed on Windows? Run `.\.venv\Scripts\python.exe .\scripts\start_local_demo.py`.
 It asks for a missing Meta key without displaying or saving it and opens the local demo in your browser.
 Press **Start hunt** when ready; opening the page alone makes no model call.
+The [Windows installer source and packaging instructions](windows/README.md) prepare the dependencies,
+test browser and a desktop shortcut automatically on a PC with Python already installed.
 
 ## Built for a real workflow
 
