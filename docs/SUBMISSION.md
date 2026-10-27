@@ -3,9 +3,9 @@
 Track: Indie Developer Track
 Problem statement: Push the Frontier
 Team name: Faultline
-Team members: the submitter only (solo)
+Team members: Kevin Moritz (@Lilith568) — sole developer and submitter (solo)
 Public GitHub repository: https://github.com/lilith568/faultline
-3-minute demo video: (link after recording)
+Demo video: https://www.youtube.com/watch?v=V_Kpp8x-xhM (3:18; recorded Muse-plan replay)
 
 ## Project Description
 
